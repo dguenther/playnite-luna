@@ -1,0 +1,44 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{433E3E8D-AF86-4F9A-AFAE-3D7220B87215}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LunaCatalog", "src\LunaCatalog\LunaCatalog.csproj", "{662D0691-91CA-40BC-93F7-B99DC2990FC8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{F70B8937-6FE9-4F48-8832-2623CC10F86E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LunaCatalogProbe", "tools\LunaCatalogProbe\LunaCatalogProbe.csproj", "{7DA18410-2661-418E-B419-B370D394E363}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7E8C9D42-C21C-4299-ACB8-D634831B9D55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LunaCatalog.Tests", "tests\LunaCatalog.Tests\LunaCatalog.Tests.csproj", "{727112F8-7A0B-4C25-B86F-CA3311AAC3AA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{662D0691-91CA-40BC-93F7-B99DC2990FC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{662D0691-91CA-40BC-93F7-B99DC2990FC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{662D0691-91CA-40BC-93F7-B99DC2990FC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{662D0691-91CA-40BC-93F7-B99DC2990FC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DA18410-2661-418E-B419-B370D394E363}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DA18410-2661-418E-B419-B370D394E363}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DA18410-2661-418E-B419-B370D394E363}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DA18410-2661-418E-B419-B370D394E363}.Release|Any CPU.Build.0 = Release|Any CPU
+		{727112F8-7A0B-4C25-B86F-CA3311AAC3AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{727112F8-7A0B-4C25-B86F-CA3311AAC3AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{727112F8-7A0B-4C25-B86F-CA3311AAC3AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{727112F8-7A0B-4C25-B86F-CA3311AAC3AA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{662D0691-91CA-40BC-93F7-B99DC2990FC8} = {433E3E8D-AF86-4F9A-AFAE-3D7220B87215}
+		{7DA18410-2661-418E-B419-B370D394E363} = {F70B8937-6FE9-4F48-8832-2623CC10F86E}
+		{727112F8-7A0B-4C25-B86F-CA3311AAC3AA} = {7E8C9D42-C21C-4299-ACB8-D634831B9D55}
+	EndGlobalSection
+EndGlobal

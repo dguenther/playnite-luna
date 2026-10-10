@@ -1,0 +1,43 @@
+{
+  "actions": [],
+  "pageContext": {
+    "encryptPageId": false,
+    "pageId": "default",
+    "pageType": "browse_results_luna_premium",
+    "productStage": "Release"
+  },
+  "pageMemberGroups": {
+    "mainContent": {
+      "widgets": [
+        {
+          "actions": [],
+          "id": "collection_browse_luna_premium",
+          "type": "GRID",
+          "widgets": [
+            {
+              "actions": [
+                {
+                  "target": "/game/alan-wake-2/B0GFWDM8NP"
+                }
+              ],
+              "id": "game_tile_amzn1.adg.product.2b77fdb6-bfbe-43dc-b1f1-8a264660ed0f",
+              "presentationData": "{\"hoverDetails\":{\"metacritic\":{},\"gameInputsString\":\"Controller, Keyboard and Mouse\",\"primaryButtonDefaultText\":\"Play now\",\"productUrl\":\"https://play.amazon.com/play?r=web&transferRequest=false&asin=B0GFWDM8NP&territory=US\",\"secondaryButtonText\":\"More Info\",\"trailerUrl\":\"https://m.media-amazon.com/images/I/E1am-72WQYL.mp4\",\"ageRating\":{\"isMature\":false,\"contentDescription\":[\"Blood and Gore\",\"Nudity\",\"Intense Violence\",\"Strong Language\"],\"categoryId\":\"ESRB_AGE_M\",\"categoryImageUrl\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/IARC/ESRB_AGE_M.png\",\"categoryText\":\"Mature 17+\",\"moreInfoLink\":\"https://www.globalratings.com/ratings-guide-esrb\"},\"gameInputs\":[{\"icon\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/Controller.png\",\"text\":\"Controller\"},{\"icon\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/Keyboard.png\",\"text\":\"Keyboard and Mouse\"}],\"genreTags\":[\"Action\",\"Adventure\",\"Horror\"],\"gameInputsLabel\":\"Play with\",\"gameInputsLabelV2\":\"Play with:\",\"publishersText\":\"Epic Games\",\"title\":\"Alan Wake 2\"},\"genreTags\":[\"Action\",\"Adventure\",\"Horror\"],\"gameId\":\"amzn1.adg.product.2b77fdb6-bfbe-43dc-b1f1-8a264660ed0f\",\"releaseYear\":\"2023\",\"title\":\"Alan Wake 2\",\"imageLandscape\":\"https://m.media-amazon.com/images/I/A1KsSchsldL.png\",\"imagePortrait\":\"https://m.media-amazon.com/images/I/913iT9TMOBL.png\"}",
+              "type": "GAME_TILE"
+            },
+            {
+              "actions": [
+                {
+                  "target": "/game/alien-isolation/B09HFKWMTQ"
+                }
+              ],
+              "id": "game_tile_amzn1.adg.product.4c84058d-6f78-49db-9d7b-59c18e81cbfe",
+              "presentationData": "{\"hoverDetails\":{\"metacritic\":{},\"gameInputsString\":\"Controller, Keyboard and Mouse\",\"primaryButtonDefaultText\":\"Play now\",\"productUrl\":\"https://play.amazon.com/play?r=web&transferRequest=false&asin=B09HFKWMTQ&territory=US\",\"secondaryButtonText\":\"More Info\",\"trailerUrl\":\"https://m.media-amazon.com/images/I/G1OV5i09rmL.mp4\",\"ageRating\":{\"isMature\":false,\"contentDescription\":[\"Violence\",\"Blood\",\"Strong Language\"],\"categoryId\":\"ESRB_AGE_M\",\"categoryImageUrl\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/IARC/ESRB_AGE_M.png\",\"categoryText\":\"Mature 17+\",\"moreInfoLink\":\"https://www.globalratings.com/ratings-guide-esrb\"},\"gameInputs\":[{\"icon\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/Controller.png\",\"text\":\"Controller\"},{\"icon\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/Keyboard.png\",\"text\":\"Keyboard and Mouse\"}],\"genreTags\":[\"Horror\"],\"gameInputsLabel\":\"Play with\",\"gameInputsLabelV2\":\"Play with:\",\"publishersText\":\"SEGA\",\"title\":\"Alien: Isolation\"},\"genreTags\":[\"Horror\"],\"gameId\":\"amzn1.adg.product.4c84058d-6f78-49db-9d7b-59c18e81cbfe\",\"releaseYear\":\"2014\",\"title\":\"Alien: Isolation\",\"imageLandscape\":\"https://m.media-amazon.com/images/I/91VKLxDaitL.png\",\"imagePortrait\":\"https://m.media-amazon.com/images/I/91DOeU2yJpL.png\"}",
+              "type": "GAME_TILE"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "templatePreviewApplied": false
+}

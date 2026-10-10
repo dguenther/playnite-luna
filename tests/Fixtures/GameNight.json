@@ -1,0 +1,43 @@
+{
+  "actions": [],
+  "pageContext": {
+    "encryptPageId": false,
+    "pageId": "default",
+    "pageType": "browse_results_game_night",
+    "productStage": "Release"
+  },
+  "pageMemberGroups": {
+    "mainContent": {
+      "widgets": [
+        {
+          "actions": [],
+          "id": "collection_browse_game_night",
+          "type": "GRID",
+          "widgets": [
+            {
+              "actions": [
+                {
+                  "target": "/game/angry-birds-flock-party/B0FLBQL3RQ"
+                }
+              ],
+              "id": "game_tile_amzn1.adg.product.b3eab288-9d8d-4c8a-a1fa-475722cb4ceb",
+              "presentationData": "{\"hoverDetails\":{\"metacritic\":{},\"gameInputsString\":\"Use phones as controllers\",\"numberOfPlayers\":\"1-4 players\",\"primaryButtonDefaultText\":\"Play now\",\"productUrl\":\"https://play.amazon.com/play?r=web&transferRequest=false&asin=B0FLBQL3RQ&territory=US\",\"secondaryButtonText\":\"More Info\",\"suggestedRoundTime\":\"10 min\",\"trailerUrl\":\"https://m.media-amazon.com/images/I/F1MPRkaLoaL.mp4\",\"ageRating\":{\"isMature\":false,\"contentDescription\":[\"Crude Humor\"],\"categoryId\":\"ESRB_AGE_E\",\"categoryImageUrl\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/IARC/ESRB_AGE_E.png\",\"categoryText\":\"Everyone\",\"moreInfoLink\":\"https://www.globalratings.com/ratings-guide-esrb\"},\"gameInputs\":[{\"icon\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/Controller.png\",\"text\":\"Use phones as controllers\"}],\"genreTags\":[\"Arcade\",\"Party\",\"Puzzle\"],\"gameInputsLabel\":\"Play with\",\"gameInputsLabelV2\":\"Play with:\",\"publishersText\":\"Rovio Entertainment Ltd\",\"title\":\"Angry Birds Flock Party\"},\"genreTags\":[\"Arcade\",\"Party\",\"Puzzle\"],\"gameId\":\"amzn1.adg.product.b3eab288-9d8d-4c8a-a1fa-475722cb4ceb\",\"releaseYear\":\"2025\",\"title\":\"Angry Birds Flock Party\",\"imageLandscape\":\"https://m.media-amazon.com/images/I/91LM9MFA1xL.png\",\"imagePortrait\":\"https://m.media-amazon.com/images/I/81fhp-5KkhL.png\"}",
+              "type": "GAME_TILE"
+            },
+            {
+              "actions": [
+                {
+                  "target": "/game/worms-wmd/B0GD9723R4"
+                }
+              ],
+              "id": "game_tile_amzn1.adg.product.4845a109-b308-43ce-80cc-52480dac57d3",
+              "presentationData": "{\"hoverDetails\":{\"metacritic\":{\"color\":\"#66CC33\",\"metacriticText\":\"Metascore: 76\"},\"gameInputsString\":\"Use phones as controllers\",\"numberOfPlayers\":\"1-6 players\",\"primaryButtonDefaultText\":\"Play now\",\"productUrl\":\"https://play.amazon.com/play?r=web&transferRequest=false&asin=B0GD9723R4&territory=US\",\"secondaryButtonText\":\"More Info\",\"suggestedRoundTime\":\"15 min\",\"trailerUrl\":\"https://m.media-amazon.com/images/I/F1bpSeGt32L.mp4\",\"ageRating\":{\"isMature\":false,\"contentDescription\":[\"Fantasy Violence\"],\"categoryId\":\"ESRB_AGE_E10\",\"categoryImageUrl\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/IARC/ESRB_AGE_E10.png\",\"categoryText\":\"Everyone 10+\",\"moreInfoLink\":\"https://www.globalratings.com/ratings-guide-esrb\"},\"gameInputs\":[{\"icon\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/Controller.png\",\"text\":\"Use phones as controllers\"}],\"genreTags\":[\"Action\",\"Arcade\",\"Strategy\"],\"gameInputsLabel\":\"Play with\",\"gameInputsLabelV2\":\"Play with:\",\"publishersText\":\"Team17\",\"title\":\"Worms W.M.D\"},\"genreTags\":[\"Action\",\"Arcade\",\"Strategy\"],\"gameId\":\"amzn1.adg.product.4845a109-b308-43ce-80cc-52480dac57d3\",\"releaseYear\":\"2016\",\"title\":\"Worms W.M.D\",\"imageLandscape\":\"https://m.media-amazon.com/images/I/91MPdQ+bEdL.png\",\"imagePortrait\":\"https://m.media-amazon.com/images/I/81IHmqh6HKL.png\"}",
+              "type": "GAME_TILE"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "templatePreviewApplied": false
+}

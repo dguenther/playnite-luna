@@ -1,0 +1,62 @@
+{
+  "pageContext": {
+    "encryptPageId": false,
+    "pageId": "amzn1.adg.product.4c84058d-6f78-49db-9d7b-59c18e81cbfe",
+    "pageType": "game_detail_anonymous",
+    "pageUri": "detail",
+    "productStage": "Release"
+  },
+  "pageMemberGroups": {
+    "mainContent": {
+      "widgets": [
+        {
+          "type": "PRODUCT_DETAIL",
+          "id": "item_game_details",
+          "presentationData": "{\"asin\":\"B09HFKWMTQ\",\"productId\":\"amzn1.adg.product.4c84058d-6f78-49db-9d7b-59c18e81cbfe\",\"title\":\"Alien: Isolation\"}"
+        },
+        {
+          "type": "PRODUCT_DETAIL_BUTTON_CAROUSEL",
+          "id": "collection_game_detail_buttons_jumanji_anonymous",
+          "widgets": [
+            {
+              "type": "PRODUCT_DETAIL_PRIMARY_BUTTON",
+              "id": "item_primary_log_in_button_game",
+              "presentationData": "{\"primaryText\":\"Not Available\"}"
+            }
+          ]
+        },
+        {
+          "type": "CAROUSEL",
+          "id": "collection_add_ons",
+          "widgets": [
+            {
+              "type": "ADD_ON_TILE",
+              "id": "add_on_tileamzn1.adg.product.6421cf4f-bddb-459d-be54-036320029f4d",
+              "presentationData": "{\"title\":\"The Trigger\"}"
+            }
+          ]
+        },
+        {
+          "type": "CAROUSEL",
+          "id": "collection_similar_products",
+          "widgets": [
+            {
+              "type": "GAME_TILE_VERTICAL",
+              "id": "game_tile_vertical_amzn1.adg.product.ba90a72a-11fb-4f50-9cbd-0a394fcf2df9",
+              "presentationData": "{\"gameId\":\"amzn1.adg.product.ba90a72a-11fb-4f50-9cbd-0a394fcf2df9\",\"title\":\"Dead Space\"}"
+            }
+          ]
+        }
+      ]
+    },
+    "seoContent": {
+      "widgets": [
+        {
+          "type": "SEO_DETAIL",
+          "id": "item_seo_details_jumanji_web",
+          "presentationData": "{\"canonicalUrl\":\"https://luna.amazon.com/game/alien-isolation/B09HFKWMTQ\"}"
+        }
+      ]
+    }
+  }
+}

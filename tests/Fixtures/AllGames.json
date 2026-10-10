@@ -1,0 +1,73 @@
+{
+  "actions": [],
+  "pageContext": {
+    "encryptPageId": false,
+    "pageId": "default",
+    "pageType": "browse_results_all_games",
+    "productStage": "Release"
+  },
+  "pageMemberGroups": {
+    "mainContent": {
+      "widgets": [
+        {
+          "actions": [],
+          "id": "collection_browse_all_games",
+          "type": "GRID",
+          "widgets": [
+            {
+              "actions": [
+                {
+                  "target": "/game/alan-wake-2/B0GFWDM8NP"
+                }
+              ],
+              "id": "game_tile_amzn1.adg.product.2b77fdb6-bfbe-43dc-b1f1-8a264660ed0f",
+              "presentationData": "{\"hoverDetails\":{\"metacritic\":{},\"gameInputsString\":\"Controller, Keyboard and Mouse\",\"primaryButtonDefaultText\":\"Play now\",\"productUrl\":\"https://play.amazon.com/play?r=web&transferRequest=false&asin=B0GFWDM8NP&territory=US\",\"secondaryButtonText\":\"More Info\",\"trailerUrl\":\"https://m.media-amazon.com/images/I/E1am-72WQYL.mp4\",\"ageRating\":{\"isMature\":false,\"contentDescription\":[\"Blood and Gore\",\"Nudity\",\"Intense Violence\",\"Strong Language\"],\"categoryId\":\"ESRB_AGE_M\",\"categoryImageUrl\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/IARC/ESRB_AGE_M.png\",\"categoryText\":\"Mature 17+\",\"moreInfoLink\":\"https://www.globalratings.com/ratings-guide-esrb\"},\"gameInputs\":[{\"icon\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/Controller.png\",\"text\":\"Controller\"},{\"icon\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/Keyboard.png\",\"text\":\"Keyboard and Mouse\"}],\"genreTags\":[\"Action\",\"Adventure\",\"Horror\"],\"gameInputsLabel\":\"Play with\",\"gameInputsLabelV2\":\"Play with:\",\"publishersText\":\"Epic Games\",\"title\":\"Alan Wake 2\"},\"genreTags\":[\"Action\",\"Adventure\",\"Horror\"],\"gameId\":\"amzn1.adg.product.2b77fdb6-bfbe-43dc-b1f1-8a264660ed0f\",\"releaseYear\":\"2023\",\"title\":\"Alan Wake 2\",\"imageLandscape\":\"https://m.media-amazon.com/images/I/A1KsSchsldL.png\",\"imagePortrait\":\"https://m.media-amazon.com/images/I/913iT9TMOBL.png\"}",
+              "type": "GAME_TILE"
+            },
+            {
+              "actions": [
+                {
+                  "target": "/game/alien-isolation/B09HFKWMTQ"
+                }
+              ],
+              "id": "game_tile_amzn1.adg.product.4c84058d-6f78-49db-9d7b-59c18e81cbfe",
+              "presentationData": "{\"hoverDetails\":{\"metacritic\":{},\"gameInputsString\":\"Controller, Keyboard and Mouse\",\"primaryButtonDefaultText\":\"Play now\",\"productUrl\":\"https://play.amazon.com/play?r=web&transferRequest=false&asin=B09HFKWMTQ&territory=US\",\"secondaryButtonText\":\"More Info\",\"trailerUrl\":\"https://m.media-amazon.com/images/I/G1OV5i09rmL.mp4\",\"ageRating\":{\"isMature\":false,\"contentDescription\":[\"Violence\",\"Blood\",\"Strong Language\"],\"categoryId\":\"ESRB_AGE_M\",\"categoryImageUrl\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/IARC/ESRB_AGE_M.png\",\"categoryText\":\"Mature 17+\",\"moreInfoLink\":\"https://www.globalratings.com/ratings-guide-esrb\"},\"gameInputs\":[{\"icon\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/Controller.png\",\"text\":\"Controller\"},{\"icon\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/Keyboard.png\",\"text\":\"Keyboard and Mouse\"}],\"genreTags\":[\"Horror\"],\"gameInputsLabel\":\"Play with\",\"gameInputsLabelV2\":\"Play with:\",\"publishersText\":\"SEGA\",\"title\":\"Alien: Isolation\"},\"genreTags\":[\"Horror\"],\"gameId\":\"amzn1.adg.product.4c84058d-6f78-49db-9d7b-59c18e81cbfe\",\"releaseYear\":\"2014\",\"title\":\"Alien: Isolation\",\"imageLandscape\":\"https://m.media-amazon.com/images/I/91VKLxDaitL.png\",\"imagePortrait\":\"https://m.media-amazon.com/images/I/91DOeU2yJpL.png\"}",
+              "type": "GAME_TILE"
+            },
+            {
+              "actions": [
+                {
+                  "target": "/game/angry-birds-flock-party/B0FLBQL3RQ"
+                }
+              ],
+              "id": "game_tile_amzn1.adg.product.b3eab288-9d8d-4c8a-a1fa-475722cb4ceb",
+              "presentationData": "{\"hoverDetails\":{\"metacritic\":{},\"gameInputsString\":\"Use phones as controllers\",\"numberOfPlayers\":\"1-4 players\",\"primaryButtonDefaultText\":\"Play now\",\"productUrl\":\"https://play.amazon.com/play?r=web&transferRequest=false&asin=B0FLBQL3RQ&territory=US\",\"secondaryButtonText\":\"More Info\",\"suggestedRoundTime\":\"10 min\",\"trailerUrl\":\"https://m.media-amazon.com/images/I/F1MPRkaLoaL.mp4\",\"ageRating\":{\"isMature\":false,\"contentDescription\":[\"Crude Humor\"],\"categoryId\":\"ESRB_AGE_E\",\"categoryImageUrl\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/IARC/ESRB_AGE_E.png\",\"categoryText\":\"Everyone\",\"moreInfoLink\":\"https://www.globalratings.com/ratings-guide-esrb\"},\"gameInputs\":[{\"icon\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/Controller.png\",\"text\":\"Use phones as controllers\"}],\"genreTags\":[\"Arcade\",\"Party\",\"Puzzle\"],\"gameInputsLabel\":\"Play with\",\"gameInputsLabelV2\":\"Play with:\",\"publishersText\":\"Rovio Entertainment Ltd\",\"title\":\"Angry Birds Flock Party\"},\"genreTags\":[\"Arcade\",\"Party\",\"Puzzle\"],\"gameId\":\"amzn1.adg.product.b3eab288-9d8d-4c8a-a1fa-475722cb4ceb\",\"releaseYear\":\"2025\",\"title\":\"Angry Birds Flock Party\",\"imageLandscape\":\"https://m.media-amazon.com/images/I/91LM9MFA1xL._PIGameNightGameLogo,BottomRight,0,0_.png\",\"imagePortrait\":\"https://m.media-amazon.com/images/I/81fhp-5KkhL._PIGameNightGameLogo,BottomRight,0,0_.png\"}",
+              "type": "GAME_TILE"
+            },
+            {
+              "actions": [
+                {
+                  "target": "/game/worms-wmd/B0GD9723R4"
+                }
+              ],
+              "id": "game_tile_amzn1.adg.product.4845a109-b308-43ce-80cc-52480dac57d3",
+              "presentationData": "{\"hoverDetails\":{\"metacritic\":{},\"gameInputsString\":\"Use phones as controllers\",\"numberOfPlayers\":\"1-6 players\",\"primaryButtonDefaultText\":\"Play now\",\"productUrl\":\"https://play.amazon.com/play?r=web&transferRequest=false&asin=B0GD9723R4&territory=US\",\"secondaryButtonText\":\"More Info\",\"suggestedRoundTime\":\"15 min\",\"trailerUrl\":\"https://m.media-amazon.com/images/I/F1bpSeGt32L.mp4\",\"ageRating\":{\"isMature\":false,\"contentDescription\":[\"Fantasy Violence\"],\"categoryId\":\"ESRB_AGE_E10\",\"categoryImageUrl\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/IARC/ESRB_AGE_E10.png\",\"categoryText\":\"Everyone 10+\",\"moreInfoLink\":\"https://www.globalratings.com/ratings-guide-esrb\"},\"gameInputs\":[{\"icon\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/Controller.png\",\"text\":\"Use phones as controllers\"}],\"genreTags\":[\"Action\",\"Arcade\",\"Strategy\"],\"gameInputsLabel\":\"Play with\",\"gameInputsLabelV2\":\"Play with:\",\"publishersText\":\"Team17\",\"title\":\"Worms W.M.D\"},\"genreTags\":[\"Action\",\"Arcade\",\"Strategy\"],\"gameId\":\"amzn1.adg.product.4845a109-b308-43ce-80cc-52480dac57d3\",\"releaseYear\":\"2016\",\"title\":\"Worms W.M.D\",\"imageLandscape\":\"https://m.media-amazon.com/images/I/91MPdQ+bEdL._PIGameNightGameLogo,BottomRight,0,0_.png\",\"imagePortrait\":\"https://m.media-amazon.com/images/I/81IHmqh6HKL._PIGameNightGameLogo,BottomRight,0,0_.png\"}",
+              "type": "GAME_TILE"
+            },
+            {
+              "actions": [
+                {
+                  "target": "/game/wrc-generations-fully-loaded-edition/B0BQSB3RM1"
+                }
+              ],
+              "id": "game_tile_amzn1.adg.product.6f9e5958-299d-4f6b-b483-fd245ba516bd",
+              "presentationData": "{\"hoverDetails\":{\"metacritic\":{},\"gameInputsString\":\"Controller, Keyboard and Mouse\",\"primaryButtonDefaultText\":\"Play now\",\"productUrl\":\"https://play.amazon.com/play?r=web&transferRequest=false&asin=B0BQSB3RM1&territory=US\",\"secondaryButtonText\":\"More Info\",\"trailerUrl\":\"https://m.media-amazon.com/images/I/F1iBfqsg45L.mp4\",\"ageRating\":{\"isMature\":false,\"categoryId\":\"ESRB_AGE_E\",\"categoryImageUrl\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/IARC/ESRB_AGE_E.png\",\"categoryText\":\"Everyone\",\"moreInfoLink\":\"https://www.globalratings.com/ratings-guide-esrb\"},\"gameInputs\":[{\"icon\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/Controller.png\",\"text\":\"Controller\"},{\"icon\":\"https://m.media-amazon.com/images/G/01/T/TC05316420/A07531864/Keyboard.png\",\"text\":\"Keyboard and Mouse\"}],\"genreTags\":[\"Racing\",\"Simulation\",\"Sports\"],\"gameInputsLabel\":\"Play with\",\"gameInputsLabelV2\":\"Play with:\",\"publishersText\":\"Nacon\",\"title\":\"WRC Generations Fully Loaded Edition\"},\"genreTags\":[\"Racing\",\"Simulation\",\"Sports\"],\"gameId\":\"amzn1.adg.product.6f9e5958-299d-4f6b-b483-fd245ba516bd\",\"releaseYear\":\"2022\",\"title\":\"WRC Generations Fully Loaded Edition\",\"imageLandscape\":\"https://m.media-amazon.com/images/I/91okqZg-AGL.png\",\"imagePortrait\":\"https://m.media-amazon.com/images/I/9101XlwXYqL.png\"}",
+              "type": "GAME_TILE"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "templatePreviewApplied": false
+}

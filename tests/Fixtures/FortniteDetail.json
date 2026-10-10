@@ -1,0 +1,51 @@
+{
+  "pageContext": {
+    "encryptPageId": false,
+    "pageId": "amzn1.adg.product.090330b3-1fe1-49a8-99e7-8b24f5f55227",
+    "pageType": "game_detail_anonymous",
+    "pageUri": "detail",
+    "productStage": "Release"
+  },
+  "pageMemberGroups": {
+    "mainContent": {
+      "widgets": [
+        {
+          "type": "PRODUCT_DETAIL",
+          "id": "item_game_details",
+          "presentationData": "{\"asin\":\"B0BTRVRN6M\",\"productId\":\"amzn1.adg.product.090330b3-1fe1-49a8-99e7-8b24f5f55227\",\"title\":\"Fortnite\"}"
+        },
+        {
+          "type": "PRODUCT_DETAIL_BUTTON_CAROUSEL",
+          "id": "collection_game_detail_buttons_jumanji_anonymous",
+          "widgets": [
+            {
+              "type": "PRODUCT_DETAIL_PRIMARY_BUTTON",
+              "id": "item_primary_log_in_button_game",
+              "presentationData": "{\"primaryText\":\"Not Available\"}"
+            }
+          ]
+        },
+        {
+          "type": "CAROUSEL",
+          "id": "collection_similar_products",
+          "widgets": [
+            {
+              "type": "GAME_TILE_VERTICAL",
+              "id": "game_tile_vertical_amzn1.adg.product.6a64a0e0-814b-4208-a176-86120b103ad1",
+              "presentationData": "{\"gameId\":\"amzn1.adg.product.6a64a0e0-814b-4208-a176-86120b103ad1\",\"title\":\"Fortnite Battle Royale\"}"
+            }
+          ]
+        }
+      ]
+    },
+    "seoContent": {
+      "widgets": [
+        {
+          "type": "SEO_DETAIL",
+          "id": "item_seo_details_jumanji_web",
+          "presentationData": "{\"canonicalUrl\":\"https://luna.amazon.com/game/fortnite\"}"
+        }
+      ]
+    }
+  }
+}
