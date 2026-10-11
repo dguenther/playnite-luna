@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -15,6 +16,7 @@ namespace LunaCatalog
     public sealed class LunaCatalogProvider : ILunaCatalogProvider
     {
         public static readonly Uri Endpoint = new Uri("https://proxy-prod.eu-west-1.tempo.digital.a2z.com/getPage");
+        public const int MaximumResponseBytes = 8 * 1024 * 1024;
         private readonly HttpClient client;
         private readonly string userAgent;
         private readonly string browserVersion;
@@ -22,10 +24,11 @@ namespace LunaCatalog
 
         public LunaCatalogProvider(HttpClient client, string userAgent, string browserVersion, TimeSpan? requestTimeout = null)
         {
-            this.client = client;
+            this.client = client ?? throw new ArgumentNullException(nameof(client));
             this.userAgent = userAgent;
             this.browserVersion = browserVersion;
             this.requestTimeout = requestTimeout ?? TimeSpan.FromSeconds(30);
+            if (this.requestTimeout <= TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(requestTimeout));
         }
 
         public async Task<CatalogSnapshot> FetchAsync(string region, CancellationToken cancellationToken)
@@ -35,7 +38,9 @@ namespace LunaCatalog
             foreach (var query in CatalogQuery.UsQueries)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                results.Add(await FetchQueryAsync(query, cancellationToken).ConfigureAwait(false));
+                var result = await FetchQueryAsync(query, cancellationToken).ConfigureAwait(false);
+                results.Add(result);
+                if (result.StopFurtherRequests) break;
                 // Sequential requests; no request bursts.
                 if (query != CatalogQuery.UsQueries[CatalogQuery.UsQueries.Count - 1])
                     await Task.Delay(TimeSpan.FromMilliseconds(500), cancellationToken).ConfigureAwait(false);
@@ -46,7 +51,7 @@ namespace LunaCatalog
         public async Task<QueryResult> FetchQueryAsync(CatalogQuery query, CancellationToken cancellationToken)
         {
             var page = await FetchPageAsync(() => CreateRequest(query), cancellationToken).ConfigureAwait(false);
-            if (page.Error != null) return Failure(query, page.Error, page.HttpStatus);
+            if (page.Error != null) return Failure(query, page.Error, page.HttpStatus, page.StopFurtherRequests);
             var result = LunaResponseParser.Parse(page.Body!, query);
             result.HttpStatus = page.HttpStatus;
             return result;
@@ -64,7 +69,8 @@ namespace LunaCatalog
             var page = await FetchPageAsync(() => CreateRequest(null, game), cancellationToken).ConfigureAwait(false);
             if (page.Error != null)
             {
-                var failed = new GameDetailObservation { RequestedId = game.Id, RequestedUrl = game.Url, HttpStatus = page.HttpStatus };
+                var failed = new GameDetailObservation { RequestedId = game.Id, RequestedUrl = game.Url, HttpStatus = page.HttpStatus,
+                    StopFurtherRequests = page.StopFurtherRequests };
                 failed.Diagnostics.Add(page.Error);
                 return failed;
             }
@@ -78,6 +84,7 @@ namespace LunaCatalog
             public string? Body { get; set; }
             public int? HttpStatus { get; set; }
             public string? Error { get; set; }
+            public bool StopFurtherRequests { get; set; }
         }
 
         private async Task<PageResponse> FetchPageAsync(Func<HttpRequestMessage> createRequest, CancellationToken cancellationToken)
@@ -89,30 +96,60 @@ namespace LunaCatalog
                     timeout.CancelAfter(requestTimeout);
                     using (var request = createRequest())
                     {
+                        int? status = null;
                         try
                         {
-                            using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseContentRead, timeout.Token).ConfigureAwait(false))
+                            using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token).ConfigureAwait(false))
                             {
+                                status = (int)response.StatusCode;
                                 // One bounded retry for transient server failures. Never retry 401/403/429.
-                                if (attempt == 0 && (int)response.StatusCode >= 500)
+                                if (attempt == 0 && (status == 500 || status == 502 || status == 503 || status == 504))
                                 {
-                                    await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken).ConfigureAwait(false);
+                                    var retryAfter = response.Headers.RetryAfter;
+                                    var delay = retryAfter?.Delta ?? (retryAfter?.Date.HasValue == true ?
+                                        retryAfter.Date.Value - DateTimeOffset.UtcNow : TimeSpan.FromSeconds(1));
+                                    if (delay < TimeSpan.Zero) delay = TimeSpan.Zero;
+                                    if (delay > TimeSpan.FromSeconds(30))
+                                        return new PageResponse { Error = "Server requested a longer retry delay; remaining requests stopped.",
+                                            HttpStatus = status, StopFurtherRequests = true };
+                                    await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
                                     continue;
                                 }
                                 if (!response.IsSuccessStatusCode)
-                                    return new PageResponse { Error = "HTTP " + (int)response.StatusCode + "; response not used as catalog data.", HttpStatus = (int)response.StatusCode };
-                                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                    return new PageResponse { Error = "HTTP " + status + "; response not used as catalog data.",
+                                        HttpStatus = status, StopFurtherRequests = status == 401 || status == 403 || status == 429 || response.Headers.RetryAfter != null };
+                                if (response.Content.Headers.ContentLength > MaximumResponseBytes)
+                                    return new PageResponse { Error = "Response exceeds the 8 MiB size limit.", HttpStatus = status };
+                                string json;
+                                using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                                using (var bytes = new MemoryStream())
+                                {
+                                    var buffer = new byte[8192];
+                                    int read;
+                                    while ((read = await stream.ReadAsync(buffer, 0, buffer.Length, timeout.Token).ConfigureAwait(false)) > 0)
+                                    {
+                                        if (bytes.Length + read > MaximumResponseBytes)
+                                            return new PageResponse { Error = "Response exceeds the 8 MiB size limit.", HttpStatus = status };
+                                        bytes.Write(buffer, 0, read);
+                                    }
+                                    timeout.Token.ThrowIfCancellationRequested();
+                                    json = new UTF8Encoding(false, true).GetString(bytes.ToArray());
+                                }
                                 cancellationToken.ThrowIfCancellationRequested();
-                                return new PageResponse { Body = json, HttpStatus = (int)response.StatusCode };
+                                return new PageResponse { Body = json, HttpStatus = status };
                             }
                         }
                         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
                         {
-                            return new PageResponse { Error = "Request timed out; no catalog removal can be inferred." };
+                            return new PageResponse { Error = "Request timed out; no catalog removal can be inferred.", HttpStatus = status };
                         }
                         catch (HttpRequestException)
                         {
-                            return new PageResponse { Error = "Network request failed; check network access and TLS trust." };
+                            return new PageResponse { Error = "Network request failed; check network access and TLS trust.", HttpStatus = status };
+                        }
+                        catch (Exception ex) when (ex is IOException || ex is DecoderFallbackException)
+                        {
+                            return new PageResponse { Error = "Response could not be read as UTF-8 catalog data.", HttpStatus = status };
                         }
                     }
                 }
@@ -161,9 +198,9 @@ namespace LunaCatalog
             return request;
         }
 
-        private static QueryResult Failure(CatalogQuery query, string diagnostic, int? httpStatus = null)
+        private static QueryResult Failure(CatalogQuery query, string diagnostic, int? httpStatus = null, bool stopFurtherRequests = false)
         {
-            var result = new QueryResult { Name = query.Name, HttpStatus = httpStatus };
+            var result = new QueryResult { Name = query.Name, HttpStatus = httpStatus, StopFurtherRequests = stopFurtherRequests };
             result.Diagnostics.Add(diagnostic);
             return result;
         }

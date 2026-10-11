@@ -24,7 +24,7 @@ Accept-Language: en-US
 User-Agent: actual browser user agent
 ```
 
-This is an observed working combination, not a claim that every header is required. Header minimization and browser request parity remain future checks.
+This is an observed working combination, not a claim that every header is required. A later anonymous experiment omitted `timeout`, `clientContext`, `inputContext`, and `dynamicFeatures` and returned the same 118 IDs using only `searchContext`, `featureScheme`, and `pageContext`. The provider retains its existing request for compatibility with detail verification. Browser request parity remains a future check.
 
 ```json
 {
@@ -87,7 +87,7 @@ Responses contain nested `pageMemberGroups.mainContent.widgets` collections with
 
 Observed `gameId` values use both `amzn1.adg.product.<uuid>` and `amzn1.luna.product.<uuid>`. The latter appears on eight games in the captured All Games response. Most tiles have an action target such as `/game/alan-wake-2/B0GFWDM8NP`. Fortnite instead uses `/game/fortnite`; its ASIN is present in `hoverDetails.productUrl`. The parser retains the actual Luna page action and derives an ASIN from the path or that first-party product URL. Some product URLs point to `play.amazon.com`; those are not substituted for the Luna page action. Reduced recorded regression samples for these two cases are in `tests/Fixtures/EdgeCases.json`.
 
-Canonical identity is `(region, gameId)`, falling back to the action's ASIN if the native ID is absent. Both identifiers are retained. Repeated tiles and overlapping memberships merge by identity, never by title. Tiles missing a title or safe Luna page action invalidate their query; incomplete parse results remain diagnostic observations.
+Canonical identity is `(region, gameId)`, falling back to the verified ASIN if the native ID is absent. Both identifiers are retained. Repeated tiles and overlapping memberships merge by identity, never by title. Only tiles under the direct `pageMemberGroups.mainContent.widgets` array are collected. Tiles missing a title, safe Luna action, or first-party `play.amazon.com/play` link invalidate their query. The play-link ASIN must match any ASIN in the Luna action and exactly one `territory` parameter must be present and match the requested region. Conflicting product ID/ASIN mappings within or across queries invalidate the snapshot; incomplete parse results remain diagnostic observations.
 
 All observed tiles had game IDs and game-page actions. A rendered-page check is still needed to rule out promotions, non-playable editions, or storefront items masquerading as game tiles.
 
@@ -115,18 +115,22 @@ All five primary buttons reported **"Not Available"** in this anonymous environm
 
 No continuation token, next-page cursor, `hasMore`, pagination object, or total-count field was observed in the four responses. Each request returned a single collection extending from the first to the last title listed above.
 
+Additional All Games experiments set `searchContext.pagination` to `{ "pageSize": 12, "startIndex": 0 }` and then start index 12. Both returned the same 118 identifiers. `TITLE_Z_TO_A` returned the same set in reverse title order. The inspected frontend browse grid slices an already fetched widget array for scrolling. These observations support a single-response browse grid, but do not prove coverage or validate live browser scrolling.
+
 This does **not** prove the browser makes no subsequent requests or that the API returns all available games. Query-union equality is useful evidence, but both query mechanisms could share the same server limit.
 
 The parser flags recognized continuation markers as `UnresolvedContinuation`. It deliberately does not fabricate a pagination request protocol. A future observed protocol must be implemented and tested before such responses can be validated. Absence of markers is reported as `NoContinuationObserved`, never "all pages verified."
 
-The Phase 0 snapshot always exposes `isComplete: false` and `coverageStatus: "Unverified"`. Successful HTTP requests, valid parsing, and equal category sets cannot change those fields.
+The Phase 0 snapshot always exposes `isComplete: false`. Usable research reports have `coverageStatus: "Unverified"`; failed validation produces `"Incomplete"` diagnostics. Successful HTTP requests, valid parsing, and equal category sets cannot establish completeness.
 
 ## Reliability behavior
 
 - Sequential queries, with 500 ms between categories.
-- 30-second local timeout, caller cancellation, one delayed retry for HTTP 5xx.
-- No automatic retry on 401, 403, or 429; no authentication or anti-bot bypass.
-- Malformed JSON, unexpected page types, rejected tiles, unresolved pagination, and zero tiles invalidate a query.
+- 30-second local timeout covering response headers and body reads, caller cancellation, strict UTF-8 decoding, and an 8 MiB response limit.
+- One delayed retry for HTTP 500/502/503/504, honoring `Retry-After`. A delay above 30 seconds defers the run and stops remaining calls. A terminal failure with `Retry-After` also stops further calls.
+- No automatic retry on 401, 403, or 429; these failures stop remaining queries or detail samples. Cookies and automatic redirects are disabled.
+- Malformed/deep JSON, unexpected page types, rejected tiles, unresolved pagination actions or markers, totals above observed tile counts, and zero tiles invalidate a query.
+- Identity conflicts and disagreement between All Games and the category union prevent a successful snapshot.
 - Failed runs write a separate diagnostics report and preserve an existing export.
 - Successful research exports use a temporary file and atomic replacement; this is not a production cache of a complete catalog.
 
@@ -136,11 +140,11 @@ From the repository root, use the commands in [README](../README.md). Fixture re
 
 ## Remaining blockers and acceptance checks
 
-The current session's cloud allowlist permits `luna.amazon.com` and the tested proxy endpoint, but blocks `m.media-amazon.com`, where the homepage loads its JavaScript. A direct request to that asset host was rejected by the environment's network proxy. The user added the host to the configuration and reported that a new chat is needed for it to take effect. Clean Chromium navigation also requires its certificate store to trust the environment proxy CA; TLS verification was not disabled. See [the next-session handoff](next-session.md).
+The resumed session permits `luna.amazon.com`, `m.media-amazon.com`, and the tested proxy endpoint. Clean signed-out browse navigation redirected to Luna's login route; the subsequent Amazon sign-in destination was denied by the network proxy. No browse grid or browse `getPage` request was observed in that browser session. Chromium's initial certificate error was worked around for investigation by forwarding browser requests through Playwright's Node transport with the configured proxy and CA trust, retaining TLS verification. This does not establish normal Chromium navigation or satisfy the rendered-website comparison. See [the next-session handoff](next-session.md).
 
 To finish Phase 0:
 
-1. Resolve frontend asset access and Chromium CA trust, using normal environment configuration.
+1. Resolve normal Chromium CA trust and the signed-out browse/login behavior through supported environment and account configuration.
 2. Capture actual anonymous requests for `/browse` and all three quick-search pages.
 3. Scroll to the bottom; record any additional requests and implement their observed pagination protocol.
 4. Compare IDs/counts, boundary titles, search results, and category overlaps against the rendered website. Check whether other catalog groups exist.

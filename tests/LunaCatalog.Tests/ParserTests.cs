@@ -30,13 +30,13 @@ public sealed class ParserTests
     }
 
     [Fact]
-    public void ObjectPresentationDataAndAdditionalNestingAreSupported()
+    public void ObjectPresentationDataAndNestedWidgetsAreSupported()
     {
         var response = Response();
         var tile = FirstTile(response);
         tile["presentationData"] = JObject.Parse((string)tile["presentationData"]!);
-        var members = response["pageMemberGroups"]!.DeepClone();
-        response["pageMemberGroups"] = new JObject { ["extra"] = new JArray(members) };
+        var widgets = response.SelectToken("pageMemberGroups.mainContent.widgets")!.DeepClone();
+        response["pageMemberGroups"]!["mainContent"]!["widgets"] = new JArray(new JObject { ["extra"] = widgets });
         Assert.True(LunaResponseParser.Parse(response.ToString(), Query("Standard")).ResponseValid);
     }
 
@@ -115,6 +115,8 @@ public sealed class ParserTests
         var distinct = (JObject)duplicate.DeepClone();
         var data = JObject.Parse((string)distinct["presentationData"]!);
         data["gameId"] = "amzn1.adg.product.00000000-0000-0000-0000-000000000001";
+        data["hoverDetails"]!["productUrl"] = "https://play.amazon.com/play?asin=B000000001&territory=US";
+        distinct["actions"] = new JArray(new JObject { ["target"] = "/game/another-game/B000000001" });
         distinct["presentationData"] = data.ToString();
         tiles.Add(distinct);
         var result = LunaResponseParser.Parse(response.ToString(), Query("Standard"));
@@ -127,7 +129,14 @@ public sealed class ParserTests
     public void RegionIsPartOfIdentity()
     {
         var us = LunaResponseParser.Parse(Fixture("Standard"), Query("Standard"), "US");
-        var ca = LunaResponseParser.Parse(Fixture("Standard"), Query("Standard"), "CA");
+        var canadianSample = Response();
+        foreach (var tile in canadianSample.Descendants().OfType<JObject>().Where(o => (string?)o["type"] == "GAME_TILE"))
+        {
+            var data = JObject.Parse((string)tile["presentationData"]!);
+            data["hoverDetails"]!["productUrl"] = ((string)data.SelectToken("hoverDetails.productUrl")!).Replace("territory=US", "territory=CA");
+            tile["presentationData"] = data;
+        }
+        var ca = LunaResponseParser.Parse(canadianSample.ToString(), Query("Standard"), "CA");
         Assert.Equal(4, CatalogSnapshot.Merge(new[] { us, ca }).Games.Count);
     }
 

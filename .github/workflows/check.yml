@@ -1,0 +1,17 @@
+name: Validate catalog probe
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+      - run: dotnet restore AmazonLuna.sln --locked-mode
+      - run: dotnet build AmazonLuna.sln --no-restore --configuration Release
+      - run: dotnet test tests/LunaCatalog.Tests/LunaCatalog.Tests.csproj --no-build --configuration Release

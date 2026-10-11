@@ -13,7 +13,7 @@ namespace LunaCatalog
             var observation = new GameDetailObservation { RequestedId = expected.Id, RequestedUrl = expected.Url };
             try
             {
-                var root = JObject.Parse(json);
+                var root = LunaJson.ParseObject(json);
                 observation.ObservedPageType = Text(root.SelectToken("pageContext.pageType"));
                 if (observation.ObservedPageType != "game_detail_anonymous" && observation.ObservedPageType != "game_detail")
                 {
@@ -39,7 +39,7 @@ namespace LunaCatalog
                     (expected.Asin == null || expected.Asin == observation.Asin);
                 observation.UrlMatches = Uri.TryCreate(observation.CanonicalUrl, UriKind.Absolute, out var actual) &&
                     Uri.TryCreate(expected.Url, UriKind.Absolute, out var requested) &&
-                    actual.Scheme == "https" && actual.Host == "luna.amazon.com" &&
+                    actual.Scheme == "https" && actual.Host == "luna.amazon.com" && actual.Port == 443 && actual.UserInfo.Length == 0 &&
                     actual.AbsoluteUri == requested.AbsoluteUri;
                 if (!observation.IdentityMatches) observation.Diagnostics.Add("Returned product identity differs from the catalog tile.");
                 if (!observation.UrlMatches) observation.Diagnostics.Add("Canonical game URL differs from the catalog tile.");
@@ -56,7 +56,7 @@ namespace LunaCatalog
         private static string? Text(JToken? token) => token?.Type == JTokenType.String ? token.Value<string>() : null;
 
         private static JObject Presentation(JObject widget) => widget["presentationData"] is JObject obj ? obj :
-            JObject.Parse(Text(widget["presentationData"]) ?? "null");
+            LunaJson.ParseObject(Text(widget["presentationData"]) ?? "null");
 
         private static IEnumerable<JObject> Objects(JToken root)
         {

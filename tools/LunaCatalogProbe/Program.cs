@@ -54,7 +54,7 @@ internal static class Program
             if (live)
             {
                 // Disable cookies: every query is anonymous. Honor the system proxy and TLS trust.
-                using var handler = new HttpClientHandler { UseCookies = false };
+                using var handler = new HttpClientHandler { UseCookies = false, AllowAutoRedirect = false };
                 using var client = new HttpClient(handler) { Timeout = Timeout.InfiniteTimeSpan };
                 var provider = new LunaCatalogProvider(client, userAgent, version);
                 snapshot = await provider.FetchAsync("US", cancellation.Token);
@@ -76,6 +76,7 @@ internal static class Program
                         snapshot.DetailChecks.Add(check);
                         Console.WriteLine($"Detail {game.Title}: identity={check.IdentityMatches}, URL={check.UrlMatches}, button={check.PrimaryButtonText ?? "unknown"}");
                         foreach (var diagnostic in check.Diagnostics) Console.WriteLine("  " + diagnostic);
+                        if (check.StopFurtherRequests) break;
                     }
                 }
             }
