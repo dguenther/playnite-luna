@@ -88,5 +88,6 @@ atomically; the evidence/catalog pair is not a transaction.
 
 Full datasets stay in ignored `artifacts/`; only reduced evidence is committed.
 The production cache and refresh contract are implemented in Milestone B. The
-next milestone integrates the data layer with a Playnite catalog browser. This
-audit does not implement automatic removal handling or a Playnite plugin.
+Milestone C [browser preview](playnite-browser.md) consumes that service at
+runtime; Windows host checks remain pending. The optional audit retains its
+research role and does not implement automatic removal handling.

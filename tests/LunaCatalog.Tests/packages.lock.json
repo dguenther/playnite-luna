@@ -107,6 +107,12 @@
           "Newtonsoft.Json": "[13.0.3, )"
         }
       },
+      "lunacatalogbrowser": {
+        "type": "Project",
+        "dependencies": {
+          "LunaCatalog": "[1.0.0, )"
+        }
+      },
       "lunacatalogprobe": {
         "type": "Project",
         "dependencies": {

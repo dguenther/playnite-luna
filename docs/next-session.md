@@ -1,12 +1,13 @@
-# Continue with the Playnite catalog browser
+# Validate the Playnite browser and continue with imports
 
 ## Current state
 
 Repository: `dguenther/playnite-luna`. PR
 [#5](https://github.com/dguenther/playnite-luna/pull/5) merged into `main` as
-`b3b29fa`. Milestone B is in
-[PR #6](https://github.com/dguenther/playnite-luna/pull/6), branch
-`feature/catalog-cache-refresh`. Check current
+`b3b29fa`; [PR #6](https://github.com/dguenther/playnite-luna/pull/6) merged as
+`abd2260`. Milestone C is in draft
+[PR #7](https://github.com/dguenther/playnite-luna/pull/7), branch
+`feature/playnite-catalog-browser`. Check current
 Git/PR state and preserve existing edits before resuming. No applicable
 `AGENTS.md` was found during this work.
 
@@ -15,7 +16,11 @@ production data layer. `src/LunaCatalog` targets `net462;net8.0` with no Playnit
 dependencies. It now includes `CatalogValidator`, `ValidatedCatalog`,
 `CatalogService`, `ICatalogCache` / `JsonCatalogCache`, and `CatalogComparer`.
 See [the runtime contract](catalog-data-layer.md) and [architecture](architecture.md).
-There is no Playnite plugin/UI, import service, or `.pext` yet.
+`src/LunaCatalogBrowser` provides a read-only local browsing model and bounded
+artwork downloads. `src/LunaPlaynite` is a `net462` WPF `GenericPlugin` using
+SDK 6.17.0, matching the official Playnite 10 template. CI generates a Toolbox
+preview package. **Gate C still needs Windows Playnite Desktop host checks.**
+There is no import service or import-status mapping yet.
 
 The browser will download current API data directly through C# at runtime.
 `CatalogService.LoadAsync` opens the cache without networking;
@@ -27,6 +32,15 @@ Cancellation propagates without discarding cached data. Unique temporary files
 and atomic replacement protect writes; a validated backup recovers corrupt or
 missing primary data. The host supplies the plugin data directory and owns a
 single service/cache pair. Cross-process writers are not coordinated.
+
+The Desktop main menu opens one catalog window with cached startup, local title
+search, All/Standard/Premium/GameNight filters, deterministic title/ID sorting,
+membership overlap, counts, refresh time, and Open in Luna. Refresh/cancel leave
+browsing available; failed refreshes retain previous data. Preferences save
+category/sort/window size through Playnite's settings API. Artwork is optional,
+bounded, decoded on workers, and cached only in memory; an offline restart may
+show placeholders. Stable plugin GUID:
+`6f4229ca-70a9-4c65-ae9f-047a367beda9`. See [browser details](playnite-browser.md).
 
 Runtime catalogs are `Validated` / complete under `PublicUSStreamingBrowseV1`.
 The research CLI remains `Unverified` / false, with successful exit 2. Python's
@@ -46,14 +60,23 @@ Playnite games based on a single observed removal.
 ## Verification
 
 - Locked restore and Release builds for both library targets pass with zero
-  warnings/errors. All 182 .NET tests and 24 Python offline checks pass.
-- The 85 production cases cover validation, restart reload, malformed/schema
+  warnings/errors, including WPF and the Windows smoke harness. All 211 .NET
+  tests and 24 Python offline checks pass.
+- The 88 production data-layer cases cover validation, restart reload, malformed/schema
   checks, backup recovery, atomic replacement, cancellation/write failures,
   serialized refreshes, metadata differences, and identity migration/conflicts.
   HTTP-provider regressions cover connection/body failures, timeouts, error
   statuses, deferred retries, invalid responses, and caller cancellation while
   preserving the prior cache bytes and timestamp.
-  CI now covers Linux and Windows. It does not test loading inside Playnite.
+  Twenty-six browser/artwork cases cover representative local views, selection,
+  cancellation, real-provider offline retention, bounded artwork, and concurrency.
+  CI covers Linux and Windows, with actual WPF bindings/dispatcher smoke checks
+  and official Toolbox packaging on Windows. It does not load inside Playnite.
+- The `net462` build shares Playnite 10.62's JSON 10.0.3; no JSON DLL or private
+  loader is packaged. Standalone .NET 8 keeps JSON 13.0.3. The independent
+  installed-package check verifies host reuse and duplicate/depth rejection.
+  The WPF harness checks that a late obsolete artwork failure cannot clear a
+  recycled row's replacement image.
 - A live runtime download at October 11, 2026 **16:45:02 UTC** returned All 118,
   Standard 90, Premium 118, and GameNight 50, all HTTP 200 without continuation.
   Validation and cache save passed. A restarted service loaded 118 games, and a
@@ -71,18 +94,22 @@ Playnite games based on a single observed removal.
 
 ## Next work
 
-**Start Milestone C.** Use the compatible Playnite 10 Toolbox template for a
-`GenericPlugin` and WPF catalog browser. Connect `CatalogService` to the plugin
-data directory, show cached data immediately, and expose explicit asynchronous
-refresh. Keep title search, category filters, and sorting local. Show overlapping
-memberships, artwork, visible counts, stale/offline/error state, last successful
-refresh, and Open in Luna actions. Preserve imported/user data; import operations
-belong to Milestone D. Follow the checklist in [PLAN.md](../PLAN.md).
+**Finish Gate C's Windows host checks, then start Milestone D.** Download the
+`luna-playnite-preview` CI artifact from PR #7, or use `tools/PackageLuna.ps1` with
+an installed Playnite 10 Toolbox. Follow the [host checklist](playnite-browser.md#outstanding-windows-host-checks),
+record actual loading/theme/browser/offline/restart results, and keep Gate C
+pending until those pass. Playnite 10.62 is the preview packaging target.
+
+Milestone D adds optional selected/bulk imports and Imported/Not imported status,
+backed by versioned `(region, LunaId) -> Playnite GUID` mappings reconciled with
+the real database. Same-title copies in another library never establish Luna
+identity. Preserve user edits, never delete games automatically, and keep catalog
+viewing independent of importing. Follow [PLAN.md](../PLAN.md).
 
 Windows Playnite is required to validate SDK integration, host loading, responsive
-UI, and final packaging. Linux builds and Windows .NET tests alone do not close
-Gate C. Retain representative fixture tests and validate new UI seams separately
-from API downloads. Native Chromium trust remains unresolved in this cloud
+UI, and clean-install packaging. Linux builds, WPF smoke checks, and generated
+packages alone do not close Gate C. Keep representative fixtures and verify import
+seams separately from API downloads. Native Chromium trust remains unresolved in this cloud
 environment; verified Node forwarding works for optional research tools and does
 not repair native trust. It is not a production C# refresh dependency.
 

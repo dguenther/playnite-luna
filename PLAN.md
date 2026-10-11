@@ -1,7 +1,9 @@
 # Amazon Luna Catalog Browser — implementation plan
 
-Reconciled October 11, 2026 (UTC) against PR
-[#5](https://github.com/dguenther/playnite-luna/pull/5) in
+Reconciled October 11, 2026 (UTC) after merged PRs
+[#5](https://github.com/dguenther/playnite-luna/pull/5) and
+[#6](https://github.com/dguenther/playnite-luna/pull/6), with Milestone C in
+[#7](https://github.com/dguenther/playnite-luna/pull/7), in
 `dguenther/playnite-luna`. Evidence timestamps use UTC.
 
 This is the working checklist reconciled with the uploaded implementation plan.
@@ -12,9 +14,11 @@ the original specification and update this file as milestones gain evidence.
 **Current state: Gates A and B pass for the public US streaming investigation
 and production data layer.** The repository has a reusable provider, validated
 runtime refreshes, versioned cache/recovery, identity-aware comparisons, optional
-research tools, representative fixtures, and CI. It has no Playnite extension,
-browser UI, imports, or `.pext`. Proceed to Milestone C using the
-[runtime data-layer contract](docs/catalog-data-layer.md).
+research tools, representative fixtures, and CI. Milestone C now adds a Playnite
+WPF browser, a testable local browsing model, and Toolbox preview packaging.
+**Gate C remains pending Windows Playnite host validation.** Imports remain
+Milestone D. See [browser behavior and host checks](docs/playnite-browser.md) and
+the [runtime data-layer contract](docs/catalog-data-layer.md).
 
 A checked item below means implementation or linked evidence exists in this
 working tree. Phase verdicts are stated separately; see
@@ -179,26 +183,27 @@ use reduced first-party samples and real temporary cache files. A live runtime
 download passed validation, reloaded all 118 games after restart, and retained
 cache bytes after a simulated network failure. See the
 [contract](docs/catalog-data-layer.md) and [validation](docs/validation.md).
-The host will connect its plugin data directory in C; the research CLI remains
+The Milestone C host connects its plugin data directory; the research CLI remains
 unverified. No new full audit or bulk fixture is required.
 
 ## C — Build the Playnite catalog browser (Phase 2)
 
 Depends on Gate B; Windows is required for Playnite runtime verification.
 
-- [ ] Add `src/LunaPlaynite` using the compatible Playnite 10 Toolbox template,
+- [x] Add `src/LunaPlaynite` using the compatible Playnite 10 Toolbox template,
   targeting `net462`. Add the extension manifest, stable plugin ID, settings/data
-  integration, and dependency packaging; verify loading inside the host.
-- [ ] Add the main-menu entry **Amazon Luna Catalog Browser** and a WPF window.
+  integration, and dependency packaging. SDK 6.17.0 matches the official template.
+- [ ] Verify loading inside the Playnite Desktop host on Windows.
+- [x] Add the main-menu entry **Amazon Luna Catalog Browser** and a WPF window.
   A sidebar shortcut is optional.
-- [ ] Display the entire validated cached catalog with cover artwork, titles,
+- [x] Display the entire validated cached catalog with cover artwork, titles,
   multiple membership indicators, visible-game count, and last successful refresh.
-- [ ] Add local title search, All/Standard/Premium/GameNight filters, and a stable
+- [x] Add local title search, All/Standard/Premium/GameNight filters, and a stable
   default title sort. Filtering/sorting must not mutate the snapshot.
-- [ ] Load/fetch asynchronously with cancellation and asynchronous image loading;
+- [x] Load/fetch asynchronously with cancellation and asynchronous image loading;
   keep the UI responsive and show cached/offline, loading, empty-cache, and
   refresh-failure states clearly.
-- [ ] Add manual Refresh and Open in Luna using the default browser.
+- [x] Add manual Refresh and Open in Luna using the default browser.
 - [ ] Add Not imported / Imported indicators backed by the mapping and actual
   Playnite database reconciliation from Milestone D. Same-title Steam/GOG games
   must not count as Luna imports.
@@ -209,6 +214,15 @@ Depends on Gate B; Windows is required for Playnite runtime verification.
 once, preserves membership overlap, searches/filters/sorts locally, opens Luna
 pages, and stays responsive during refresh and offline use. The import-status
 and import-control acceptance checks finish with Milestone D.
+
+**Implementation status:** the browser and full solution compile on Linux and
+Windows targets. Twenty-six new model/artwork cases use representative API data.
+The Windows WPF smoke harness checks actual bindings, selection, cancellation,
+dispatcher notifications, image decoding, and cache restart without live Amazon
+requests. CI packages a preview with official Playnite 10.62 Toolbox and checks
+staging/archive dependencies. These checks do not establish Playnite host loading;
+the [manual checklist](docs/playnite-browser.md#outstanding-windows-host-checks)
+still gates C. Imports/status controls remain explicitly deferred to D.
 
 ## D — Implement optional library imports (Phase 3)
 
@@ -261,6 +275,8 @@ Depends on Gates A–D. Retain the existing offline suite and CI.
   build, and offline tests in GitHub Actions.
 - [x] Milestone B passes 182 .NET cases and Release builds for
   `net462` and `net8.0` with zero warnings/errors. CI covers Linux and Windows.
+- [x] Milestone C expands the suite to 208 .NET cases, adds full WPF compilation,
+  Windows dispatcher/binding smoke checks, and official Toolbox preview packaging.
 - [x] Twenty-four Python offline checks cover evidence safety, incomplete comparisons,
   context cleanup, bounded catalog draining, search termination, and unstable
   pages/reference disagreement, complete audit requirements, snapshot binding,
@@ -271,9 +287,10 @@ Depends on Gates A–D. Retain the existing offline suite and CI.
   first launch with no cache; offline opening; all-category search/filtering;
   successful refresh; single import; multi-import; repeated import; manual edits
   and deletion; restart/persistence; and clean-install package testing.
-- [ ] Build a `.pext` using Playnite's supported Toolbox workflow; verify bundled
-  `net462` dependencies, installation, plugin load, browser, URL actions, and
-  imports on a clean Playnite installation. Linux compilation cannot close this gate.
+- [x] Add `.pext` generation using Playnite's supported Toolbox workflow, with
+  checks for staged dependencies and shared host assemblies.
+- [ ] Verify installation, plugin load, browser, URL actions, and imports on a
+  clean Playnite installation. Automated compilation/packaging cannot close this gate.
 - [ ] Update README with installation, supported versions, catalog/region scope,
   refresh/import behavior, undocumented API dependency, and known limitations.
   Update architecture/API/validation docs as production behavior changes.

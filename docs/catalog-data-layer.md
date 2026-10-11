@@ -1,8 +1,9 @@
 # Runtime catalog data layer
 
 Milestone B validates and caches current public US streaming data independently
-of Playnite. `CatalogService` downloads through the existing C# provider; the
-future Playnite host supplies the plugin data directory and calls the service.
+of Playnite. `CatalogService` downloads through the existing C# provider;
+the [Playnite browser](playnite-browser.md) supplies the plugin data directory
+and calls the service.
 The [Gate A investigation](streaming-completeness.md) established the browse
 protocol. The Python audit remains optional research tooling.
 
@@ -121,14 +122,16 @@ cross-refresh removal confirmation remain separate work.
 
 ## Verification and next step
 
-The suite contains 182 .NET tests, including 85 production data-layer cases,
-and 24 Python checks. Production tests use the existing five-game API samples
+The suite contains 211 .NET tests, including 88 production data-layer cases and
+26 browser/artwork cases, and 24 Python checks. Production tests use the existing
+five-game API samples
 and targeted edge cases, with an injected HTTP handler and real temporary cache
 files. CI builds both library targets and runs both suites on Linux and Windows.
 See [validation](validation.md) for the live runtime smoke test and offline
 failure/restart results.
 
-Gate B passes for this data layer. Milestone C will connect `CatalogService` to
+Gate B passes for this data layer. Milestone C connects `CatalogService` to
 a Playnite 10 WPF `GenericPlugin`, with local search/filtering and cached offline
-display. Host loading, UI behavior, and `.pext` packaging still need Windows
-Playnite validation.
+display. Windows CI checks WPF bindings and produces a Toolbox preview package;
+host loading, real-host UI behavior, and clean installation remain Windows
+Playnite checks before Gate C passes.

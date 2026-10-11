@@ -3,7 +3,7 @@
 Milestone A / Gate A passes for the public US streaming catalog captured October
 11, 2026. The [scoped verdict](streaming-completeness.md) records the evidence and
 exclusions. Milestone B / Gate B passes for the production data layer; Milestone
-C's Playnite browser is next.
+C's Playnite browser is implemented, with Windows host validation still pending.
 
 `src/LunaCatalog` builds for `net462` and `net8.0`, with no Playnite or WPF
 dependencies. It owns request construction, normalized models, recursive
@@ -46,7 +46,7 @@ sets. The historical 118-game count is not an acceptance threshold.
 `CatalogService` serializes cache loads and explicit refreshes, publishes candidates
 only after successful storage, and exposes data source, age/staleness, timestamp,
 errors, progress, and changes. `JsonCatalogCache` implements `ICatalogCache` using
-the directory supplied by the future host. Versioned normalized games and query
+the directory supplied by the Playnite host. Versioned normalized games and query
 summaries are validated on read/write; bounded UTF-8/JSON reads reject malformed
 data. Atomic replacement retains a validated backup, and backup recovery never
 replaces good data with a corrupt primary. State copies protect the accepted
@@ -77,15 +77,43 @@ shapes and edge cases, not a complete raw response or saved catalog. Optional
 full research snapshots remain in ignored `artifacts/` and are not bundled with
 the browser.
 
+`src/LunaCatalogBrowser` targets `net462;net8.0` without Playnite or WPF. Its
+`CatalogBrowserModel` publishes read-only display items, combines local title
+search/category filters with deterministic title/ID sorting, and retains selection
+by ID when accepted metadata changes. It runs service work on workers and returns
+notifications to the caller's UI context. Duplicate refresh clicks do not enqueue
+work; cancellation and unexpected errors leave prior data available. Its optional
+`CatalogArtworkClient` bounds anonymous first-party downloads independently of
+catalog validation.
+
+`src/LunaPlaynite` follows the official Playnite 10 GenericPlugin template with
+SDK 6.17.0 and `net462` WPF. A stable plugin GUID owns one service and window;
+the main-menu entry opens a themed Playnite-created Desktop window, supplying
+`GetPluginUserDataPath()` to the cache. Browser preferences use Playnite's settings
+API. The virtualized list cancels recycled-row cover requests, decodes images on
+workers, and retains bounded frozen bitmaps in memory. Open in Luna launches a
+validated page through the default browser. This phase makes no database imports.
+See [the browser contract](playnite-browser.md).
+
 `global.json`, committed NuGet lock files, pinned Python dependencies, and GitHub
 Actions make offline validation repeatable: locked restore, Release builds for
-both library targets, 182 .NET tests, and 24 Python tests on Linux and Windows.
-Library compilation/testing does not validate Playnite host loading.
+both library targets plus the WPF plugin, 211 .NET tests, and 24 Python tests on
+Linux and Windows. Windows additionally opens the actual WPF view in a dispatcher
+smoke harness and packages a checked preview with the official Playnite 10.62
+Toolbox. Playnite supplies both its SDK and JSON 10.0.3; the `net462` catalog
+reuses that host assembly, with no JSON DLL or assembly loader bundled.
+Standalone `net8.0` tools/tests retain JSON 13.0.3. Both targets bound JSON
+depth to 64 and reject duplicate cache properties through a compatible reader.
+A separate process loads the extracted package beside the official host assemblies
+and round-trips representative data through validation/cache, checking a single
+host JSON assembly and rejecting duplicate/deep cache input. These dependency
+checks, compilation, WPF smoke checks, and packaging do not validate
+loading inside Playnite.
 
 Milestone B provides versioned caching, validated refreshes, recovery, and snapshot
 comparisons while preserving the last validated snapshot after failures. With
-Gate B passed, Milestone C adds the WPF `GenericPlugin` using Playnite's Toolbox
-template and consumes `CatalogService`. Milestone D adds explicit imports
+Gate B passed, Milestone C's WPF `GenericPlugin` consumes `CatalogService` and
+has a documented Windows host checklist. Milestone D adds explicit imports
 and reconciles `(region, LunaId)` mappings with Playnite's database. Windows is
-required for host validation and final `.pext` packaging. No import service,
-Playnite plugin, or UI exists yet.
+required for host validation and final clean-install package testing. No import
+service or import-status mapping exists yet.

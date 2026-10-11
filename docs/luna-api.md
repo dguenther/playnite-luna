@@ -307,5 +307,7 @@ runtime requirement. Native Chromium trust remains an environment limitation
 for the optional research tools.
 
 See [the handoff](next-session.md) for reproduction commands and current
-limitations. Milestone C will integrate the production service with a Playnite
-10 catalog browser; the optional research CLI retains its existing behavior.
+limitations. Milestone C's [Playnite 10 browser preview](playnite-browser.md)
+integrates the production service with local search/filtering and manual runtime
+refreshes; host validation remains pending. The optional research CLI retains
+its existing behavior.

@@ -1,8 +1,23 @@
 # Amazon Luna Catalog Browser for Playnite
 
-Milestones A and B implementation for a future Playnite 10 extension. It contains a reusable C# provider, validated runtime refreshes, a versioned cache with recovery, catalog comparisons, and optional research tools. The library builds for .NET Framework 4.6.2 and .NET 8. It does not yet contain the WPF plugin or a `.pext` package.
+Milestone C preview for Playnite 10: a WPF catalog browser with saved offline data, runtime C# refreshes, local search and category filters, artwork, and Open in Luna actions. The provider and browser model build for .NET Framework 4.6.2 and .NET 8; the plugin targets `net462` with Playnite SDK 6.17.0. Optional library imports come in Milestone D. Loading inside Playnite and clean-install validation remain pending.
 
 See [PLAN.md](PLAN.md) for the implementation checklist reconciled with the original plan and the current repository.
+
+## Try the browser preview
+
+Windows CI packages a `.pext` with the official Playnite 10.62 Toolbox and uploads
+it as `luna-playnite-preview`. Download that artifact from the successful Windows
+workflow run on [PR #7](https://github.com/dguenther/playnite-luna/pull/7), extract
+the `.pext`, and open it with Playnite. This is a development preview awaiting
+host validation, not a verified release.
+
+In Playnite Desktop Mode, open **Amazon Luna Catalog Browser** from the main menu.
+Saved games appear without an API request. On first use, choose **Refresh** to
+download the public US streaming catalog. Search, category filters, and title
+sorting work locally; select a game and choose **Open in Luna**. Failed or
+cancelled refreshes retain the previous catalog. No games are imported by this
+phase. See [browser behavior, packaging, and host checks](docs/playnite-browser.md).
 
 ## Current findings
 
@@ -12,21 +27,21 @@ Anonymous first-party requests repeated on October 11, 2026 returned 118 distinc
 
 **The October 11 snapshot was fully audited and exported as `Verified` / `isComplete: true`.** Its receipt records the public US streaming scope, source-file hash, ID-set hash, and verification time.
 
-The catalog browser will download current Luna API data at runtime through the C# provider. Tests use reduced, representative API samples; a complete saved API response or catalog is not required for testing. The Python audit is optional research tooling used to establish the browse protocol's coverage, not a step required on every runtime refresh.
+The catalog browser downloads current Luna API data at runtime through the C# provider. Tests use reduced, representative API samples; a complete saved API response or catalog is not required for testing. The Python audit is optional research tooling used to establish the browse protocol's coverage, not a step required on every runtime refresh.
 
 The research CLI still exports `Unverified` / `isComplete: false` by default. The production `CatalogService` validates runtime downloads against the established browse contract and caches accepted data as `Validated` / `isComplete: true`. It preserves previous data after failed refreshes and reloads it offline. The October 11 receipt identifies that research capture; runtime downloads may contain a different set of games, and 118 is not a fixed requirement. See [the data-layer contract](docs/catalog-data-layer.md) for usage, cache recovery, state, and identity migration.
 
 The provider uses the frontend-selected US endpoint and explicit `all_games`
 query. Rendered browse grids match the retrieved catalog and reach stable scroll
 bottoms. Remote search uses stable alphabetical offsets and explicit no-results
-states for the audit; Playnite search will filter the downloaded catalog locally.
+states for the audit; Playnite search filters the downloaded catalog locally.
 Read [the API investigation](docs/luna-api.md) for the request shape and findings,
 and [the evidence tools](tools/LunaBrowserEvidence/README.md) for reproduction and
 proxy/TLS setup.
 
 ## Build and test
 
-Install a .NET 8 SDK. `global.json` selects the latest installed .NET 8 feature band. Reference assemblies for `net462` are restored from NuGet; Linux can compile the provider but cannot run the future Windows WPF plugin.
+Install a .NET 8 SDK. `global.json` selects the latest installed .NET 8 feature band. Reference assemblies for `net462` are restored from NuGet. Linux can compile the full solution, including WPF, but running WPF or Playnite requires Windows.
 
 ```sh
 dotnet restore AmazonLuna.sln --locked-mode
@@ -34,14 +49,14 @@ dotnet build AmazonLuna.sln -c Release --no-restore
 dotnet test tests/LunaCatalog.Tests/LunaCatalog.Tests.csproj -c Release --no-build
 ```
 
-The suite has 182 .NET tests and 24 Python offline checks. After installing the
+The suite has 211 .NET tests and 24 Python offline checks. After installing the
 [pinned Python dependency](tools/LunaBrowserEvidence/README.md#setup), run:
 
 ```sh
 python3 -m unittest discover -s tools/LunaBrowserEvidence -v
 ```
 
-GitHub Actions runs locked restore, Release build, and both offline suites on Linux and Windows.
+GitHub Actions runs locked restore, Release build, and both offline suites on Linux and Windows. Windows also runs a WPF smoke harness and verifies Toolbox package contents.
 See [validation](docs/validation.md).
 
 ## Replay recorded fixtures
@@ -94,17 +109,17 @@ The C# command returns **2** on success. The full audit returns **0** when every
 required check passes and **1** when coverage checks fail. Its verified JSON
 export applies only to the checked research snapshot. This command is optional
 research verification, separate from runtime fetching and representative fixture
-tests. The production browser will fetch directly through C# and validate each
-refresh; it will not require Python or load a bundled catalog export.
+tests. The production browser fetches directly through C# and validates each
+refresh; it requires no Python or bundled catalog export.
 See [the export contract](docs/streaming-completeness.md#repeat-and-export).
 
 ## Next milestone gate
 
 Gates A and B pass for the scoped investigation and production data layer.
-The next milestone is the Playnite 10 WPF catalog browser, consuming
-`CatalogService` for runtime downloads, refresh state, and cached offline display.
-Search, category filters, and sorting will operate locally on the downloaded
-catalog. Windows Playnite host validation remains required.
+Milestone C's browser implementation is present, with local browsing and runtime
+refreshes. Gate C still requires loading and checking it inside Playnite Desktop
+Mode on Windows. Milestone D will add explicit imports and reconciled import
+status; viewing the catalog will continue to work independently of importing.
 
 See [the next-session handoff](docs/next-session.md) for the current evidence and
 limits, and [the original implementation plan](docs/implementation-plan.md) for

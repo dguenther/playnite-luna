@@ -1,5 +1,54 @@
 # Catalog validation record
 
+## October 11 Playnite browser implementation — Gate C host checks pending
+
+Milestone C adds the official-template `net462` / SDK 6.17.0 GenericPlugin,
+main-menu WPF browser, plugin-local cache/preferences, local search/category/title
+sorting, overlapping membership display, counts, refresh age/error state,
+asynchronous refresh/cancellation and artwork, selection, and Open in Luna.
+It does not import or modify Playnite library entries.
+
+Locked restore and full Release builds, including compiled WPF XAML and the
+Windows smoke executable, pass with zero warnings/errors. All **211 .NET tests**
+and **24 Python offline checks** pass. The **26 new browser/artwork cases** use
+the existing five-game API fixtures and injected failures: cached startup makes
+no requests; filters/sorting retain cache bytes; selection follows stable IDs;
+cancelled/failed refreshes retain games; the real HTTP provider feeds the browser;
+and optional images enforce host/size/deadline/concurrency/cancellation bounds.
+
+Windows CI runs a real WPF window/dispatcher harness checking bindings, overlapping
+memberships, sort/selection, Open in Luna callback identity, responsive browsing
+during refresh, cancellation, committed metadata/selection updates, frozen image
+decoding, UI-thread notifications, and offline cache restart. The executable has
+an explicit `win-x86` target so locked restore agrees across Linux and Windows.
+It also starts an obsolete artwork request, loads its replacement, then fails
+the old request after cancellation and confirms the replacement remains visible.
+The queue cancellation test also exposed a released-slot race on Windows;
+downloads recheck cancellation after acquiring a slot before starting HTTP work.
+
+CI uses the official Playnite 10.62 Toolbox to generate a preview `.pext` after
+checking the portable archive checksum and host SDK version. Staging and
+archive checks verify the three Luna DLLs, manifest, and licenses, with no JSON
+DLL bundled. The `net462` catalog uses the official host's JSON 10.0.3 without
+an assembly loader or binding changes; standalone .NET 8 uses JSON 13.0.3.
+An independent process preloads official host SDK/JSON 10,
+loads the extracted package, and validates/caches/reloads representative data
+using only that host JSON assembly. It also rejects duplicate properties
+(nested and escaped), trailing cache data, and overly deep cache/API responses
+with the actual host DLL. Three additional .NET cache cases cover nested and
+escaped duplicates and excessive depth. All catalog JSON readers use depth 64;
+see [the compatibility and advisory mitigation](playnite-browser.md#build-and-package).
+No raw catalog, source, test fixtures, or user data is packaged.
+The preview is a CI artifact, not a
+published release.
+
+**Gate C remains pending:** these automated checks do not load `LunaPlugin`
+inside Playnite Desktop Mode, validate host themes/default-browser launching, or
+establish clean-install behavior. Follow [the Windows host checklist](playnite-browser.md#outstanding-windows-host-checks)
+before marking C passed. Import/status acceptance remains Milestone D. No new
+complete Luna response fixture or repeated Python catalog audit is needed.
+The following records preserve earlier milestone results and test counts.
+
 ## October 11 review fix: classify provider transport failures
 
 The production HTTP provider now retains a typed network failure on browse and

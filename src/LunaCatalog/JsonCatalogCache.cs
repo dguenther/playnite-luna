@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
 namespace LunaCatalog
@@ -126,16 +125,10 @@ namespace LunaCatalog
                 }
                 token.ThrowIfCancellationRequested();
                 var text = new UTF8Encoding(false, true).GetString(bytes.ToArray());
-                using (var source = new StringReader(text))
-                using (var reader = new JsonTextReader(source) { MaxDepth = 64, DateParseHandling = DateParseHandling.None })
-                {
-                    var root = JObject.Load(reader, new JsonLoadSettings { DuplicatePropertyNameHandling = DuplicatePropertyNameHandling.Error });
-                    while (reader.Read())
-                        if (reader.TokenType != JsonToken.Comment) throw new JsonReaderException("Trailing cache data.");
-                    var catalog = root.ToObject<ValidatedCatalog>(JsonSerializer.Create(Settings))!;
-                    CatalogValidator.ValidateCached(catalog, region, utcNow());
-                    return catalog;
-                }
+                var root = LunaJson.ParseObject(text, rejectDuplicateProperties: true);
+                var catalog = root.ToObject<ValidatedCatalog>(JsonSerializer.Create(Settings))!;
+                CatalogValidator.ValidateCached(catalog, region, utcNow());
+                return catalog;
             }
         }
 

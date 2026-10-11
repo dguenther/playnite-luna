@@ -1,4 +1,4 @@
-name: Validate catalog data layer
+name: Validate Luna browser
 on:
   push:
   pull_request:
@@ -19,6 +19,33 @@ jobs:
       - run: dotnet restore AmazonLuna.sln --locked-mode
       - run: dotnet build AmazonLuna.sln --no-restore --configuration Release
       - run: dotnet test tests/LunaCatalog.Tests/LunaCatalog.Tests.csproj --no-build --configuration Release
+      - name: Windows WPF browser smoke checks
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          & tools/LunaPlayniteSmoke/bin/Release/net462/LunaPlayniteSmoke.exe
+          if ($LASTEXITCODE -ne 0) { throw "WPF browser smoke checks failed." }
+      - name: Package with Playnite 10 Toolbox
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path work/playnite -Force | Out-Null
+          Invoke-WebRequest https://github.com/JosefNemec/Playnite/releases/download/10.62/10.62.7z -OutFile work/playnite.7z
+          $expectedHash = 'a31cd00e9942619a1efdc5c8474c3eed20de5f8f1c31f0b1352e336e941e0d1f'
+          if ((Get-FileHash work/playnite.7z -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expectedHash) { throw "Playnite archive checksum mismatch." }
+          & 'C:/Program Files/7-Zip/7z.exe' x work/playnite.7z -owork/playnite -y
+          if ($LASTEXITCODE -ne 0) { throw "Playnite archive extraction failed." }
+          tools/PackageLuna.ps1 -ToolboxPath work/playnite/Toolbox.exe
+          $package = Get-ChildItem artifacts/packages/*.pext | Select-Object -First 1
+          [IO.Compression.ZipFile]::ExtractToDirectory($package.FullName, (Join-Path $PWD 'work/installed-preview'))
+          & tools/LunaDependencySmoke/bin/Release/net462/LunaDependencySmoke.exe work/playnite work/installed-preview tests/Fixtures
+          if ($LASTEXITCODE -ne 0) { throw "Installed archive dependency checks failed." }
+      - uses: actions/upload-artifact@v4
+        if: runner.os == 'Windows'
+        with:
+          name: luna-playnite-preview
+          path: artifacts/packages/*.pext
+          if-no-files-found: error
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'

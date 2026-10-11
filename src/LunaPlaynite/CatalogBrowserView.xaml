@@ -1,0 +1,98 @@
+<UserControl x:Class="LunaPlaynite.CatalogBrowserView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:LunaPlaynite"
+    Foreground="{DynamicResource TextBrush}">
+    <UserControl.Resources>
+        <Style x:Key="FilterLabel" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,16">
+            <TextBlock Text="US streaming catalog" FontSize="22" FontWeight="SemiBold"/>
+            <TextBlock Text="Browse here, play on Luna" HorizontalAlignment="Right" VerticalAlignment="Center" Opacity="0.7"/>
+        </DockPanel>
+        <Grid Grid.Row="1" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Search" Target="{Binding ElementName=SearchBox}" VerticalAlignment="Center" Padding="0,0,8,0"/>
+            <TextBox x:Name="SearchBox" Grid.Column="1" MinWidth="140" Margin="0,0,16,0"
+                AutomationProperties.Name="Search catalog titles"
+                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Grid.Column="2" Content="Category" Target="{Binding ElementName=CategoryBox}" VerticalAlignment="Center" Padding="0,0,8,0"/>
+            <ComboBox x:Name="CategoryBox" Grid.Column="3" Width="130" Margin="0,0,16,0"
+                ItemsSource="{Binding Categories}" SelectedItem="{Binding Category}"/>
+            <Label Grid.Column="4" Content="Title sort" Target="{Binding ElementName=SortBox}" VerticalAlignment="Center" Padding="0,0,8,0"/>
+            <ComboBox x:Name="SortBox" Grid.Column="5" Width="120" ItemsSource="{Binding TitleSorts}" SelectedItem="{Binding TitleSort}"/>
+        </Grid>
+        <StackPanel Grid.Row="2" Margin="0,0,0,12">
+            <DockPanel>
+                <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding CountText}" HorizontalAlignment="Right" FontWeight="SemiBold"/>
+            </DockPanel>
+            <TextBlock Text="{Binding ErrorText}" TextWrapping="Wrap" Margin="0,4,0,0" Opacity="0.85"/>
+            <ProgressBar Height="3" Margin="0,8,0,0" IsIndeterminate="True">
+                <ProgressBar.Style>
+                    <Style TargetType="ProgressBar">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers><DataTrigger Binding="{Binding IsBusy}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
+                    </Style>
+                </ProgressBar.Style>
+            </ProgressBar>
+        </StackPanel>
+        <Grid Grid.Row="3">
+            <ListBox x:Name="GamesList" ItemsSource="{Binding VisibleGames}" SelectedItem="{Binding SelectedGame}"
+                SelectionMode="Single" MouseDoubleClick="GameDoubleClick"
+                ScrollViewer.CanContentScroll="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                AutomationProperties.Name="Luna catalog games">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem"><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Padding" Value="8"/></Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="76"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <Border Width="76" Height="110" Background="#183F3F3F" CornerRadius="4">
+                                <Grid>
+                                    <TextBlock Text="Luna" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.4"/>
+                                    <local:CatalogCover ArtworkUrl="{Binding CoverUrl}" Stretch="UniformToFill"
+                                        AutomationProperties.Name="{Binding Title}"/>
+                                </Grid>
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Title}" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding MembershipText}" Margin="0,8,0,0" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding Details}" Margin="0,6,0,0" Opacity="0.65" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock Text="{Binding EmptyText}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Margin="30" IsHitTestVisible="False">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers><DataTrigger Binding="{Binding VisibleCount}" Value="0"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Grid>
+        <DockPanel Grid.Row="4" Margin="0,14,0,0">
+            <TextBlock Text="{Binding LastRefreshText}" VerticalAlignment="Center" Opacity="0.7"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="CancelButton" Content="Cancel" IsEnabled="{Binding IsBusy}" Click="CancelClick" MinWidth="72" Margin="0,0,8,0"/>
+                <Button x:Name="RefreshButton" Content="Refresh" IsEnabled="{Binding CanRefresh}" Click="RefreshClick" MinWidth="90" Margin="0,0,8,0"/>
+                <Button x:Name="OpenButton" Content="Open in Luna" IsEnabled="{Binding CanOpenSelected}" Click="OpenClick" MinWidth="120"/>
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</UserControl>

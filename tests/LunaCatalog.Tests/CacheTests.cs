@@ -72,6 +72,9 @@ public sealed class CacheTests : IDisposable
     [InlineData("future time")]
     [InlineData("trailing JSON")]
     [InlineData("duplicate property")]
+    [InlineData("nested duplicate property")]
+    [InlineData("escaped duplicate property")]
+    [InlineData("excessive depth")]
     public async Task UntrustedCacheContentIsValidatedAndNeverReturnedAsAnEmptyCatalog(string corruption)
     {
         await Cache().SaveAsync(RuntimeSamples.Validated(), CancellationToken.None);
@@ -97,6 +100,9 @@ public sealed class CacheTests : IDisposable
         if (corruption == "broken JSON") text = "sensitive malformed body";
         if (corruption == "trailing JSON") text += " {}";
         if (corruption == "duplicate property") text = text.Insert(1, "\"schemaVersion\":1,");
+        if (corruption == "nested duplicate property") text = text.Replace("\"title\":", "\"title\":\"ignored duplicate\",\"title\":");
+        if (corruption == "escaped duplicate property") text = text.Insert(1, "\"schema\\u0056ersion\":1,");
+        if (corruption == "excessive depth") text = text.Insert(1, "\"unknown\":" + new string('[', 65) + "0" + new string(']', 65) + ",");
         await File.WriteAllTextAsync(PathName, text);
         var result = await Cache().LoadAsync("US", CancellationToken.None);
         Assert.Null(result.Catalog);
