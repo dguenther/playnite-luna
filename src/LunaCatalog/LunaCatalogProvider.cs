@@ -52,7 +52,7 @@ namespace LunaCatalog
         public async Task<QueryResult> FetchQueryAsync(CatalogQuery query, CancellationToken cancellationToken)
         {
             var page = await FetchPageAsync(() => CreateRequest(query), cancellationToken).ConfigureAwait(false);
-            if (page.Error != null) return Failure(query, page.Error, page.HttpStatus, page.StopFurtherRequests);
+            if (page.Error != null) return Failure(query, page);
             var result = LunaResponseParser.Parse(page.Body!, query);
             result.HttpStatus = page.HttpStatus;
             return result;
@@ -71,7 +71,7 @@ namespace LunaCatalog
             if (page.Error != null)
             {
                 var failed = new GameDetailObservation { RequestedId = game.Id, RequestedUrl = game.Url, HttpStatus = page.HttpStatus,
-                    StopFurtherRequests = page.StopFurtherRequests };
+                    StopFurtherRequests = page.StopFurtherRequests, FailureKind = page.FailureKind };
                 failed.Diagnostics.Add(page.Error);
                 return failed;
             }
@@ -86,6 +86,7 @@ namespace LunaCatalog
             public int? HttpStatus { get; set; }
             public string? Error { get; set; }
             public bool StopFurtherRequests { get; set; }
+            public CatalogFetchFailureKind FailureKind { get; set; }
         }
 
         private async Task<PageResponse> FetchPageAsync(Func<HttpRequestMessage> createRequest, CancellationToken cancellationToken)
@@ -112,13 +113,14 @@ namespace LunaCatalog
                                     if (delay < TimeSpan.Zero) delay = TimeSpan.Zero;
                                     if (delay > TimeSpan.FromSeconds(30))
                                         return new PageResponse { Error = "Server requested a longer retry delay; remaining requests stopped.",
-                                            HttpStatus = status, StopFurtherRequests = true };
+                                            HttpStatus = status, StopFurtherRequests = true, FailureKind = CatalogFetchFailureKind.Network };
                                     await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
                                     continue;
                                 }
                                 if (!response.IsSuccessStatusCode)
                                     return new PageResponse { Error = "HTTP " + status + "; response not used as catalog data.",
-                                        HttpStatus = status, StopFurtherRequests = status == 401 || status == 403 || status == 429 || response.Headers.RetryAfter != null };
+                                        HttpStatus = status, FailureKind = CatalogFetchFailureKind.Network,
+                                        StopFurtherRequests = status == 401 || status == 403 || status == 429 || response.Headers.RetryAfter != null };
                                 if (response.Content.Headers.ContentLength > MaximumResponseBytes)
                                     return new PageResponse { Error = "Response exceeds the 8 MiB size limit.", HttpStatus = status };
                                 string json;
@@ -142,13 +144,20 @@ namespace LunaCatalog
                         }
                         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
                         {
-                            return new PageResponse { Error = "Request timed out; no catalog removal can be inferred.", HttpStatus = status };
+                            return new PageResponse { Error = "Request timed out; no catalog removal can be inferred.",
+                                HttpStatus = status, FailureKind = CatalogFetchFailureKind.Network };
                         }
                         catch (HttpRequestException)
                         {
-                            return new PageResponse { Error = "Network request failed; check network access and TLS trust.", HttpStatus = status };
+                            return new PageResponse { Error = "Network request failed; check network access and TLS trust.",
+                                HttpStatus = status, FailureKind = CatalogFetchFailureKind.Network };
                         }
-                        catch (Exception ex) when (ex is IOException || ex is DecoderFallbackException)
+                        catch (IOException)
+                        {
+                            return new PageResponse { Error = "Network response could not be read; previous catalog data should be retained.",
+                                HttpStatus = status, FailureKind = CatalogFetchFailureKind.Network };
+                        }
+                        catch (DecoderFallbackException)
                         {
                             return new PageResponse { Error = "Response could not be read as UTF-8 catalog data.", HttpStatus = status };
                         }
@@ -199,10 +208,11 @@ namespace LunaCatalog
             return request;
         }
 
-        private static QueryResult Failure(CatalogQuery query, string diagnostic, int? httpStatus = null, bool stopFurtherRequests = false)
+        private static QueryResult Failure(CatalogQuery query, PageResponse page)
         {
-            var result = new QueryResult { Name = query.Name, HttpStatus = httpStatus, StopFurtherRequests = stopFurtherRequests };
-            result.Diagnostics.Add(diagnostic);
+            var result = new QueryResult { Name = query.Name, HttpStatus = page.HttpStatus,
+                StopFurtherRequests = page.StopFurtherRequests, FailureKind = page.FailureKind };
+            result.Diagnostics.Add(page.Error!);
             return result;
         }
     }

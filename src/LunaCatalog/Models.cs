@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace LunaCatalog
 {
@@ -47,6 +49,10 @@ namespace LunaCatalog
             !string.IsNullOrWhiteSpace(Id) && !string.IsNullOrWhiteSpace(Url);
     }
 
+    // None means no transport/HTTP failure; response data may still fail validation.
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum CatalogFetchFailureKind { None, Network }
+
     public sealed class QueryResult
     {
         public string Name { get; set; } = "";
@@ -56,6 +62,7 @@ namespace LunaCatalog
         public int TilesObserved { get; set; }
         public bool ResponseValid { get; set; }
         public bool StopFurtherRequests { get; set; }
+        public CatalogFetchFailureKind FailureKind { get; set; }
         public string PaginationStatus { get; set; } = "Unknown";
         public List<string> Diagnostics { get; set; } = new List<string>();
         public List<LunaGame> Games { get; set; } = new List<LunaGame>();
@@ -63,6 +70,7 @@ namespace LunaCatalog
 
     public sealed class CatalogSnapshot
     {
+        internal const string ResearchCoverageDiagnostic = "Full website coverage remains unverified; separate browser evidence is required. This is a research snapshot.";
         public int SchemaVersion { get; set; } = 1;
         public string Region { get; set; } = "US";
         public string MarketplaceId { get; set; } = "ATVPDKIKX0DER";
@@ -79,9 +87,11 @@ namespace LunaCatalog
             .SetEquals(IdentitySet(Queries.Where(q => q.Name != "AllGames")));
         public bool AllQueriesSucceeded => Queries.Count == CatalogQuery.UsQueries.Count &&
             CatalogQuery.UsQueries.All(expected => Queries.Count(q => q.Name == expected.Name) == 1) &&
-            Queries.All(q => q.ResponseValid && q.PaginationStatus == "NoContinuationObserved") &&
+            Queries.All(q => q.ResponseValid && q.FailureKind == CatalogFetchFailureKind.None &&
+                q.PaginationStatus == "NoContinuationObserved") &&
             CatalogSetsAgree && !HasIdentityConflicts;
-        public bool AllRequestedChecksSucceeded => AllQueriesSucceeded && DetailChecks.All(d => d.ResponseValid);
+        public bool AllRequestedChecksSucceeded => AllQueriesSucceeded &&
+            DetailChecks.All(d => d.ResponseValid && d.FailureKind == CatalogFetchFailureKind.None);
 
         public static CatalogSnapshot Merge(IEnumerable<QueryResult> results)
         {
@@ -133,7 +143,7 @@ namespace LunaCatalog
                 .SelectMany(q => q.Games).Select(g => g.Region + ":" + g.Id), StringComparer.Ordinal);
             snapshot.Diagnostics.Add("AllGames minus category union: " + all.Except(categorized).Count());
             snapshot.Diagnostics.Add("Category union minus AllGames: " + categorized.Except(all).Count());
-            snapshot.Diagnostics.Add("Full website coverage remains unverified; separate browser evidence is required. This is a research snapshot.");
+            snapshot.Diagnostics.Add(ResearchCoverageDiagnostic);
             return snapshot;
         }
 
@@ -156,6 +166,7 @@ namespace LunaCatalog
         public bool UrlMatches { get; set; }
         public bool ResponseValid { get; set; }
         public bool StopFurtherRequests { get; set; }
+        public CatalogFetchFailureKind FailureKind { get; set; }
         public List<string> Diagnostics { get; set; } = new List<string>();
     }
 }

@@ -9,11 +9,12 @@ This is the working checklist reconciled with the uploaded implementation plan.
 plan; its text matches the attachment after whitespace normalization. Keep it as
 the original specification and update this file as milestones gain evidence.
 
-**Current state: Milestone A / Phase 0 passes for the public US streaming catalog
-recorded October 11, 2026.** The repository has a reusable provider, a research
-CLI, a full scoped audit/export command, fixtures, validation, and CI. It has no
-production cache, Playnite extension, browser UI, imports, or `.pext`.
-Proceed to Milestone B using the [recorded completeness contract](docs/streaming-completeness.md).
+**Current state: Gates A and B pass for the public US streaming investigation
+and production data layer.** The repository has a reusable provider, validated
+runtime refreshes, versioned cache/recovery, identity-aware comparisons, optional
+research tools, representative fixtures, and CI. It has no Playnite extension,
+browser UI, imports, or `.pext`. Proceed to Milestone C using the
+[runtime data-layer contract](docs/catalog-data-layer.md).
 
 A checked item below means implementation or linked evidence exists in this
 working tree. Phase verdicts are stated separately; see
@@ -128,7 +129,9 @@ and committed repeatable evidence must all pass. The current evidence supports
 the observed public US streaming catalog across the advertised route graph,
 genre filters, search, and product details. **Gate A passes for this scope.**
 Claims, PC giveaways, account libraries, and entitlement/playability are excluded.
-The raw C# fetch remains unverified; only the specific audited export is complete.
+The raw research fetch remains unverified; the audited research export carries
+its specific receipt. Runtime downloads are accepted separately through the
+Milestone B browse validation contract.
 See [the verdict and evidence](docs/streaming-completeness.md).
 
 ## B — Complete the production data layer (Phase 1)
@@ -136,34 +139,34 @@ See [the verdict and evidence](docs/streaming-completeness.md).
 Depends on Gate A. Reuse existing models, provider abstraction, parsing, and
 transport; do not restart them.
 
-- [ ] Replace the research-only `Unverified` / `IsComplete: false` contract with
+- [x] Replace the research-only `Unverified` / `IsComplete: false` contract with
   production refresh validation. Download the current API data through C# at
   runtime using the browse protocol established by Gate A; validate required
   queries, region, response structure, identities, and continuation/total fields.
   Retain retrieval time, marketplace, queried memberships, diagnostics, and schema
   version. The Python audit and its dated receipt are optional research artifacts;
   neither a full audit per refresh nor receipt import is a production prerequisite.
-- [ ] Reconcile the current strict All Games/category-union equality rule with
+- [x] Reconcile the current strict All Games/category-union equality rule with
   production refresh validation. Gate A found equal sets, so the observed
   contract supports the current rule. If future evidence establishes legitimate
   unclassified games, retain them in All without inventing memberships.
-- [ ] Preserve native-ID-first identity with ASIN fallback. Define migration or
+- [x] Preserve native-ID-first identity with ASIN fallback. Define migration or
   reconciliation if an ASIN-only entry later gains a native ID; never merge by
   title or resolve conflicting identities silently.
-- [ ] Keep uncertain records diagnostic and non-importable. The source plan allows
+- [x] Keep uncertain records diagnostic and non-importable. The source plan allows
   display-only records with unreliable identity; the current parser rejects them
   and invalidates the query. Add display-only handling only if observed records
   require it, without weakening the complete-snapshot gate.
-- [ ] Add a versioned validated JSON cache under Playnite's plugin data directory,
+- [x] Add a versioned validated JSON cache under the directory supplied by the host,
   through a storage abstraction that keeps the catalog library independent of
   Playnite. Support restart reload, schema checks, and malformed-file recovery.
-- [ ] Atomically replace the cache only after validation succeeds; preserve the
+- [x] Atomically replace the cache only after validation succeeds; preserve the
   previous snapshot after HTTP/parse/pagination/cancellation/write failures.
   Reuse the CLI's export approach where compatible, while implementing storage
   with APIs available in `net462`.
-- [ ] Expose last successful refresh, stale cached data, no cache yet, and refresh
+- [x] Expose last successful refresh, stale cached data, no cache yet, and refresh
   errors as distinct states. Load cached data when Luna is unavailable.
-- [ ] Add tests for validated-cache reload, atomic replacement and recovery,
+- [x] Add tests for validated-cache reload, atomic replacement and recovery,
   rejected partial/zero snapshots, region mismatch, and failed-refresh preservation;
   extend traversal/category tests according to Gate A. Continue using reduced,
   representative first-party API samples; no complete response/catalog fixture
@@ -171,7 +174,13 @@ transport; do not restart them.
 
 **Gate B:** retrieval still works independently of Playnite; overlapping games
 normalize once; a validated cache survives restart; failed refreshes preserve it;
-and the data-layer acceptance tests pass.
+and the data-layer acceptance tests pass. **Gate B passes.** The 85 production cases
+use reduced first-party samples and real temporary cache files. A live runtime
+download passed validation, reloaded all 118 games after restart, and retained
+cache bytes after a simulated network failure. See the
+[contract](docs/catalog-data-layer.md) and [validation](docs/validation.md).
+The host will connect its plugin data directory in C; the research CLI remains
+unverified. No new full audit or bulk fixture is required.
 
 ## C — Build the Playnite catalog browser (Phase 2)
 
@@ -241,17 +250,17 @@ Depends on Gates A–D. Retain the existing offline suite and CI.
 | Original automated-test requirement | Coverage already present | Remaining verification |
 | --- | --- | --- |
 | Recorded responses, nested tiles, malformed presentation data | Parser/detail fixtures and tests; canonical browse-collection restrictions | Extend fixtures for any newly observed contract. |
-| Membership overlap, region identity, duplicate ASINs, title collisions | Parser/model/validation tests, including identity conflicts | Production identity migration and import behavior. |
-| Pagination and incomplete results | Marker/action/total rejection, category-set disagreement, and 36-query alphabetical traversal with explicit termination in the research audit | Future browse continuation, if observed; runtime validation using the established browse contract. |
+| Membership overlap, region identity, duplicate ASINs, title collisions | Parser/model/validation tests and production identity migration/conflict checks | Import behavior. |
+| Pagination and incomplete results | Runtime browse validation, marker/action/total rejection, category-set disagreement, and 36-query alphabetical research traversal | Future browse continuation, if observed. |
 | 401/403/429/500, timeouts, cancellation | Provider/transport tests; bounded retry/deferral, body deadlines/limits, UTF-8/depth checks | Regressions across any new request types. |
-| Cache recovery and atomic replacement | Research-export success/failure tests only | Production cache restart, corruption, interrupted replacement, schema handling. |
-| Additions/removals across snapshots | No snapshot-diff implementation | Same-region complete-snapshot comparisons and failure safeguards; no MVP deletion. |
+| Cache recovery and atomic replacement | Production restart, corruption/backup recovery, schema validation, cancellation, failed replacement, and byte preservation | Windows Playnite host integration. |
+| Additions/removals across snapshots | Validated same-scope comparisons, migration, metadata changes, and failed-refresh safeguards | Import integration; no MVP deletion. |
 | Import idempotency and stale mappings | No import implementation | Milestone D service tests plus Playnite database integration. |
 
 - [x] .NET 8 SDK selection, committed NuGet lock files, locked restore, Release
   build, and offline tests in GitHub Actions.
-- [x] This continuation repeated 97 passing cases and Release builds for
-  `net462` and `net8.0` with zero warnings/errors, including the US endpoint/query change.
+- [x] Milestone B passes 182 .NET cases and Release builds for
+  `net462` and `net8.0` with zero warnings/errors. CI covers Linux and Windows.
 - [x] Twenty-four Python offline checks cover evidence safety, incomplete comparisons,
   context cleanup, bounded catalog draining, search termination, and unstable
   pages/reference disagreement, complete audit requirements, snapshot binding,
@@ -319,9 +328,9 @@ For the full scoped audit and optional verified export, follow
 [README's streaming verification commands](README.md#verify-a-streaming-snapshot).
 That audit returns 0 on success; the C# probe keeps its research exit code 2.
 
-**Next increment:** Milestone B's production data layer and versioned cache,
-using runtime C# downloads, response validation, and failure safeguards. Keep
-increments independently testable and follow B → C → D → E.
+**Next increment:** Milestone C's Playnite 10 WPF browser, consuming the production
+catalog service for cached startup and explicit runtime refresh. Keep search and
+filters local, and validate the host on Windows. Follow C → D → E.
 
 ## Deferred improvements
 

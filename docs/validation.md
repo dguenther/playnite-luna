@@ -1,5 +1,58 @@
 # Catalog validation record
 
+## October 11 review fix: classify provider transport failures
+
+The production HTTP provider now retains a typed network failure on browse and
+detail observations. `CatalogService` checks that cause before generic snapshot
+validation, including when a session-wide HTTP error leaves fewer than four
+queries. Connection errors, header/body timeouts, response-stream I/O errors,
+unsuccessful HTTP statuses, and long retry deferrals report `Network`.
+Malformed JSON/UTF-8 and oversized responses remain `Validation`; caller
+cancellation remains `Cancelled` and propagates.
+
+The new service regressions reproduced ten transport cases misclassified as
+`Validation` before the fix. All thirteen classification cases now pass through
+the real `LunaCatalogProvider` with injected HTTP responses and a real temporary
+cache, preserving previous games, timestamp, and cache bytes with no change list.
+The other five new cases cover real-provider cancellation, typed detail failures,
+and rejection of transport failures even when success flags are set.
+
+Locked restore and Release `net462`/`net8.0` builds pass with zero warnings/errors.
+All **182 .NET tests**, including **85 production data-layer cases**, and all
+**24 Python offline checks** pass. All 81 relative documentation links and anchors
+pass. Tests use reduced representative API fixtures and injected failures; no new
+live catalog audit or complete response fixture is needed for this fix.
+
+## October 11 production data layer — Gate B passed
+
+Locked restore and Release `net462`/`net8.0` builds pass with zero warnings/errors.
+All **164 .NET tests** and **24 Python offline checks** pass. The 67 new production
+cases cover validation against representative API samples, normalized cache
+reload, malformed/schema/scope checks, backup recovery, atomic replacement,
+byte preservation, cancelled/failed refreshes, serialized refreshes, metadata
+comparisons, and ASIN-to-native-ID migration/conflicts. CI now covers Linux and
+Windows; these builds/tests do not validate loading inside Playnite.
+All 81 current relative documentation links and anchors also pass validation.
+The `net462` reference-assembly packages are explicit so the committed lock file
+works consistently on Linux and Windows, regardless of locally installed targets.
+
+A live `CatalogService` smoke test retrieved the public US catalog at
+**16:45:02 UTC**, accepted it as `Validated` / `isComplete: true` under
+`PublicUSStreamingBrowseV1`, and saved a normalized cache. All four queries
+returned HTTP 200 with no continuation: All 118, Standard 90, Premium 118,
+GameNight 50. A new service instance loaded all 118 games without networking.
+A deliberately failing transport then reported stale cached data and a network
+error, with no change list and byte-for-byte preservation of the cache.
+The [reduced result](evidence/2026-10-11-runtime-cache.json) includes counts and
+outcomes only. The smoke harness and full runtime cache remain ignored; fixtures
+still contain five representative games, not a complete catalog response.
+
+This uses the Gate A browse contract, not a new full Python research audit or
+receipt import. The research CLI still exports unverified snapshots with exit 2.
+**Gate B passes.** Continue with the Playnite browser in Milestone C; see
+[the runtime contract](catalog-data-layer.md) and [handoff](next-session.md).
+The following sections preserve earlier research history and its test counts.
+
 ## October 11 review fix: derived output path collisions
 
 The streaming audit now checks the source, evidence, optional verified catalog,
@@ -52,9 +105,10 @@ is unchanged by the full-audit follow-up. The raw C# fetch still returns 2 with
 unverified coverage; a full audit is required for a checked complete export.
 The count 118 is historical.
 
-**Gate A passes for this recorded scope.** Milestone B's production cache and
-refresh validation are next. The following sections preserve earlier run history;
-their open-gate statements describe those earlier stages.
+**Gate A passes for this recorded scope.** At this stage, production cache and
+refresh validation were the next increment; they are now covered by Gate B above.
+The following sections preserve earlier run history; their open-gate statements
+describe those earlier stages.
 
 ## Historical: October 11 live rerun before the full audit
 

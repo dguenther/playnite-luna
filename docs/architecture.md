@@ -1,8 +1,9 @@
-# Catalog research architecture
+# Catalog architecture
 
 Milestone A / Gate A passes for the public US streaming catalog captured October
 11, 2026. The [scoped verdict](streaming-completeness.md) records the evidence and
-exclusions. Milestone B is the next implementation step.
+exclusions. Milestone B / Gate B passes for the production data layer; Milestone
+C's Playnite browser is next.
 
 `src/LunaCatalog` builds for `net462` and `net8.0`, with no Playnite or WPF
 dependencies. It owns request construction, normalized models, recursive
@@ -34,14 +35,29 @@ time. This Python-generated JSON is a research artifact; the current C# snapshot
 model has no receipt property or verified-state support. Importing that artifact
 or running the full Python audit is not a runtime requirement.
 
-The production catalog browser will download current API data through the C#
-provider for the initial catalog and refreshes, with cached data available offline.
-Milestone B will validate those results
-against the established browse contract: required queries, expected page types,
-region, safe identities/links, and unresolved continuation or truncation. It will
-cache normalized data after validation. The research receipt identifies the
-October 11 capture, while runtime refreshes may legitimately return changed game
+`CatalogValidator` applies the established browse contract to current C# downloads:
+required queries, expected page types, region/marketplace, safe identities/links,
+continuation/total checks, category-union equality, and normalization consistency.
+It produces a separate `ValidatedCatalog` (`Validated` / complete) rather than
+changing the research CLI's `CatalogSnapshot`. The research receipt identifies
+the October 11 capture; runtime downloads may legitimately return changed game
 sets. The historical 118-game count is not an acceptance threshold.
+
+`CatalogService` serializes cache loads and explicit refreshes, publishes candidates
+only after successful storage, and exposes data source, age/staleness, timestamp,
+errors, progress, and changes. `JsonCatalogCache` implements `ICatalogCache` using
+the directory supplied by the future host. Versioned normalized games and query
+summaries are validated on read/write; bounded UTF-8/JSON reads reject malformed
+data. Atomic replacement retains a validated backup, and backup recovery never
+replaces good data with a corrupt primary. State copies protect the accepted
+baseline from consumer edits.
+
+`CatalogComparer` reports same-scope additions/removals and metadata changes.
+ASIN-only records gaining native IDs migrate without becoming new/removed games.
+Conflicting or downgraded identities invalidate refreshes; titles never identify
+games. Failed/cancelled refreshes retain previous data and produce no changes.
+These observations do not delete imported games. See
+[the runtime contract](catalog-data-layer.md) for exact behavior and service usage.
 
 The C# transport caps responses at 8 MiB and applies its 30-second deadline to
 headers and streamed body reads. JSON and encoded presentations use a 64-level
@@ -63,13 +79,13 @@ the browser.
 
 `global.json`, committed NuGet lock files, pinned Python dependencies, and GitHub
 Actions make offline validation repeatable: locked restore, Release builds for
-both library targets, 97 .NET tests, and 24 Python tests. Linux compilation does
-not validate Playnite host loading.
+both library targets, 182 .NET tests, and 24 Python tests on Linux and Windows.
+Library compilation/testing does not validate Playnite host loading.
 
-Milestone B adds versioned caching, validated refreshes, recovery, and snapshot
-comparisons while preserving the last validated snapshot after failures. After
-Gate B passes, Milestone C adds the WPF `GenericPlugin` using Playnite's Toolbox
-template and consumes `ILunaCatalogProvider`. Milestone D adds explicit imports
+Milestone B provides versioned caching, validated refreshes, recovery, and snapshot
+comparisons while preserving the last validated snapshot after failures. With
+Gate B passed, Milestone C adds the WPF `GenericPlugin` using Playnite's Toolbox
+template and consumes `CatalogService`. Milestone D adds explicit imports
 and reconciles `(region, LunaId)` mappings with Playnite's database. Windows is
-required for host validation and final `.pext` packaging. No production cache,
-import service, Playnite plugin, or UI exists yet.
+required for host validation and final `.pext` packaging. No import service,
+Playnite plugin, or UI exists yet.

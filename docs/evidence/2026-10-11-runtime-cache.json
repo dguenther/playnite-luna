@@ -1,0 +1,26 @@
+{
+  "scope": "PublicUSStreamingCatalog",
+  "validation_contract": "PublicUSStreamingBrowseV1",
+  "retrieved_at_utc": "2026-10-11T16:45:02.3763703Z",
+  "source": "LunaCatalogProvider anonymous runtime download",
+  "coverage_status": "Validated",
+  "is_complete": true,
+  "catalog_count": 118,
+  "queries": [
+    {"name": "AllGames", "count": 118, "http_status": 200, "pagination_status": "NoContinuationObserved"},
+    {"name": "Standard", "count": 90, "http_status": 200, "pagination_status": "NoContinuationObserved"},
+    {"name": "Premium", "count": 118, "http_status": 200, "pagination_status": "NoContinuationObserved"},
+    {"name": "GameNight", "count": 50, "http_status": 200, "pagination_status": "NoContinuationObserved"}
+  ],
+  "restart_reload_count": 118,
+  "simulated_offline_refresh": {
+    "error_kind": "Network",
+    "cache_bytes_preserved": true,
+    "retained_catalog_count": 118,
+    "is_stale": true,
+    "changes": null
+  },
+  "full_python_audit_rerun": false,
+  "raw_responses_or_catalog_ids_included": false,
+  "notes": "Runtime browse validation smoke test; this is not a new full research audit or an entitlement check. The historical count is not a fixed threshold. The full runtime cache stays in ignored artifacts."
+}

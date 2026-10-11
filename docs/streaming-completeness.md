@@ -72,9 +72,10 @@ never a fixed acceptance threshold.
 The verified output is a Python-generated research JSON artifact. The current C#
 `CatalogSnapshot` keeps `IsComplete` false and has no `coverageEvidence` property;
 it cannot retain a verified receipt through deserialization/reserialization.
-Milestone B's production refresh validation will use live API responses and the
-established browse contract. Importing the research artifact/receipt is not a
-production requirement.
+Milestone B's `CatalogService` validates live API responses against the established
+browse contract and caches `Validated` / complete runtime catalogs separately.
+Importing the research artifact/receipt is not a production requirement. See
+[the runtime contract](catalog-data-layer.md).
 
 Unknown search/detail states, unresolved browse continuation, reported
 truncation, exhausted safety limits, failed requests, missing sources, unstable
@@ -86,5 +87,6 @@ must all resolve to distinct locations. Each successful output is replaced
 atomically; the evidence/catalog pair is not a transaction.
 
 Full datasets stay in ignored `artifacts/`; only reduced evidence is committed.
-The next milestone implements the production cache and refresh contract. This
+The production cache and refresh contract are implemented in Milestone B. The
+next milestone integrates the data layer with a Playnite catalog browser. This
 audit does not implement automatic removal handling or a Playnite plugin.

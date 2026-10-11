@@ -259,13 +259,14 @@ reports have `coverageStatus: "Unverified"`; failed validation produces
 alone cannot establish completeness. The full audit now accepts a specific
 snapshot only after every scoped coverage check passes; its optional catalog
 export carries `Verified` / `isComplete: true` and a hash-bound, dated receipt.
-Runtime refreshes will validate newly returned data against the established
+Runtime refreshes validate newly returned data against the established
 browse contract; the research audit is separate from that runtime validation.
 
 The Python audit writes a research receipt into JSON. The current C# model still
 computes an unverified state and has no `coverageEvidence` property. Milestone B
-will add production refresh validation and caching for live C# downloads; importing
-the Python receipt is not a prerequisite.
+adds a separate `ValidatedCatalog` and `CatalogService` for production refresh
+validation and caching of live C# downloads; importing the Python receipt is not
+a prerequisite. See [the runtime contract](catalog-data-layer.md).
 
 ## Reliability behavior
 
@@ -298,12 +299,13 @@ two fresh contexts. Search discovery and all 111 detail recommendation IDs remai
 inside All; end-of-run All rechecks in both title orders agree with the source.
 Claims is excluded and account-specific playability is not part of this verdict.
 
-Milestone B implements production validation and caching for runtime C# downloads
+Milestone B now implements production validation and caching for runtime C# downloads
 using the browse protocol established by this investigation. Every refresh must
 pass its response checks; its game set need not equal the historical capture.
 The current research CLI's unverified flag does not make a full Python audit a
 runtime requirement. Native Chromium trust remains an environment limitation
 for the optional research tools.
 
-See [the handoff](next-session.md) for exact reproduction commands and current
-limitations. The working implementation remains a research probe.
+See [the handoff](next-session.md) for reproduction commands and current
+limitations. Milestone C will integrate the production service with a Playnite
+10 catalog browser; the optional research CLI retains its existing behavior.

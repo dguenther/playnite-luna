@@ -105,6 +105,7 @@ public sealed class TransportTests
         using var client = new HttpClient(handler);
         var query = await Provider(client).FetchQueryAsync(CatalogQuery.UsQueries[0], CancellationToken.None);
         Assert.False(query.ResponseValid);
+        Assert.Equal(CatalogFetchFailureKind.None, query.FailureKind);
         Assert.Equal(200, query.HttpStatus);
         Assert.Contains(query.Diagnostics, d => d.Contains("size limit"));
     }
@@ -116,6 +117,7 @@ public sealed class TransportTests
         using var client = new HttpClient(handler);
         var query = await Provider(client, TimeSpan.FromMilliseconds(25)).FetchQueryAsync(CatalogQuery.UsQueries[0], CancellationToken.None);
         Assert.False(query.ResponseValid);
+        Assert.Equal(CatalogFetchFailureKind.Network, query.FailureKind);
         Assert.Equal(200, query.HttpStatus);
         Assert.Contains(query.Diagnostics, d => d.Contains("timed out"));
     }
@@ -137,6 +139,7 @@ public sealed class TransportTests
         using var client = new HttpClient(handler);
         var query = await Provider(client).FetchQueryAsync(CatalogQuery.UsQueries[0], CancellationToken.None);
         Assert.False(query.ResponseValid);
+        Assert.Equal(CatalogFetchFailureKind.None, query.FailureKind);
         Assert.Contains(query.Diagnostics, d => d.Contains("UTF-8"));
     }
 }

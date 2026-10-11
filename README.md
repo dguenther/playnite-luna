@@ -1,6 +1,6 @@
 # Amazon Luna Catalog Browser for Playnite
 
-Milestone A research implementation for a future Playnite 10 extension. It contains a standalone C# catalog probe, a reusable provider that builds for .NET Framework 4.6.2 and .NET 8, a full public streaming audit with verified JSON export, reduced recorded fixtures, and automated tests. It does not yet contain the WPF plugin or a `.pext` package.
+Milestones A and B implementation for a future Playnite 10 extension. It contains a reusable C# provider, validated runtime refreshes, a versioned cache with recovery, catalog comparisons, and optional research tools. The library builds for .NET Framework 4.6.2 and .NET 8. It does not yet contain the WPF plugin or a `.pext` package.
 
 See [PLAN.md](PLAN.md) for the implementation checklist reconciled with the original plan and the current repository.
 
@@ -14,7 +14,7 @@ Anonymous first-party requests repeated on October 11, 2026 returned 118 distinc
 
 The catalog browser will download current Luna API data at runtime through the C# provider. Tests use reduced, representative API samples; a complete saved API response or catalog is not required for testing. The Python audit is optional research tooling used to establish the browse protocol's coverage, not a step required on every runtime refresh.
 
-The current research CLI still exports `Unverified` / `isComplete: false` by default. Milestone B will add production refresh validation and caching using the established browse protocol and checks on the newly returned data. The October 11 receipt identifies that research capture; runtime downloads may contain a different set of games, and 118 is not a fixed requirement.
+The research CLI still exports `Unverified` / `isComplete: false` by default. The production `CatalogService` validates runtime downloads against the established browse contract and caches accepted data as `Validated` / `isComplete: true`. It preserves previous data after failed refreshes and reloads it offline. The October 11 receipt identifies that research capture; runtime downloads may contain a different set of games, and 118 is not a fixed requirement. See [the data-layer contract](docs/catalog-data-layer.md) for usage, cache recovery, state, and identity migration.
 
 The provider uses the frontend-selected US endpoint and explicit `all_games`
 query. Rendered browse grids match the retrieved catalog and reach stable scroll
@@ -34,14 +34,14 @@ dotnet build AmazonLuna.sln -c Release --no-restore
 dotnet test tests/LunaCatalog.Tests/LunaCatalog.Tests.csproj -c Release --no-build
 ```
 
-The suite has 97 .NET tests and 24 Python offline checks. After installing the
+The suite has 182 .NET tests and 24 Python offline checks. After installing the
 [pinned Python dependency](tools/LunaBrowserEvidence/README.md#setup), run:
 
 ```sh
 python3 -m unittest discover -s tools/LunaBrowserEvidence -v
 ```
 
-GitHub Actions runs locked restore, Release build, and both offline suites.
+GitHub Actions runs locked restore, Release build, and both offline suites on Linux and Windows.
 See [validation](docs/validation.md).
 
 ## Replay recorded fixtures
@@ -100,12 +100,11 @@ See [the export contract](docs/streaming-completeness.md#repeat-and-export).
 
 ## Next milestone gate
 
-Gate A is complete for the recorded public US streaming scope. The next milestone
-is the production data layer: versioned caching, validated refreshes, recovery,
-and snapshot comparisons. Apply the established browse contract and validate
-returned pages, identities, region, and continuation indicators before accepting
-a refresh. Catalog ingestion uses browse; Playnite search will filter its
-downloaded snapshot locally.
+Gates A and B pass for the scoped investigation and production data layer.
+The next milestone is the Playnite 10 WPF catalog browser, consuming
+`CatalogService` for runtime downloads, refresh state, and cached offline display.
+Search, category filters, and sorting will operate locally on the downloaded
+catalog. Windows Playnite host validation remains required.
 
 See [the next-session handoff](docs/next-session.md) for the current evidence and
 limits, and [the original implementation plan](docs/implementation-plan.md) for

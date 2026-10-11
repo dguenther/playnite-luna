@@ -1,119 +1,111 @@
-# Continue the Luna production data layer
+# Continue with the Playnite catalog browser
 
 ## Current state
 
-Repository: `dguenther/playnite-luna`; PR [#5](https://github.com/dguenther/playnite-luna/pull/5),
-branch `research/anonymous-frontend-retest`. Gate A evidence was captured October
-11, 2026 (UTC). Check current Git/PR state and preserve existing edits before
-resuming. No applicable `AGENTS.md` was found during the recorded investigation.
+Repository: `dguenther/playnite-luna`. PR
+[#5](https://github.com/dguenther/playnite-luna/pull/5) merged into `main` as
+`b3b29fa`. Milestone B is in
+[PR #6](https://github.com/dguenther/playnite-luna/pull/6), branch
+`feature/catalog-cache-refresh`. Check current
+Git/PR state and preserve existing edits before resuming. No applicable
+`AGENTS.md` was found during this work.
 
-The earlier environment-wide Envoy outage did **not** recur. Supported network
-permission was needed for shell commands, including .NET build/test IPC. An
-initial command without that permission reported a connection refusal; with it,
-Git, NuGet, Luna, and the US API worked through the inherited proxy. This was not
-a reason to change routing, disable TLS checks, or request account login.
+**Gates A and B pass** for the scoped public US streaming investigation and
+production data layer. `src/LunaCatalog` targets `net462;net8.0` with no Playnite
+dependencies. It now includes `CatalogValidator`, `ValidatedCatalog`,
+`CatalogService`, `ICatalogCache` / `JsonCatalogCache`, and `CatalogComparer`.
+See [the runtime contract](catalog-data-layer.md) and [architecture](architecture.md).
+There is no Playnite plugin/UI, import service, or `.pext` yet.
 
-The provider targets `net462;net8.0`, uses the frontend-selected US endpoint and
-`all_games`, and exports anonymous research snapshots. There is no production
-cache, Playnite UI/plugin, import implementation, or `.pext`. **Gate A passes for
-the recorded public US streaming scope.** The October 11 snapshot was fully
-audited and exported as `Verified` / complete with a scoped, hash-bound receipt.
-The current research CLI exports `Unverified` / `IsComplete: false` by default.
-The production browser will download current API data through C# and validate
-each refresh against the established browse contract. The full Python audit is
-optional research tooling, not a requirement for every runtime download. Failed
-checks preserve prior outputs. Proceed to Milestone B; see
-[the verdict](streaming-completeness.md).
+The browser will download current API data directly through C# at runtime.
+`CatalogService.LoadAsync` opens the cache without networking;
+`RefreshAsync` fetches, validates, compares, saves, and then publishes a candidate.
+It retains previous games and timestamps after failures, with no removal list.
+Typed provider failures preserve the distinction between network/HTTP errors
+and invalid catalog data, including partial fetches stopped by 401/403/429.
+Cancellation propagates without discarding cached data. Unique temporary files
+and atomic replacement protect writes; a validated backup recovers corrupt or
+missing primary data. The host supplies the plugin data directory and owns a
+single service/cache pair. Cross-process writers are not coordinated.
 
-## Completed streaming audit
+Runtime catalogs are `Validated` / complete under `PublicUSStreamingBrowseV1`.
+The research CLI remains `Unverified` / false, with successful exit 2. Python's
+full audit remains optional research verification, producing a `Verified` receipt
+for its exact checked capture. Neither a full audit on each refresh nor receipt
+import is required. Tests use reduced first-party samples; no complete API
+response/catalog fixture or bundled catalog is needed.
 
-- Cookie-free C# requests returned All 118, Standard 90, Premium 118, GameNight 50;
-  category union equals All. Separate browse comparisons matched every rendered
-  ID, title, and action link in all four grids in two fresh browser contexts.
-  Stable bottoms triggered detail prefetches, with no further browse results.
-- The full audit closed the advertised graph at 13 streaming pages and visited
-  all 27 carousel/swiper instances (229 slide positions) in each of two fresh
-  browser contexts. All 26 advertised genre filters were checked in two anonymous
-  API contexts, with matching sets and no IDs outside All.
-- All 36 letter/digit searches were traversed to explicit terminal states in
-  both API contexts. Page IDs/order and reverse-title references agree; each
-  union equals All's 118 IDs. Empty-query recommendations were checked separately.
-  Use `TITLE_A_TO_Z`, advance by requested size even after a short page, and stop
-  only on the explicit empty-search state with `SEARCH_NO_RESULTS_FOUND`.
-  The frontend's relevance search scrolls a single loaded page.
-- Every one of the 118 main products passed ID/ASIN/title/canonical checks twice;
-  all 111 distinct recommendation IDs remain inside All. Final All rechecks in
-  both title orders confirm no catalog change. Detail labels were 90 “Play free
-  with Prime” and 28 “Included in Luna Premium”; these are anonymous observations,
-  not entitlement or streaming eligibility.
-- The exact final full audit returned 0 and exported its checked snapshot as
-  verified research JSON. Runtime C# refresh validation remains Milestone B work;
-  it does not require importing this receipt. Existing checks comprise 97 .NET
-  tests and 24 Python offline tests, all included in CI.
-- Claims assets and PC giveaways are excluded from the streaming gate. No account
-  login or streaming launch was attempted.
+The parser/validator retain All/category-union equality and reject empty queries,
+unknown browse continuation, wrong scope, unsafe links, and conflicting identities.
+There is no historical game-count threshold. ASIN-only IDs gaining native IDs
+produce migration records rather than additions/removals. Native-ID conflicts and
+downgrades fail validation; titles never define identity. The future import
+service must consume/reconcile stable IDs and ASIN metadata without deleting
+Playnite games based on a single observed removal.
 
-Earlier [sampled browser checks](evidence/2026-10-11-search-discovery.json) also
-rendered eight searches and five representative action pages twice, including
-Batman and Fortnite. That capture recorded Tetris® Effect: Connected as an extra
-GameNight marketing link outside filtered membership; marketing placements do
-not redefine memberships. Alien's `ADD_ON_TILE` DLC remains separate from main
-products. Keep advertised editions, including the WRC sample. The repaired
-browser cleanup ignores late background-route errors while requiring catalog
-requests to drain within 30 seconds.
+## Verification
 
-See [validation](validation.md), [API findings](luna-api.md), and the reduced
-[browse](evidence/2026-10-11-anonymous-browser.json),
-[search/discovery](evidence/2026-10-11-search-discovery.json), and
-[initial offset experiment](evidence/2026-10-11-search-offsets.json),
-[frontend source](evidence/2026-10-11-search-frontend.json), and
-[validated search pagination](evidence/2026-10-11-stable-search-pagination.json),
-and [full streaming audit](evidence/2026-10-11-public-streaming-audit.json)
-evidence. No raw
-responses, bulk catalog, cookies, account headers, guest tokens, or storage state
-are committed.
+- Locked restore and Release builds for both library targets pass with zero
+  warnings/errors. All 182 .NET tests and 24 Python offline checks pass.
+- The 85 production cases cover validation, restart reload, malformed/schema
+  checks, backup recovery, atomic replacement, cancellation/write failures,
+  serialized refreshes, metadata differences, and identity migration/conflicts.
+  HTTP-provider regressions cover connection/body failures, timeouts, error
+  statuses, deferred retries, invalid responses, and caller cancellation while
+  preserving the prior cache bytes and timestamp.
+  CI now covers Linux and Windows. It does not test loading inside Playnite.
+- A live runtime download at October 11, 2026 **16:45:02 UTC** returned All 118,
+  Standard 90, Premium 118, and GameNight 50, all HTTP 200 without continuation.
+  Validation and cache save passed. A restarted service loaded 118 games, and a
+  simulated offline refresh preserved the cache byte for byte and marked it stale.
+  See [reduced results](evidence/2026-10-11-runtime-cache.json).
+- Gate A's full research audit completed at **15:24:11 UTC**: two contexts checked
+  all 13 streaming pages, 27 carousels, 26 advertised genres, 36 paginated searches,
+  and 118 main products. No streaming omissions/extras were found. See
+  [the verdict](streaming-completeness.md) and
+  [audit receipt](evidence/2026-10-11-public-streaming-audit.json).
+- Claims/PC giveaways, account libraries, entitlement, and streaming eligibility
+  remain excluded. No login or streaming launch was attempted. Full runtime caches,
+  research snapshots, and the smoke harness remain ignored; only reduced results
+  and existing representative fixtures are committed.
 
 ## Next work
 
-1. **Start Milestone B.** Build the versioned production cache, refresh/recovery,
-   and snapshot comparison behavior. Download API data directly through C# at
-   runtime, validate the established browse contract on each refresh, and cache
-   normalized data. Preserve prior cached data on failed validation; HTTP success
-   alone is insufficient. Keep tests on reduced representative API samples and
-   edge cases; no complete saved response/catalog fixture is needed. Python audit
-   receipts are optional research evidence, not runtime inputs or prerequisites.
-   Keep Playnite search local. The count 118 is historical, not a permanent
-   threshold. Claims/account inventories remain out of scope. See `PLAN.md` for
-   independently testable next increments.
-2. Native Chromium still reports `ERR_CERT_AUTHORITY_INVALID`. Verified Node
-   forwarding works but does not repair native trust. Keep configured proxy/CA
-   settings and certificate verification; do not change unrelated home profiles.
+**Start Milestone C.** Use the compatible Playnite 10 Toolbox template for a
+`GenericPlugin` and WPF catalog browser. Connect `CatalogService` to the plugin
+data directory, show cached data immediately, and expose explicit asynchronous
+refresh. Keep title search, category filters, and sorting local. Show overlapping
+memberships, artwork, visible counts, stale/offline/error state, last successful
+refresh, and Open in Luna actions. Preserve imported/user data; import operations
+belong to Milestone D. Follow the checklist in [PLAN.md](../PLAN.md).
+
+Windows Playnite is required to validate SDK integration, host loading, responsive
+UI, and final packaging. Linux builds and Windows .NET tests alone do not close
+Gate C. Retain representative fixture tests and validate new UI seams separately
+from API downloads. Native Chromium trust remains unresolved in this cloud
+environment; verified Node forwarding works for optional research tools and does
+not repair native trust. It is not a production C# refresh dependency.
 
 ## Reproduce
 
-The SDK is at `/workspace/.dotnet/dotnet` in this environment. These paths are
-environment state, not repository dependencies. Use task-local
+Read the managed cloud runtime skill, environment status, and executor policy
+before network work. Supported network permission is needed for shell networking
+and .NET build/test IPC in this environment. Preserve the inherited proxy and
+TLS/CA trust. The SDK is at `/workspace/.dotnet/dotnet`; use task-local
 `DOTNET_CLI_HOME=/workspace/work/dotnet-cli` and
-`NUGET_PACKAGES=/workspace/.nuget/packages` when using that SDK. Read the cloud
-runtime skill, environment status, and executor policy first. Grant commands the
-supported network permission; preserve inherited proxy variables and CA trust.
+`NUGET_PACKAGES=/workspace/.nuget/packages`. These are environment paths, not
+repository dependencies.
 
 ```sh
 dotnet restore AmazonLuna.sln --locked-mode
 dotnet build AmazonLuna.sln -c Release --no-restore
 dotnet test tests/LunaCatalog.Tests/LunaCatalog.Tests.csproj -c Release --no-build
-dotnet run --project tools/LunaCatalogProbe -c Release --no-build -- --fixtures tests/Fixtures --output artifacts/fixture-catalog.json
-dotnet run --project tools/LunaCatalogProbe -c Release --no-build -- --live --verify-details --output artifacts/us-catalog.json
 python3 -m unittest discover -s tools/LunaBrowserEvidence -v
-python3 tools/LunaBrowserEvidence/probe.py --probe-snapshot artifacts/us-catalog.json --output artifacts/browser-evidence.json
-python3 tools/LunaBrowserEvidence/discovery.py --probe-snapshot artifacts/us-catalog.json --output artifacts/discovery-evidence.json
-python3 tools/LunaBrowserEvidence/search_offsets.py --probe-snapshot artifacts/us-catalog.json --output artifacts/search-offsets.json
-python3 tools/LunaBrowserEvidence/streaming_audit.py --probe-snapshot artifacts/us-catalog.json --output artifacts/streaming-evidence.json --catalog-output artifacts/verified-us-catalog.json
 ```
 
-Research probes return 2 on successful checks, 1 on failures. The full scoped
-audit returns 0 only when every required check passes. Full snapshots
-belong in ignored `artifacts/`. See [browser tool setup](../tools/LunaBrowserEvidence/README.md)
-for pinned dependencies. CI now runs the Python offline checks without installing
-or launching a browser. Read `PLAN.md` as the reconciled checklist and
-`docs/implementation-plan.md` as the original specification.
+Research replay/live commands and expected exit codes are in
+[README](../README.md); optional browser setup is in
+[the tool instructions](../tools/LunaBrowserEvidence/README.md).
+[Validation](validation.md) retains earlier research history. Keep
+`docs/implementation-plan.md` as the original specification and update `PLAN.md`
+as production milestones gain evidence.

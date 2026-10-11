@@ -36,6 +36,7 @@ public sealed class ProviderTests
         var result = await Provider(handler).FetchQueryAsync(CatalogQuery.UsQueries[0], CancellationToken.None);
         Assert.False(result.ResponseValid);
         Assert.Empty(result.Games);
+        Assert.Equal(CatalogFetchFailureKind.Network, result.FailureKind);
         Assert.Equal(status, result.HttpStatus);
         Assert.Equal(1, handler.Requests);
     }
@@ -46,6 +47,7 @@ public sealed class ProviderTests
         var handler = new Handler { Respond = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError)) };
         var result = await Provider(handler).FetchQueryAsync(CatalogQuery.UsQueries[0], CancellationToken.None);
         Assert.False(result.ResponseValid);
+        Assert.Equal(CatalogFetchFailureKind.Network, result.FailureKind);
         Assert.Equal(2, handler.Requests);
     }
 
@@ -58,6 +60,7 @@ public sealed class ProviderTests
         };
         var result = await Provider(handler, TimeSpan.FromMilliseconds(25)).FetchQueryAsync(CatalogQuery.UsQueries[0], CancellationToken.None);
         Assert.False(result.ResponseValid);
+        Assert.Equal(CatalogFetchFailureKind.Network, result.FailureKind);
         Assert.Contains(result.Diagnostics, d => d.Contains("timed out"));
     }
 
@@ -91,6 +94,7 @@ public sealed class ProviderTests
         };
         var result = await Provider(handler).FetchQueryAsync(CatalogQuery.UsQueries[0], CancellationToken.None);
         Assert.True(result.ResponseValid);
+        Assert.Equal(CatalogFetchFailureKind.None, result.FailureKind);
         Assert.Equal(5, result.Games.Count);
     }
 
@@ -100,7 +104,30 @@ public sealed class ProviderTests
         var handler = new Handler { Respond = (_, _) => throw new HttpRequestException("potentially sensitive transport details") };
         var result = await Provider(handler).FetchQueryAsync(CatalogQuery.UsQueries[0], CancellationToken.None);
         Assert.False(result.ResponseValid);
+        Assert.Equal(CatalogFetchFailureKind.Network, result.FailureKind);
         Assert.DoesNotContain("sensitive", string.Join(" ", result.Diagnostics));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DetailTransportFailuresPreserveTheirTypeAndSanitizedDiagnostics(bool timeout)
+    {
+        var handler = new Handler
+        {
+            Respond = async (_, token) =>
+            {
+                if (timeout) await Task.Delay(Timeout.Infinite, token);
+                throw new HttpRequestException("sensitive transport details");
+            }
+        };
+        using var client = new HttpClient(handler);
+        var provider = new LunaCatalogProvider(client, "TestBrowser", "154", TimeSpan.FromMilliseconds(25));
+        var result = await provider.FetchDetailAsync(RuntimeSamples.Snapshot().Games[0], CancellationToken.None);
+        Assert.False(result.ResponseValid);
+        Assert.Equal(CatalogFetchFailureKind.Network, result.FailureKind);
+        Assert.DoesNotContain("sensitive", string.Join(" ", result.Diagnostics));
+        if (timeout) Assert.Contains(result.Diagnostics, d => d.Contains("timed out"));
     }
 
     [Fact]
