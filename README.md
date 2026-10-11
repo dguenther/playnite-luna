@@ -2,6 +2,8 @@
 
 Milestone A research implementation for a future Playnite 10 extension. It contains a standalone C# catalog probe, a reusable provider that builds for .NET Framework 4.6.2 and .NET 8, reduced recorded fixtures, and automated tests. It does not yet contain the WPF plugin or a `.pext` package.
 
+See [PLAN.md](PLAN.md) for the implementation checklist reconciled with the original plan and the current repository.
+
 ## Current findings
 
 Anonymous first-party requests on October 10, 2026 returned 118 distinct games through the All Games query, with 90 Standard, 118 Premium, and 50 GameNight memberships. The union of the three category results matched the All Games IDs. Memberships overlap and do not establish a user's entitlement.
