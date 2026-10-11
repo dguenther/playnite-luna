@@ -1,0 +1,78 @@
+{
+  "observed_at_utc": "2026-10-11T13:57:20.161866+00:00",
+  "method": "Inspect public script resources loaded by an anonymous Luna search page using configured proxy and verified Node TLS; retain hashes and short source excerpts only.",
+  "sources": [
+    {
+      "public_asset_path": "/images/S/sash/Q6lPDFhNJVU97sH.js",
+      "bytes": 67145,
+      "sha256": "ea8e4d08b4f9233a0debd55a0dab11c7edd4081db71ae73813ae02feb51070cf",
+      "excerpts": {
+        "fixed_search_request": "l={query:$.current,sort:getPageDataSortOption(L),pagination:{startIndex:0,pageSize:50}}",
+        "relevance_sort": "getPageDataSortOption=e=>(g.Y.RELEVANCE,g.Y.RELEVANCE.toString().toUpperCase())"
+      }
+    },
+    {
+      "public_asset_path": "/images/S/sash/Qcsepp1yKNsrYJB.js",
+      "bytes": 124279,
+      "sha256": "b29bcf78fe69b44a7b231fdd10b04483c8de7a826e916d421c525cbeb40bc904",
+      "excerpts": {
+        "local_load_more": "this.handleLoadMore=e=>{var t,a;const i=this.getPageSize(),n=this.getLastPage(),r=null!==(a=null===(t=this.props.widgets)||void 0===t?void 0:t.length)&&void 0!==a?a:0;this.logger.d(`Loading: ${e}/${n}, items: ${e*i}/${r}`),setTimeout(()=>{this.setState({currentPage:e})},250)}",
+        "local_array_slice": "getWidgets(e){var t;const a=null!==(t=this.props.withVirtualScrolling)&&void 0!==t&&t;return e.slice(0,Math.min(this.state.currentPage*this.getPageSize(),e.length))",
+        "last_local_page": "getLastPage(){var e,t;return Math.ceil((null!==(t=null===(e=this.props.widgets)||void 0===e?void 0:e.length)&&void 0!==t?t:0)/this.getPageSize())}"
+      }
+    }
+  ],
+  "interpretation": "Search requests one size-50 relevance page. Grid loadMore changes local state and slices its supplied widgets; it does not fetch another search page.",
+  "frontend_request_replay": {
+    "method": "Replay captured frontend request body and headers in memory in two fresh anonymous contexts; save no header values, body, or guest tokens. Identical index-0 size-50 relevance requests still vary.",
+    "contexts": [
+      {
+        "context": 1,
+        "repeated_relevance_first_page": [
+          {
+            "count": 49,
+            "id_set_sha256": "20ae9b9450d97630041450146a5262a6c8b5022b6cc582b079351b56604a9206",
+            "same_request_set_difference": null,
+            "same_request_order_matches": null
+          },
+          {
+            "count": 49,
+            "id_set_sha256": "1613b37580cc5f9174260cb0fd171fe3d353b744b85b3aea780c9eea6dffb825",
+            "same_request_set_difference": 4,
+            "same_request_order_matches": false
+          },
+          {
+            "count": 49,
+            "id_set_sha256": "79f0ab6b1daa3c3f4134640b9094c0a08a6c6583a561c853e53cebfda579dd87",
+            "same_request_set_difference": 4,
+            "same_request_order_matches": false
+          }
+        ]
+      },
+      {
+        "context": 2,
+        "repeated_relevance_first_page": [
+          {
+            "count": 49,
+            "id_set_sha256": "20ae9b9450d97630041450146a5262a6c8b5022b6cc582b079351b56604a9206",
+            "same_request_set_difference": null,
+            "same_request_order_matches": null
+          },
+          {
+            "count": 49,
+            "id_set_sha256": "20ae9b9450d97630041450146a5262a6c8b5022b6cc582b079351b56604a9206",
+            "same_request_set_difference": 0,
+            "same_request_order_matches": true
+          },
+          {
+            "count": 49,
+            "id_set_sha256": "1cbad6d313f2827343c8821dca97325a8b1aa579b72d54b15eeecd20cbe9eeed",
+            "same_request_set_difference": 4,
+            "same_request_order_matches": false
+          }
+        ]
+      }
+    ],
+    "observed_at_utc": "2026-10-11T13:58:30.229624+00:00"
+  }
+}

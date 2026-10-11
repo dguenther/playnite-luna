@@ -79,12 +79,12 @@ public sealed class ProviderTests
             Respond = async (request, _) =>
             {
                 Assert.Equal(HttpMethod.Post, request.Method);
-                Assert.Equal(LunaCatalogProvider.Endpoint, request.RequestUri);
+                Assert.Equal(new Uri("https://proxy-prod.us-east-1.tempo.digital.a2z.com/getPage"), request.RequestUri);
                 Assert.Equal(new[] { "ATVPDKIKX0DER" }, request.Headers.GetValues("x-amz-marketplace-id"));
                 Assert.False(request.Headers.Contains("Cookie"));
                 Assert.Null(request.Headers.Authorization);
                 var body = JObject.Parse(await request.Content!.ReadAsStringAsync());
-                Assert.Equal("", (string?)body.SelectToken("searchContext.query"));
+                Assert.Equal("all_games", (string?)body.SelectToken("searchContext.query"));
                 Assert.Equal("text/plain", request.Content.Headers.ContentType!.MediaType);
                 return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(ParserTests.Fixture("AllGames")) };
             }

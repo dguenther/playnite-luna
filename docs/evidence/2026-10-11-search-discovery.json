@@ -1,0 +1,1572 @@
+{
+  "observed_at_utc": "2026-10-11T13:32:45.892417+00:00",
+  "probe_retrieved_at": "2026-10-11T13:21:26.7414267+00:00",
+  "method": "Chromium DOM; configured proxy and verified Playwright Node TLS forwarding",
+  "contexts": [
+    {
+      "context": 1,
+      "search": [
+        {
+          "query": "a",
+          "api_count": 49,
+          "api_id_set_sha256": "1cbad6d313f2827343c8821dca97325a8b1aa579b72d54b15eeecd20cbe9eeed",
+          "rendered_count": 49,
+          "rendered_id_set_sha256": "1cbad6d313f2827343c8821dca97325a8b1aa579b72d54b15eeecd20cbe9eeed",
+          "api_rendered_id_difference": 0,
+          "title_mismatches": 0,
+          "outside_browse_count": 0,
+          "probe_link_mismatches": 0,
+          "requests": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": "multistate_search_results",
+              "response_page_type": "search_results_no_prime",
+              "query": "a",
+              "sort": "RELEVANCE",
+              "start_index": 0,
+              "page_size": 50
+            }
+          ],
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 49,
+            "SEO_SEARCH": 1
+          },
+          "failed_catalog_requests": {},
+          "recognizable_title_found": true,
+          "scroll_measurement_count": 6,
+          "scroll_samples": [
+            {
+              "top": 0,
+              "height": 2104,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 1204,
+              "height": 2104,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 1204,
+              "height": 2104,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 1204,
+              "height": 2104,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        },
+        {
+          "query": "e",
+          "api_count": 39,
+          "api_id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+          "rendered_count": 39,
+          "rendered_id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+          "api_rendered_id_difference": 0,
+          "title_mismatches": 0,
+          "outside_browse_count": 0,
+          "probe_link_mismatches": 0,
+          "requests": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": "multistate_search_results",
+              "response_page_type": "search_results_no_prime",
+              "query": "e",
+              "sort": "RELEVANCE",
+              "start_index": 0,
+              "page_size": 50
+            }
+          ],
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 39,
+            "SEO_SEARCH": 1
+          },
+          "failed_catalog_requests": {},
+          "recognizable_title_found": true,
+          "scroll_measurement_count": 6,
+          "scroll_samples": [
+            {
+              "top": 101,
+              "height": 1814,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 914,
+              "height": 1814,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 914,
+              "height": 1814,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 914,
+              "height": 1814,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        },
+        {
+          "query": "Alan Wake 2",
+          "api_count": 8,
+          "api_id_set_sha256": "27bd0a124cf60953daa6dbdb2783a2be46b2b4c2b7f106c50b506c8bf608ffa4",
+          "rendered_count": 8,
+          "rendered_id_set_sha256": "27bd0a124cf60953daa6dbdb2783a2be46b2b4c2b7f106c50b506c8bf608ffa4",
+          "api_rendered_id_difference": 0,
+          "title_mismatches": 0,
+          "outside_browse_count": 0,
+          "probe_link_mismatches": 0,
+          "requests": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": "multistate_search_results",
+              "response_page_type": "search_results_no_prime",
+              "query": "Alan Wake 2",
+              "sort": "RELEVANCE",
+              "start_index": 0,
+              "page_size": 50
+            }
+          ],
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 8,
+            "SEO_SEARCH": 1
+          },
+          "failed_catalog_requests": {},
+          "recognizable_title_found": true,
+          "scroll_measurement_count": 5,
+          "scroll_samples": [
+            {
+              "top": 101,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        },
+        {
+          "query": "WRC Generations",
+          "api_count": 2,
+          "api_id_set_sha256": "5f882fdab14de38513e7d317bb2f0acf3ca31ae213dac8f297a78799810c6e9f",
+          "rendered_count": 2,
+          "rendered_id_set_sha256": "5f882fdab14de38513e7d317bb2f0acf3ca31ae213dac8f297a78799810c6e9f",
+          "api_rendered_id_difference": 0,
+          "title_mismatches": 0,
+          "outside_browse_count": 0,
+          "probe_link_mismatches": 0,
+          "requests": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": "multistate_search_results",
+              "response_page_type": "search_results_no_prime",
+              "query": "WRC Generations",
+              "sort": "RELEVANCE",
+              "start_index": 0,
+              "page_size": 50
+            }
+          ],
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 2,
+            "SEO_SEARCH": 1
+          },
+          "failed_catalog_requests": {},
+          "recognizable_title_found": true,
+          "scroll_measurement_count": 5,
+          "scroll_samples": [
+            {
+              "top": 101,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        },
+        {
+          "query": "Batman",
+          "api_count": 2,
+          "api_id_set_sha256": "3597e108374b160caa95442e0e2cdd837bf4d6136a217a3fcf4fec45a6f6b0ac",
+          "rendered_count": 2,
+          "rendered_id_set_sha256": "3597e108374b160caa95442e0e2cdd837bf4d6136a217a3fcf4fec45a6f6b0ac",
+          "api_rendered_id_difference": 0,
+          "title_mismatches": 0,
+          "outside_browse_count": 0,
+          "probe_link_mismatches": 0,
+          "requests": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": "multistate_search_results",
+              "response_page_type": "search_results_no_prime",
+              "query": "Batman",
+              "sort": "RELEVANCE",
+              "start_index": 0,
+              "page_size": 50
+            }
+          ],
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 2,
+            "SEO_SEARCH": 1
+          },
+          "failed_catalog_requests": {},
+          "recognizable_title_found": true,
+          "scroll_measurement_count": 5,
+          "scroll_samples": [
+            {
+              "top": 101,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        },
+        {
+          "query": "Fortnite",
+          "api_count": 7,
+          "api_id_set_sha256": "a8ea23e5773a6f37e859080b75926cdd04012a3e2551cb4429543bebce4c4db6",
+          "rendered_count": 7,
+          "rendered_id_set_sha256": "a8ea23e5773a6f37e859080b75926cdd04012a3e2551cb4429543bebce4c4db6",
+          "api_rendered_id_difference": 0,
+          "title_mismatches": 0,
+          "outside_browse_count": 0,
+          "probe_link_mismatches": 0,
+          "requests": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": "multistate_search_results",
+              "response_page_type": "search_results_no_prime",
+              "query": "Fortnite",
+              "sort": "RELEVANCE",
+              "start_index": 0,
+              "page_size": 50
+            }
+          ],
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 7,
+            "SEO_SEARCH": 1
+          },
+          "failed_catalog_requests": {},
+          "recognizable_title_found": true,
+          "scroll_measurement_count": 5,
+          "scroll_samples": [
+            {
+              "top": 101,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        },
+        {
+          "query": "Ubisoft",
+          "api_count": 4,
+          "api_id_set_sha256": "0d4363243da860d3f9b4b24187f11426467545abf9a8c9cbe063f44f1d21fe8d",
+          "rendered_count": 4,
+          "rendered_id_set_sha256": "0d4363243da860d3f9b4b24187f11426467545abf9a8c9cbe063f44f1d21fe8d",
+          "api_rendered_id_difference": 0,
+          "title_mismatches": 0,
+          "outside_browse_count": 0,
+          "probe_link_mismatches": 0,
+          "requests": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": "multistate_search_results",
+              "response_page_type": "search_results_no_prime",
+              "query": "Ubisoft",
+              "sort": "RELEVANCE",
+              "start_index": 0,
+              "page_size": 50
+            }
+          ],
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 4,
+            "SEO_SEARCH": 1
+          },
+          "failed_catalog_requests": {},
+          "recognizable_title_found": true,
+          "scroll_measurement_count": 5,
+          "scroll_samples": [
+            {
+              "top": 101,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        },
+        {
+          "query": "GOG",
+          "api_count": 1,
+          "api_id_set_sha256": "49440e1dd463bd3674901df51676eb0d4a97f91292cd55f075ed1ee588fb2cc7",
+          "rendered_count": 1,
+          "rendered_id_set_sha256": "49440e1dd463bd3674901df51676eb0d4a97f91292cd55f075ed1ee588fb2cc7",
+          "api_rendered_id_difference": 0,
+          "title_mismatches": 0,
+          "outside_browse_count": 0,
+          "probe_link_mismatches": 0,
+          "requests": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": "multistate_search_results",
+              "response_page_type": "search_results_no_prime",
+              "query": "GOG",
+              "sort": "RELEVANCE",
+              "start_index": 0,
+              "page_size": 50
+            }
+          ],
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 1,
+            "SEO_SEARCH": 1
+          },
+          "failed_catalog_requests": {},
+          "recognizable_title_found": true,
+          "scroll_measurement_count": 5,
+          "scroll_samples": [
+            {
+              "top": 101,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "path": "/",
+          "loaded_game_count": 36,
+          "loaded_id_set_sha256": "57ca720657f1ad3b6b87035253209b737f01599fcd8c6d5f59ae817772d3138f",
+          "outside_browse_id_count": 0,
+          "rendered_game_link_count": 38,
+          "outside_browse_link_count": 0,
+          "widget_types": {
+            "FEATURED_ROTATOR_V3": 1,
+            "FEATURED_PRODUCT_V3": 6,
+            "RANKINGS_ROW": 1,
+            "GAME_TILE_VERTICAL": 57,
+            "CAROUSEL": 4,
+            "PARTNER_UPSELL_ROW": 2,
+            "BROWSE_GENRE_TILE": 15,
+            "SEO_TEMPLATE": 1,
+            "TRANSLATION": 1
+          },
+          "requests": [
+            {
+              "path": "/getAppConfig",
+              "status": 200,
+              "request_page_type": null,
+              "response_page_type": null,
+              "query": null,
+              "sort": null,
+              "start_index": null,
+              "page_size": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": null,
+              "response_page_type": "landing_home_anonymous",
+              "query": null,
+              "sort": null,
+              "start_index": null,
+              "page_size": null
+            },
+            {
+              "path": "/getWidget",
+              "status": 200,
+              "request_page_type": "unmapped_widgets",
+              "response_page_type": null,
+              "query": null,
+              "sort": null,
+              "start_index": null,
+              "page_size": null
+            }
+          ],
+          "failed_catalog_requests": {},
+          "limitation": "Vertical scrolling and loaded carousels; does not exhaust every horizontal carousel or account-only view.",
+          "scroll_measurement_count": 8,
+          "scroll_samples": [
+            {
+              "top": 0,
+              "height": 2974,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 2780,
+              "height": 3680,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 2780,
+              "height": 3680,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 2780,
+              "height": 3680,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        },
+        {
+          "path": "/gamenight",
+          "loaded_game_count": 50,
+          "loaded_id_set_sha256": "0a9f95f7a6eb90b83a649f982eb641f960bc35b186ca9804babaf219b7326b66",
+          "outside_browse_id_count": 0,
+          "rendered_game_link_count": 51,
+          "outside_browse_link_count": 0,
+          "widget_types": {
+            "TRANSLATION": 1,
+            "FEATURED_ROTATOR_V3": 1,
+            "FEATURED_MERCHANDISED_ITEM_V3": 1,
+            "FEATURED_PRODUCT_V3": 5,
+            "RANKINGS_ROW": 1,
+            "GAME_TILE_VERTICAL": 79,
+            "CAROUSEL": 5,
+            "PARTY_PACK_TILE": 3,
+            "PARTNER_UPSELL_ROW": 1,
+            "BROWSE_GENRE_TILE": 14,
+            "SEO_TEMPLATE": 1
+          },
+          "requests": [
+            {
+              "path": "/getAppConfig",
+              "status": 200,
+              "request_page_type": null,
+              "response_page_type": null,
+              "query": null,
+              "sort": null,
+              "start_index": null,
+              "page_size": null
+            },
+            {
+              "path": "/getWidget",
+              "status": 200,
+              "request_page_type": "unmapped_widgets",
+              "response_page_type": null,
+              "query": null,
+              "sort": null,
+              "start_index": null,
+              "page_size": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": null,
+              "response_page_type": "landing_game_night_anonymous",
+              "query": null,
+              "sort": null,
+              "start_index": null,
+              "page_size": null
+            }
+          ],
+          "failed_catalog_requests": {},
+          "limitation": "Vertical scrolling and loaded carousels; does not exhaust every horizontal carousel or account-only view.",
+          "scroll_measurement_count": 8,
+          "scroll_samples": [
+            {
+              "top": 0,
+              "height": 2703,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 2674,
+              "height": 3574,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 2674,
+              "height": 3574,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 2674,
+              "height": 3574,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        }
+      ],
+      "game_pages": [
+        {
+          "title": "Alan Wake 2",
+          "id_namespace": "amzn1.adg.product",
+          "slug_only_action": false,
+          "document_http_status": 200,
+          "detail_http_status": 200,
+          "identity_matches": true,
+          "canonical_url_matches": true,
+          "rendered_url_matches": true,
+          "rendered_title_matches": true,
+          "rendered_primary_button": "Play free with Prime",
+          "widget_types": {
+            "PRODUCT_DETAIL": 1,
+            "GAME_TILE_VERTICAL": 18
+          },
+          "failed_catalog_requests": {}
+        },
+        {
+          "title": "Alien: Isolation",
+          "id_namespace": "amzn1.adg.product",
+          "slug_only_action": false,
+          "document_http_status": 200,
+          "detail_http_status": 200,
+          "identity_matches": true,
+          "canonical_url_matches": true,
+          "rendered_url_matches": true,
+          "rendered_title_matches": true,
+          "rendered_primary_button": "Included in Luna Premium",
+          "widget_types": {
+            "PRODUCT_DETAIL": 1,
+            "ADD_ON_TILE": 8,
+            "GAME_TILE_VERTICAL": 14
+          },
+          "failed_catalog_requests": {}
+        },
+        {
+          "title": "Angry Birds Flock Party",
+          "id_namespace": "amzn1.adg.product",
+          "slug_only_action": false,
+          "document_http_status": 200,
+          "detail_http_status": 200,
+          "identity_matches": true,
+          "canonical_url_matches": true,
+          "rendered_url_matches": true,
+          "rendered_title_matches": true,
+          "rendered_primary_button": "Play free with Prime",
+          "widget_types": {
+            "PRODUCT_DETAIL": 1,
+            "GAME_TILE_VERTICAL": 10
+          },
+          "failed_catalog_requests": {}
+        },
+        {
+          "title": "Batman Caped Crusader - Chronicles",
+          "id_namespace": "amzn1.luna.product",
+          "slug_only_action": false,
+          "document_http_status": 200,
+          "detail_http_status": 200,
+          "identity_matches": true,
+          "canonical_url_matches": true,
+          "rendered_url_matches": true,
+          "rendered_title_matches": true,
+          "rendered_primary_button": "Play free with Prime",
+          "widget_types": {
+            "PRODUCT_DETAIL": 1,
+            "GAME_TILE_VERTICAL": 14
+          },
+          "failed_catalog_requests": {}
+        },
+        {
+          "title": "Fortnite",
+          "id_namespace": "amzn1.adg.product",
+          "slug_only_action": true,
+          "document_http_status": 200,
+          "detail_http_status": 200,
+          "identity_matches": true,
+          "canonical_url_matches": true,
+          "rendered_url_matches": true,
+          "rendered_title_matches": true,
+          "rendered_primary_button": "Play free with Prime",
+          "widget_types": {
+            "PRODUCT_DETAIL": 1,
+            "GAME_TILE_VERTICAL": 23
+          },
+          "failed_catalog_requests": {}
+        }
+      ],
+      "config": {
+        "defaultLocale": "en_US",
+        "marketplaceId": "ATVPDKIKX0DER",
+        "clientProxy": "https://proxy-prod.us-east-1.tempo.digital.a2z.com"
+      }
+    },
+    {
+      "context": 2,
+      "search": [
+        {
+          "query": "a",
+          "api_count": 49,
+          "api_id_set_sha256": "1cbad6d313f2827343c8821dca97325a8b1aa579b72d54b15eeecd20cbe9eeed",
+          "rendered_count": 49,
+          "rendered_id_set_sha256": "1cbad6d313f2827343c8821dca97325a8b1aa579b72d54b15eeecd20cbe9eeed",
+          "api_rendered_id_difference": 0,
+          "title_mismatches": 0,
+          "outside_browse_count": 0,
+          "probe_link_mismatches": 0,
+          "requests": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": "multistate_search_results",
+              "response_page_type": "search_results_no_prime",
+              "query": "a",
+              "sort": "RELEVANCE",
+              "start_index": 0,
+              "page_size": 50
+            }
+          ],
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 49,
+            "SEO_SEARCH": 1
+          },
+          "failed_catalog_requests": {},
+          "recognizable_title_found": true,
+          "scroll_measurement_count": 6,
+          "scroll_samples": [
+            {
+              "top": 0,
+              "height": 2104,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 1204,
+              "height": 2104,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 1204,
+              "height": 2104,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 1204,
+              "height": 2104,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        },
+        {
+          "query": "e",
+          "api_count": 39,
+          "api_id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+          "rendered_count": 39,
+          "rendered_id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+          "api_rendered_id_difference": 0,
+          "title_mismatches": 0,
+          "outside_browse_count": 0,
+          "probe_link_mismatches": 0,
+          "requests": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": "multistate_search_results",
+              "response_page_type": "search_results_no_prime",
+              "query": "e",
+              "sort": "RELEVANCE",
+              "start_index": 0,
+              "page_size": 50
+            }
+          ],
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 39,
+            "SEO_SEARCH": 1
+          },
+          "failed_catalog_requests": {},
+          "recognizable_title_found": true,
+          "scroll_measurement_count": 6,
+          "scroll_samples": [
+            {
+              "top": 101,
+              "height": 1814,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 914,
+              "height": 1814,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 914,
+              "height": 1814,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 914,
+              "height": 1814,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        },
+        {
+          "query": "Alan Wake 2",
+          "api_count": 8,
+          "api_id_set_sha256": "27bd0a124cf60953daa6dbdb2783a2be46b2b4c2b7f106c50b506c8bf608ffa4",
+          "rendered_count": 8,
+          "rendered_id_set_sha256": "27bd0a124cf60953daa6dbdb2783a2be46b2b4c2b7f106c50b506c8bf608ffa4",
+          "api_rendered_id_difference": 0,
+          "title_mismatches": 0,
+          "outside_browse_count": 0,
+          "probe_link_mismatches": 0,
+          "requests": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": "multistate_search_results",
+              "response_page_type": "search_results_no_prime",
+              "query": "Alan Wake 2",
+              "sort": "RELEVANCE",
+              "start_index": 0,
+              "page_size": 50
+            }
+          ],
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 8,
+            "SEO_SEARCH": 1
+          },
+          "failed_catalog_requests": {},
+          "recognizable_title_found": true,
+          "scroll_measurement_count": 5,
+          "scroll_samples": [
+            {
+              "top": 101,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        },
+        {
+          "query": "WRC Generations",
+          "api_count": 2,
+          "api_id_set_sha256": "5f882fdab14de38513e7d317bb2f0acf3ca31ae213dac8f297a78799810c6e9f",
+          "rendered_count": 2,
+          "rendered_id_set_sha256": "5f882fdab14de38513e7d317bb2f0acf3ca31ae213dac8f297a78799810c6e9f",
+          "api_rendered_id_difference": 0,
+          "title_mismatches": 0,
+          "outside_browse_count": 0,
+          "probe_link_mismatches": 0,
+          "requests": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": "multistate_search_results",
+              "response_page_type": "search_results_no_prime",
+              "query": "WRC Generations",
+              "sort": "RELEVANCE",
+              "start_index": 0,
+              "page_size": 50
+            }
+          ],
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 2,
+            "SEO_SEARCH": 1
+          },
+          "failed_catalog_requests": {},
+          "recognizable_title_found": true,
+          "scroll_measurement_count": 5,
+          "scroll_samples": [
+            {
+              "top": 101,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        },
+        {
+          "query": "Batman",
+          "api_count": 2,
+          "api_id_set_sha256": "3597e108374b160caa95442e0e2cdd837bf4d6136a217a3fcf4fec45a6f6b0ac",
+          "rendered_count": 2,
+          "rendered_id_set_sha256": "3597e108374b160caa95442e0e2cdd837bf4d6136a217a3fcf4fec45a6f6b0ac",
+          "api_rendered_id_difference": 0,
+          "title_mismatches": 0,
+          "outside_browse_count": 0,
+          "probe_link_mismatches": 0,
+          "requests": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": "multistate_search_results",
+              "response_page_type": "search_results_no_prime",
+              "query": "Batman",
+              "sort": "RELEVANCE",
+              "start_index": 0,
+              "page_size": 50
+            }
+          ],
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 2,
+            "SEO_SEARCH": 1
+          },
+          "failed_catalog_requests": {},
+          "recognizable_title_found": true,
+          "scroll_measurement_count": 5,
+          "scroll_samples": [
+            {
+              "top": 101,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        },
+        {
+          "query": "Fortnite",
+          "api_count": 7,
+          "api_id_set_sha256": "a8ea23e5773a6f37e859080b75926cdd04012a3e2551cb4429543bebce4c4db6",
+          "rendered_count": 7,
+          "rendered_id_set_sha256": "a8ea23e5773a6f37e859080b75926cdd04012a3e2551cb4429543bebce4c4db6",
+          "api_rendered_id_difference": 0,
+          "title_mismatches": 0,
+          "outside_browse_count": 0,
+          "probe_link_mismatches": 0,
+          "requests": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": "multistate_search_results",
+              "response_page_type": "search_results_no_prime",
+              "query": "Fortnite",
+              "sort": "RELEVANCE",
+              "start_index": 0,
+              "page_size": 50
+            }
+          ],
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 7,
+            "SEO_SEARCH": 1
+          },
+          "failed_catalog_requests": {},
+          "recognizable_title_found": true,
+          "scroll_measurement_count": 5,
+          "scroll_samples": [
+            {
+              "top": 101,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        },
+        {
+          "query": "Ubisoft",
+          "api_count": 4,
+          "api_id_set_sha256": "0d4363243da860d3f9b4b24187f11426467545abf9a8c9cbe063f44f1d21fe8d",
+          "rendered_count": 4,
+          "rendered_id_set_sha256": "0d4363243da860d3f9b4b24187f11426467545abf9a8c9cbe063f44f1d21fe8d",
+          "api_rendered_id_difference": 0,
+          "title_mismatches": 0,
+          "outside_browse_count": 0,
+          "probe_link_mismatches": 0,
+          "requests": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": "multistate_search_results",
+              "response_page_type": "search_results_no_prime",
+              "query": "Ubisoft",
+              "sort": "RELEVANCE",
+              "start_index": 0,
+              "page_size": 50
+            }
+          ],
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 4,
+            "SEO_SEARCH": 1
+          },
+          "failed_catalog_requests": {},
+          "recognizable_title_found": true,
+          "scroll_measurement_count": 5,
+          "scroll_samples": [
+            {
+              "top": 101,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        },
+        {
+          "query": "GOG",
+          "api_count": 1,
+          "api_id_set_sha256": "49440e1dd463bd3674901df51676eb0d4a97f91292cd55f075ed1ee588fb2cc7",
+          "rendered_count": 1,
+          "rendered_id_set_sha256": "49440e1dd463bd3674901df51676eb0d4a97f91292cd55f075ed1ee588fb2cc7",
+          "api_rendered_id_difference": 0,
+          "title_mismatches": 0,
+          "outside_browse_count": 0,
+          "probe_link_mismatches": 0,
+          "requests": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": "multistate_search_results",
+              "response_page_type": "search_results_no_prime",
+              "query": "GOG",
+              "sort": "RELEVANCE",
+              "start_index": 0,
+              "page_size": 50
+            }
+          ],
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 1,
+            "SEO_SEARCH": 1
+          },
+          "failed_catalog_requests": {},
+          "recognizable_title_found": true,
+          "scroll_measurement_count": 5,
+          "scroll_samples": [
+            {
+              "top": 101,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 417,
+              "height": 1317,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "path": "/",
+          "loaded_game_count": 36,
+          "loaded_id_set_sha256": "57ca720657f1ad3b6b87035253209b737f01599fcd8c6d5f59ae817772d3138f",
+          "outside_browse_id_count": 0,
+          "rendered_game_link_count": 38,
+          "outside_browse_link_count": 0,
+          "widget_types": {
+            "TRANSLATION": 1,
+            "FEATURED_ROTATOR_V3": 1,
+            "FEATURED_PRODUCT_V3": 6,
+            "RANKINGS_ROW": 1,
+            "GAME_TILE_VERTICAL": 57,
+            "CAROUSEL": 4,
+            "PARTNER_UPSELL_ROW": 2,
+            "BROWSE_GENRE_TILE": 15,
+            "SEO_TEMPLATE": 1
+          },
+          "requests": [
+            {
+              "path": "/getAppConfig",
+              "status": 200,
+              "request_page_type": null,
+              "response_page_type": null,
+              "query": null,
+              "sort": null,
+              "start_index": null,
+              "page_size": null
+            },
+            {
+              "path": "/getWidget",
+              "status": 200,
+              "request_page_type": "unmapped_widgets",
+              "response_page_type": null,
+              "query": null,
+              "sort": null,
+              "start_index": null,
+              "page_size": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": null,
+              "response_page_type": "landing_home_anonymous",
+              "query": null,
+              "sort": null,
+              "start_index": null,
+              "page_size": null
+            }
+          ],
+          "failed_catalog_requests": {},
+          "limitation": "Vertical scrolling and loaded carousels; does not exhaust every horizontal carousel or account-only view.",
+          "scroll_measurement_count": 8,
+          "scroll_samples": [
+            {
+              "top": 0,
+              "height": 2974,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 2780,
+              "height": 3680,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 2780,
+              "height": 3680,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 2780,
+              "height": 3680,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        },
+        {
+          "path": "/gamenight",
+          "loaded_game_count": 50,
+          "loaded_id_set_sha256": "0a9f95f7a6eb90b83a649f982eb641f960bc35b186ca9804babaf219b7326b66",
+          "outside_browse_id_count": 0,
+          "rendered_game_link_count": 51,
+          "outside_browse_link_count": 0,
+          "widget_types": {
+            "TRANSLATION": 1,
+            "FEATURED_ROTATOR_V3": 1,
+            "FEATURED_MERCHANDISED_ITEM_V3": 1,
+            "FEATURED_PRODUCT_V3": 5,
+            "RANKINGS_ROW": 1,
+            "GAME_TILE_VERTICAL": 79,
+            "CAROUSEL": 5,
+            "PARTY_PACK_TILE": 3,
+            "PARTNER_UPSELL_ROW": 1,
+            "BROWSE_GENRE_TILE": 14,
+            "SEO_TEMPLATE": 1
+          },
+          "requests": [
+            {
+              "path": "/getAppConfig",
+              "status": 200,
+              "request_page_type": null,
+              "response_page_type": null,
+              "query": null,
+              "sort": null,
+              "start_index": null,
+              "page_size": null
+            },
+            {
+              "path": "/getWidget",
+              "status": 200,
+              "request_page_type": "unmapped_widgets",
+              "response_page_type": null,
+              "query": null,
+              "sort": null,
+              "start_index": null,
+              "page_size": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "request_page_type": null,
+              "response_page_type": "landing_game_night_anonymous",
+              "query": null,
+              "sort": null,
+              "start_index": null,
+              "page_size": null
+            }
+          ],
+          "failed_catalog_requests": {},
+          "limitation": "Vertical scrolling and loaded carousels; does not exhaust every horizontal carousel or account-only view.",
+          "scroll_measurement_count": 8,
+          "scroll_samples": [
+            {
+              "top": 0,
+              "height": 2703,
+              "client": 900,
+              "at_bottom": false
+            },
+            {
+              "top": 2674,
+              "height": 3574,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 2674,
+              "height": 3574,
+              "client": 900,
+              "at_bottom": true
+            },
+            {
+              "top": 2674,
+              "height": 3574,
+              "client": 900,
+              "at_bottom": true
+            }
+          ]
+        }
+      ],
+      "game_pages": [
+        {
+          "title": "Alan Wake 2",
+          "id_namespace": "amzn1.adg.product",
+          "slug_only_action": false,
+          "document_http_status": 200,
+          "detail_http_status": 200,
+          "identity_matches": true,
+          "canonical_url_matches": true,
+          "rendered_url_matches": true,
+          "rendered_title_matches": true,
+          "rendered_primary_button": "Play free with Prime",
+          "widget_types": {
+            "PRODUCT_DETAIL": 1,
+            "GAME_TILE_VERTICAL": 18
+          },
+          "failed_catalog_requests": {}
+        },
+        {
+          "title": "Alien: Isolation",
+          "id_namespace": "amzn1.adg.product",
+          "slug_only_action": false,
+          "document_http_status": 200,
+          "detail_http_status": 200,
+          "identity_matches": true,
+          "canonical_url_matches": true,
+          "rendered_url_matches": true,
+          "rendered_title_matches": true,
+          "rendered_primary_button": "Included in Luna Premium",
+          "widget_types": {
+            "PRODUCT_DETAIL": 1,
+            "ADD_ON_TILE": 8,
+            "GAME_TILE_VERTICAL": 14
+          },
+          "failed_catalog_requests": {}
+        },
+        {
+          "title": "Angry Birds Flock Party",
+          "id_namespace": "amzn1.adg.product",
+          "slug_only_action": false,
+          "document_http_status": 200,
+          "detail_http_status": 200,
+          "identity_matches": true,
+          "canonical_url_matches": true,
+          "rendered_url_matches": true,
+          "rendered_title_matches": true,
+          "rendered_primary_button": "Play free with Prime",
+          "widget_types": {
+            "PRODUCT_DETAIL": 1,
+            "GAME_TILE_VERTICAL": 10
+          },
+          "failed_catalog_requests": {}
+        },
+        {
+          "title": "Batman Caped Crusader - Chronicles",
+          "id_namespace": "amzn1.luna.product",
+          "slug_only_action": false,
+          "document_http_status": 200,
+          "detail_http_status": 200,
+          "identity_matches": true,
+          "canonical_url_matches": true,
+          "rendered_url_matches": true,
+          "rendered_title_matches": true,
+          "rendered_primary_button": "Play free with Prime",
+          "widget_types": {
+            "PRODUCT_DETAIL": 1,
+            "GAME_TILE_VERTICAL": 14
+          },
+          "failed_catalog_requests": {}
+        },
+        {
+          "title": "Fortnite",
+          "id_namespace": "amzn1.adg.product",
+          "slug_only_action": true,
+          "document_http_status": 200,
+          "detail_http_status": 200,
+          "identity_matches": true,
+          "canonical_url_matches": true,
+          "rendered_url_matches": true,
+          "rendered_title_matches": true,
+          "rendered_primary_button": "Play free with Prime",
+          "widget_types": {
+            "PRODUCT_DETAIL": 1,
+            "GAME_TILE_VERTICAL": 23
+          },
+          "failed_catalog_requests": {}
+        }
+      ],
+      "config": {
+        "defaultLocale": "en_US",
+        "marketplaceId": "ATVPDKIKX0DER",
+        "clientProxy": "https://proxy-prod.us-east-1.tempo.digital.a2z.com"
+      }
+    }
+  ],
+  "is_complete": false,
+  "coverage_status": "Unverified",
+  "limitations": [
+    "Finite search samples and loaded discovery groups do not establish universal catalog coverage.",
+    "Account entitlement and streaming eligibility are not tested."
+  ],
+  "browser_version": "154.0.8037.57",
+  "additional_manual_checks": {
+    "observed_at_utc": "2026-10-11T13:34:04.000574+00:00",
+    "contexts": [
+      {
+        "context": 1,
+        "gamenight_landing_links_outside_membership": [
+          "Tetris® Effect: Connected"
+        ],
+        "claims": {
+          "requests": [],
+          "final_host": "luna.amazon.com",
+          "final_path": "/claims",
+          "document_status": 200,
+          "blocked_requests": {
+            "d2u4zldaqlyj2w.cloudfront.net/05933611-db1f-400b-ab56-7a3b2ad5fe42/js/carbon.pages.root-router.js HTTP 403": 1,
+            "d2u4zldaqlyj2w.cloudfront.net/05933611-db1f-400b-ab56-7a3b2ad5fe42/js/error-boundaryV2.js HTTP 403": 1,
+            "d2u4zldaqlyj2w.cloudfront.net/05933611-db1f-400b-ab56-7a3b2ad5fe42/css/main.css HTTP 403": 1,
+            "d2u4zldaqlyj2w.cloudfront.net/05933611-db1f-400b-ab56-7a3b2ad5fe42/css/carbon.pages.root-router.css HTTP 403": 1,
+            "d2u4zldaqlyj2w.cloudfront.net/05933611-db1f-400b-ab56-7a3b2ad5fe42/js/main.js HTTP 403": 1
+          },
+          "widget_types": {},
+          "visible_pc_platforms": [],
+          "visible_claim_labels": [],
+          "rendered_game_page_link_count": 0
+        }
+      },
+      {
+        "context": 2,
+        "gamenight_landing_links_outside_membership": [
+          "Tetris® Effect: Connected"
+        ],
+        "claims": {
+          "requests": [],
+          "final_host": "luna.amazon.com",
+          "final_path": "/claims",
+          "document_status": 200,
+          "blocked_requests": {
+            "d27meqdi87hhw.cloudfront.net/05933611-db1f-400b-ab56-7a3b2ad5fe42/css/main.css HTTP 403": 1,
+            "d27meqdi87hhw.cloudfront.net/05933611-db1f-400b-ab56-7a3b2ad5fe42/css/carbon.pages.root-router.css HTTP 403": 1,
+            "d27meqdi87hhw.cloudfront.net/05933611-db1f-400b-ab56-7a3b2ad5fe42/js/carbon.pages.root-router.js HTTP 403": 1,
+            "d27meqdi87hhw.cloudfront.net/05933611-db1f-400b-ab56-7a3b2ad5fe42/js/error-boundaryV2.js HTTP 403": 1,
+            "d27meqdi87hhw.cloudfront.net/05933611-db1f-400b-ab56-7a3b2ad5fe42/js/main.js HTTP 403": 1
+          },
+          "widget_types": {},
+          "visible_pc_platforms": [],
+          "visible_claim_labels": [],
+          "rendered_game_page_link_count": 0
+        }
+      }
+    ],
+    "method": "Two fresh Chromium contexts with the same configured proxy and verified Node forwarding; GameNight links followed by Claims navigation.",
+    "coverage_status": "Incomplete",
+    "claims_classification_verified": false
+  },
+  "probe_summary": {
+    "region": "US",
+    "marketplace_id": "ATVPDKIKX0DER",
+    "queries": [
+      {
+        "name": "AllGames",
+        "http_status": 200,
+        "count": 118,
+        "id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2"
+      },
+      {
+        "name": "Standard",
+        "http_status": 200,
+        "count": 90,
+        "id_set_sha256": "4b38baaf26c852030f1954c2b9a875230deb02e5ed8a7c5c76df0e8f1eefac9c"
+      },
+      {
+        "name": "Premium",
+        "http_status": 200,
+        "count": 118,
+        "id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2"
+      },
+      {
+        "name": "GameNight",
+        "http_status": 200,
+        "count": 50,
+        "id_set_sha256": "0a9f95f7a6eb90b83a649f982eb641f960bc35b186ca9804babaf219b7326b66"
+      }
+    ],
+    "detail_checks": [
+      {
+        "title": "Alan Wake 2",
+        "status": 200,
+        "identity_matches": true,
+        "url_matches": true,
+        "primary_button": "Play free with Prime"
+      },
+      {
+        "title": "Alien: Isolation",
+        "status": 200,
+        "identity_matches": true,
+        "url_matches": true,
+        "primary_button": "Included in Luna Premium"
+      },
+      {
+        "title": "Angry Birds Flock Party",
+        "status": 200,
+        "identity_matches": true,
+        "url_matches": true,
+        "primary_button": "Play free with Prime"
+      },
+      {
+        "title": "Batman Caped Crusader - Chronicles",
+        "status": 200,
+        "identity_matches": true,
+        "url_matches": true,
+        "primary_button": "Play free with Prime"
+      },
+      {
+        "title": "Fortnite",
+        "status": 200,
+        "identity_matches": true,
+        "url_matches": true,
+        "primary_button": "Play free with Prime"
+      }
+    ]
+  },
+  "reduction": "Scroll samples retain the first and three final stable measurements; detail widget counts retain main products, recommendations, and DLC. Other public UI widget counts are omitted."
+}

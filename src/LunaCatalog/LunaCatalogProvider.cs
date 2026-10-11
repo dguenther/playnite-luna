@@ -15,7 +15,8 @@ namespace LunaCatalog
 
     public sealed class LunaCatalogProvider : ILunaCatalogProvider
     {
-        public static readonly Uri Endpoint = new Uri("https://proxy-prod.eu-west-1.tempo.digital.a2z.com/getPage");
+        // US endpoint selected by the anonymous website's getAppConfig response.
+        public static readonly Uri Endpoint = new Uri("https://proxy-prod.us-east-1.tempo.digital.a2z.com/getPage");
         public const int MaximumResponseBytes = 8 * 1024 * 1024;
         private readonly HttpClient client;
         private readonly string userAgent;

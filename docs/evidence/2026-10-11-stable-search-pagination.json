@@ -1,0 +1,569 @@
+{
+  "observed_at_utc": "2026-10-11T14:05:26.532410+00:00",
+  "method": "Two independent anonymous Node request contexts; configured proxy and verified TLS",
+  "endpoint": "https://proxy-prod.us-east-1.tempo.digital.a2z.com/getPage",
+  "contexts": [
+    {
+      "context": 1,
+      "queries": [
+        {
+          "query": "a",
+          "traversals": [
+            {
+              "pages": [
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 0,
+                  "response_page_type": "search_results_no_prime",
+                  "terminal": false,
+                  "matching_count": 50,
+                  "recommendation_count": 0,
+                  "id_set_sha256": "aa5dbb5dcf3dd824323302c5f7b0eadf97c888d9b54e8b54377e7f87d60d1986",
+                  "id_order_sha256": "97c7507dc54d7b8dce9bf390a1f4fd4e8af01a01ce2bd80892058c4f26aa4ca7"
+                },
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 50,
+                  "response_page_type": "search_results_no_prime",
+                  "terminal": false,
+                  "matching_count": 32,
+                  "recommendation_count": 0,
+                  "id_set_sha256": "334abae19b4106597f7f795979232a3393f5a1d1ed1a4e496d3b3096a57269e7",
+                  "id_order_sha256": "92c0c73ad43e1f56cf871dd1215cbe42dd0eb27f6f0e3c1cf7c69256f257e95c"
+                },
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 100,
+                  "response_page_type": "search_results_empty_jumanji",
+                  "terminal": true,
+                  "matching_count": 0,
+                  "recommendation_count": 20,
+                  "id_set_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "id_order_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                }
+              ],
+              "matching_count": 82,
+              "id_set_sha256": "d2b9739c6303e9b622590bedbca5b825ac9952fe805821a362e29c4e53277b82",
+              "page_overlap": 0
+            },
+            {
+              "pages": [
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 0,
+                  "response_page_type": "search_results_no_prime",
+                  "terminal": false,
+                  "matching_count": 50,
+                  "recommendation_count": 0,
+                  "id_set_sha256": "aa5dbb5dcf3dd824323302c5f7b0eadf97c888d9b54e8b54377e7f87d60d1986",
+                  "id_order_sha256": "97c7507dc54d7b8dce9bf390a1f4fd4e8af01a01ce2bd80892058c4f26aa4ca7"
+                },
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 50,
+                  "response_page_type": "search_results_no_prime",
+                  "terminal": false,
+                  "matching_count": 32,
+                  "recommendation_count": 0,
+                  "id_set_sha256": "334abae19b4106597f7f795979232a3393f5a1d1ed1a4e496d3b3096a57269e7",
+                  "id_order_sha256": "92c0c73ad43e1f56cf871dd1215cbe42dd0eb27f6f0e3c1cf7c69256f257e95c"
+                },
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 100,
+                  "response_page_type": "search_results_empty_jumanji",
+                  "terminal": true,
+                  "matching_count": 0,
+                  "recommendation_count": 20,
+                  "id_set_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "id_order_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                }
+              ],
+              "matching_count": 82,
+              "id_set_sha256": "d2b9739c6303e9b622590bedbca5b825ac9952fe805821a362e29c4e53277b82",
+              "page_overlap": 0
+            }
+          ],
+          "repeat_set_difference": 0,
+          "repeat_order_matches": true,
+          "outside_browse_count": 0,
+          "references": [
+            {
+              "sort": "TITLE_A_TO_Z",
+              "page_size": 100,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 82,
+              "recommendation_count": 0,
+              "id_set_sha256": "d2b9739c6303e9b622590bedbca5b825ac9952fe805821a362e29c4e53277b82",
+              "id_order_sha256": "942a1bbd18135285611fb4b1fda1d8d80b5a1047b03b5c613e1e15e2cad0f82d",
+              "paged_set_difference": 0
+            },
+            {
+              "sort": "TITLE_A_TO_Z",
+              "page_size": 200,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 82,
+              "recommendation_count": 0,
+              "id_set_sha256": "d2b9739c6303e9b622590bedbca5b825ac9952fe805821a362e29c4e53277b82",
+              "id_order_sha256": "942a1bbd18135285611fb4b1fda1d8d80b5a1047b03b5c613e1e15e2cad0f82d",
+              "paged_set_difference": 0
+            },
+            {
+              "sort": "TITLE_Z_TO_A",
+              "page_size": 100,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 82,
+              "recommendation_count": 0,
+              "id_set_sha256": "d2b9739c6303e9b622590bedbca5b825ac9952fe805821a362e29c4e53277b82",
+              "id_order_sha256": "5c34fa20c689be7bf7ef16ef68cce8324cb781f9139cb870ddf39968ce6582a9",
+              "paged_set_difference": 0
+            }
+          ],
+          "validated": true,
+          "relevance_repeats": [
+            {
+              "sort": "RELEVANCE",
+              "page_size": 50,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 49,
+              "recommendation_count": 0,
+              "id_set_sha256": "1cbad6d313f2827343c8821dca97325a8b1aa579b72d54b15eeecd20cbe9eeed",
+              "id_order_sha256": "6e110abc2000d5db17a754fb481861d993ab49e9add0e3022a1586ab10f01e19",
+              "same_request_set_difference": null,
+              "same_request_order_matches": null
+            },
+            {
+              "sort": "RELEVANCE",
+              "page_size": 50,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 49,
+              "recommendation_count": 0,
+              "id_set_sha256": "236127b71424d67411f7fcf9b1f4ed10148123ca010faeb0bf7da6ac38d51817",
+              "id_order_sha256": "03f880032db5e2a9ffb3325cbb5e888e48c54a70cb03d8c4b9d654b3c8845d11",
+              "same_request_set_difference": 2,
+              "same_request_order_matches": false
+            },
+            {
+              "sort": "RELEVANCE",
+              "page_size": 50,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 49,
+              "recommendation_count": 0,
+              "id_set_sha256": "236127b71424d67411f7fcf9b1f4ed10148123ca010faeb0bf7da6ac38d51817",
+              "id_order_sha256": "03f880032db5e2a9ffb3325cbb5e888e48c54a70cb03d8c4b9d654b3c8845d11",
+              "same_request_set_difference": 0,
+              "same_request_order_matches": true
+            }
+          ]
+        },
+        {
+          "query": "e",
+          "traversals": [
+            {
+              "pages": [
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 0,
+                  "response_page_type": "search_results_no_prime",
+                  "terminal": false,
+                  "matching_count": 39,
+                  "recommendation_count": 0,
+                  "id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+                  "id_order_sha256": "9d5523c81cd7d39b9742637688b829c859960749c67c808c466e9545a1b38b06"
+                },
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 50,
+                  "response_page_type": "search_results_empty_jumanji",
+                  "terminal": true,
+                  "matching_count": 0,
+                  "recommendation_count": 20,
+                  "id_set_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "id_order_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                }
+              ],
+              "matching_count": 39,
+              "id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+              "page_overlap": 0
+            },
+            {
+              "pages": [
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 0,
+                  "response_page_type": "search_results_no_prime",
+                  "terminal": false,
+                  "matching_count": 39,
+                  "recommendation_count": 0,
+                  "id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+                  "id_order_sha256": "9d5523c81cd7d39b9742637688b829c859960749c67c808c466e9545a1b38b06"
+                },
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 50,
+                  "response_page_type": "search_results_empty_jumanji",
+                  "terminal": true,
+                  "matching_count": 0,
+                  "recommendation_count": 20,
+                  "id_set_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "id_order_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                }
+              ],
+              "matching_count": 39,
+              "id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+              "page_overlap": 0
+            }
+          ],
+          "repeat_set_difference": 0,
+          "repeat_order_matches": true,
+          "outside_browse_count": 0,
+          "references": [
+            {
+              "sort": "TITLE_A_TO_Z",
+              "page_size": 100,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 39,
+              "recommendation_count": 0,
+              "id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+              "id_order_sha256": "9d5523c81cd7d39b9742637688b829c859960749c67c808c466e9545a1b38b06",
+              "paged_set_difference": 0
+            },
+            {
+              "sort": "TITLE_A_TO_Z",
+              "page_size": 200,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 39,
+              "recommendation_count": 0,
+              "id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+              "id_order_sha256": "9d5523c81cd7d39b9742637688b829c859960749c67c808c466e9545a1b38b06",
+              "paged_set_difference": 0
+            },
+            {
+              "sort": "TITLE_Z_TO_A",
+              "page_size": 100,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 39,
+              "recommendation_count": 0,
+              "id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+              "id_order_sha256": "1f9a22a17bf647c6ae4f5b4c73b210c40478827941f6b64be53155d08586edb0",
+              "paged_set_difference": 0
+            }
+          ],
+          "validated": true
+        }
+      ]
+    },
+    {
+      "context": 2,
+      "queries": [
+        {
+          "query": "a",
+          "traversals": [
+            {
+              "pages": [
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 0,
+                  "response_page_type": "search_results_no_prime",
+                  "terminal": false,
+                  "matching_count": 50,
+                  "recommendation_count": 0,
+                  "id_set_sha256": "aa5dbb5dcf3dd824323302c5f7b0eadf97c888d9b54e8b54377e7f87d60d1986",
+                  "id_order_sha256": "97c7507dc54d7b8dce9bf390a1f4fd4e8af01a01ce2bd80892058c4f26aa4ca7"
+                },
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 50,
+                  "response_page_type": "search_results_no_prime",
+                  "terminal": false,
+                  "matching_count": 32,
+                  "recommendation_count": 0,
+                  "id_set_sha256": "334abae19b4106597f7f795979232a3393f5a1d1ed1a4e496d3b3096a57269e7",
+                  "id_order_sha256": "92c0c73ad43e1f56cf871dd1215cbe42dd0eb27f6f0e3c1cf7c69256f257e95c"
+                },
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 100,
+                  "response_page_type": "search_results_empty_jumanji",
+                  "terminal": true,
+                  "matching_count": 0,
+                  "recommendation_count": 20,
+                  "id_set_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "id_order_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                }
+              ],
+              "matching_count": 82,
+              "id_set_sha256": "d2b9739c6303e9b622590bedbca5b825ac9952fe805821a362e29c4e53277b82",
+              "page_overlap": 0
+            },
+            {
+              "pages": [
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 0,
+                  "response_page_type": "search_results_no_prime",
+                  "terminal": false,
+                  "matching_count": 50,
+                  "recommendation_count": 0,
+                  "id_set_sha256": "aa5dbb5dcf3dd824323302c5f7b0eadf97c888d9b54e8b54377e7f87d60d1986",
+                  "id_order_sha256": "97c7507dc54d7b8dce9bf390a1f4fd4e8af01a01ce2bd80892058c4f26aa4ca7"
+                },
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 50,
+                  "response_page_type": "search_results_no_prime",
+                  "terminal": false,
+                  "matching_count": 32,
+                  "recommendation_count": 0,
+                  "id_set_sha256": "334abae19b4106597f7f795979232a3393f5a1d1ed1a4e496d3b3096a57269e7",
+                  "id_order_sha256": "92c0c73ad43e1f56cf871dd1215cbe42dd0eb27f6f0e3c1cf7c69256f257e95c"
+                },
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 100,
+                  "response_page_type": "search_results_empty_jumanji",
+                  "terminal": true,
+                  "matching_count": 0,
+                  "recommendation_count": 20,
+                  "id_set_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "id_order_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                }
+              ],
+              "matching_count": 82,
+              "id_set_sha256": "d2b9739c6303e9b622590bedbca5b825ac9952fe805821a362e29c4e53277b82",
+              "page_overlap": 0
+            }
+          ],
+          "repeat_set_difference": 0,
+          "repeat_order_matches": true,
+          "outside_browse_count": 0,
+          "references": [
+            {
+              "sort": "TITLE_A_TO_Z",
+              "page_size": 100,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 82,
+              "recommendation_count": 0,
+              "id_set_sha256": "d2b9739c6303e9b622590bedbca5b825ac9952fe805821a362e29c4e53277b82",
+              "id_order_sha256": "942a1bbd18135285611fb4b1fda1d8d80b5a1047b03b5c613e1e15e2cad0f82d",
+              "paged_set_difference": 0
+            },
+            {
+              "sort": "TITLE_A_TO_Z",
+              "page_size": 200,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 82,
+              "recommendation_count": 0,
+              "id_set_sha256": "d2b9739c6303e9b622590bedbca5b825ac9952fe805821a362e29c4e53277b82",
+              "id_order_sha256": "942a1bbd18135285611fb4b1fda1d8d80b5a1047b03b5c613e1e15e2cad0f82d",
+              "paged_set_difference": 0
+            },
+            {
+              "sort": "TITLE_Z_TO_A",
+              "page_size": 100,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 82,
+              "recommendation_count": 0,
+              "id_set_sha256": "d2b9739c6303e9b622590bedbca5b825ac9952fe805821a362e29c4e53277b82",
+              "id_order_sha256": "5c34fa20c689be7bf7ef16ef68cce8324cb781f9139cb870ddf39968ce6582a9",
+              "paged_set_difference": 0
+            }
+          ],
+          "validated": true,
+          "relevance_repeats": [
+            {
+              "sort": "RELEVANCE",
+              "page_size": 50,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 49,
+              "recommendation_count": 0,
+              "id_set_sha256": "20ae9b9450d97630041450146a5262a6c8b5022b6cc582b079351b56604a9206",
+              "id_order_sha256": "b98a7db9c050f98ce75fd5845d47b3c4f34e2ea2fe53330f6d9af77fc646b6ef",
+              "same_request_set_difference": null,
+              "same_request_order_matches": null
+            },
+            {
+              "sort": "RELEVANCE",
+              "page_size": 50,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 49,
+              "recommendation_count": 0,
+              "id_set_sha256": "79f0ab6b1daa3c3f4134640b9094c0a08a6c6583a561c853e53cebfda579dd87",
+              "id_order_sha256": "6458a3cb4a243bdee2a330a899c67caa45f5fc67fa2d9096fddec011e568a1eb",
+              "same_request_set_difference": 2,
+              "same_request_order_matches": false
+            },
+            {
+              "sort": "RELEVANCE",
+              "page_size": 50,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 49,
+              "recommendation_count": 0,
+              "id_set_sha256": "1613b37580cc5f9174260cb0fd171fe3d353b744b85b3aea780c9eea6dffb825",
+              "id_order_sha256": "4e24f6409b6c80c31f50efc22e7d0a52befb742e724bfb526ceba2ca33e18e1c",
+              "same_request_set_difference": 4,
+              "same_request_order_matches": false
+            }
+          ],
+          "cross_context_order_matches": true
+        },
+        {
+          "query": "e",
+          "traversals": [
+            {
+              "pages": [
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 0,
+                  "response_page_type": "search_results_no_prime",
+                  "terminal": false,
+                  "matching_count": 39,
+                  "recommendation_count": 0,
+                  "id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+                  "id_order_sha256": "9d5523c81cd7d39b9742637688b829c859960749c67c808c466e9545a1b38b06"
+                },
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 50,
+                  "response_page_type": "search_results_empty_jumanji",
+                  "terminal": true,
+                  "matching_count": 0,
+                  "recommendation_count": 20,
+                  "id_set_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "id_order_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                }
+              ],
+              "matching_count": 39,
+              "id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+              "page_overlap": 0
+            },
+            {
+              "pages": [
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 0,
+                  "response_page_type": "search_results_no_prime",
+                  "terminal": false,
+                  "matching_count": 39,
+                  "recommendation_count": 0,
+                  "id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+                  "id_order_sha256": "9d5523c81cd7d39b9742637688b829c859960749c67c808c466e9545a1b38b06"
+                },
+                {
+                  "sort": "TITLE_A_TO_Z",
+                  "page_size": 50,
+                  "start_index": 50,
+                  "response_page_type": "search_results_empty_jumanji",
+                  "terminal": true,
+                  "matching_count": 0,
+                  "recommendation_count": 20,
+                  "id_set_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "id_order_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                }
+              ],
+              "matching_count": 39,
+              "id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+              "page_overlap": 0
+            }
+          ],
+          "repeat_set_difference": 0,
+          "repeat_order_matches": true,
+          "outside_browse_count": 0,
+          "references": [
+            {
+              "sort": "TITLE_A_TO_Z",
+              "page_size": 100,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 39,
+              "recommendation_count": 0,
+              "id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+              "id_order_sha256": "9d5523c81cd7d39b9742637688b829c859960749c67c808c466e9545a1b38b06",
+              "paged_set_difference": 0
+            },
+            {
+              "sort": "TITLE_A_TO_Z",
+              "page_size": 200,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 39,
+              "recommendation_count": 0,
+              "id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+              "id_order_sha256": "9d5523c81cd7d39b9742637688b829c859960749c67c808c466e9545a1b38b06",
+              "paged_set_difference": 0
+            },
+            {
+              "sort": "TITLE_Z_TO_A",
+              "page_size": 100,
+              "start_index": 0,
+              "response_page_type": "search_results_no_prime",
+              "terminal": false,
+              "matching_count": 39,
+              "recommendation_count": 0,
+              "id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+              "id_order_sha256": "1f9a22a17bf647c6ae4f5b4c73b210c40478827941f6b64be53155d08586edb0",
+              "paged_set_difference": 0
+            }
+          ],
+          "validated": true,
+          "cross_context_order_matches": true
+        }
+      ]
+    }
+  ],
+  "is_complete": false,
+  "limitation": "Manual search requests, not frontend continuation. Validates sampled queries only; browse uses a separate single-response contract.",
+  "sampled_search_pagination_validated": true,
+  "coverage_status": "Unverified"
+}

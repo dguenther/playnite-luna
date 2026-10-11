@@ -1,0 +1,1316 @@
+{
+  "observed_at_utc": "2026-10-11T13:26:10.152307+00:00",
+  "method": "Chromium DOM with Playwright Node APIRequestContext forwarding; configured HTTPS_PROXY and CA; TLS verification enabled",
+  "probe_retrieved_at": "2026-10-11T13:21:26.7414267+00:00",
+  "contexts": [
+    {
+      "context": 1,
+      "default_view": {
+        "quick_search": "my_games",
+        "message": "Please login to see your games",
+        "rendered_game_count": 0
+      },
+      "config": {
+        "defaultLocale": "en_US",
+        "marketplaceId": "ATVPDKIKX0DER",
+        "clientProxy": "https://proxy-prod.us-east-1.tempo.digital.a2z.com"
+      },
+      "views": [
+        {
+          "query": "included_with_prime",
+          "api": {
+            "count": 90,
+            "id_set_sha256": "4b38baaf26c852030f1954c2b9a875230deb02e5ed8a7c5c76df0e8f1eefac9c",
+            "first": "Alan Wake 2",
+            "last": "WRC Generations Fully Loaded Edition"
+          },
+          "rendered_count": 90,
+          "rendered_id_set_sha256": "4b38baaf26c852030f1954c2b9a875230deb02e5ed8a7c5c76df0e8f1eefac9c",
+          "api_minus_rendered": 0,
+          "rendered_minus_api": 0,
+          "probe_minus_api": 0,
+          "api_minus_probe": 0,
+          "title_mismatches": 0,
+          "missing_game_links": 0,
+          "probe_link_mismatches": 0,
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 90
+          },
+          "scroll_trace": [
+            {
+              "top": 0,
+              "height": 3350,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 90
+            },
+            {
+              "top": 720,
+              "height": 3350,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 90
+            },
+            {
+              "top": 1440,
+              "height": 3350,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 90
+            },
+            {
+              "top": 2160,
+              "height": 3350,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 90
+            },
+            {
+              "top": 2450,
+              "height": 3350,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 90
+            },
+            {
+              "top": 2450,
+              "height": 3350,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 90
+            },
+            {
+              "top": 2450,
+              "height": 3350,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 90
+            },
+            {
+              "top": 2450,
+              "height": 3350,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 90
+            }
+          ],
+          "catalog_calls_during_scroll": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            }
+          ],
+          "failed_requests_during_scroll": {
+            "sentry.tempo.digital.a2z.com/api/5/envelope/ HTTP 403": 1,
+            "tempo-client-metric-prod.s3.amazonaws.com/ HTTP 403": 2,
+            "unagi-na.amazon.com/1/events/com.amazon.eel.katal.metrics.core.nexus HTTP 403": 1
+          },
+          "request": {
+            "host": "proxy-prod.us-east-1.tempo.digital.a2z.com",
+            "path": "/getPage",
+            "status": 200,
+            "headers": {
+              "content-type": "text/plain;charset=UTF-8",
+              "origin": "https://luna.amazon.com",
+              "referer": "https://luna.amazon.com/",
+              "x-amz-locale": "en_US",
+              "x-amz-marketplace-id": "ATVPDKIKX0DER",
+              "x-amz-platform": "web",
+              "x-amz-device-type": "browser",
+              "accept-language": "en-US"
+            },
+            "request": {
+              "timeout": 10000,
+              "featureScheme": "WEB_V1",
+              "searchContext": {
+                "query": "included_with_prime",
+                "sort": "TITLE_A_TO_Z",
+                "filtersList": []
+              },
+              "pageContext": {
+                "pageType": "multistate_browse_results",
+                "pageId": "default"
+              },
+              "inputContext": {
+                "gamepadTypes": []
+              },
+              "dynamicFeatures": [],
+              "clientContext": {
+                "browserMetadata": {
+                  "browserClientRole": "browser",
+                  "browserType": "Chrome Headless",
+                  "browserVersion": "154.0.0.0",
+                  "deviceModel": "unknown",
+                  "deviceType": "unknown",
+                  "osName": "Linux",
+                  "osVersion": "0"
+                }
+              }
+            },
+            "response_page_type": "browse_results_included_with_prime"
+          }
+        },
+        {
+          "query": "all_games",
+          "api": {
+            "count": 118,
+            "id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+            "first": "Alan Wake 2",
+            "last": "WRC Generations Fully Loaded Edition"
+          },
+          "rendered_count": 118,
+          "rendered_id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+          "api_minus_rendered": 0,
+          "rendered_minus_api": 0,
+          "probe_minus_api": 0,
+          "api_minus_probe": 0,
+          "title_mismatches": 0,
+          "missing_game_links": 0,
+          "probe_link_mismatches": 0,
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 118
+          },
+          "scroll_trace": [
+            {
+              "top": 0,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 720,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 1440,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 2160,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 2880,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 3320,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 118
+            },
+            {
+              "top": 3320,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 118
+            },
+            {
+              "top": 3320,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 118
+            },
+            {
+              "top": 3320,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 118
+            }
+          ],
+          "catalog_calls_during_scroll": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            }
+          ],
+          "failed_requests_during_scroll": {
+            "unagi-na.amazon.com/1/events/com.amazon.eel.katal.metrics.core.nexus HTTP 403": 1
+          },
+          "request": {
+            "host": "proxy-prod.us-east-1.tempo.digital.a2z.com",
+            "path": "/getPage",
+            "status": 200,
+            "headers": {
+              "content-type": "text/plain;charset=UTF-8",
+              "origin": "https://luna.amazon.com",
+              "referer": "https://luna.amazon.com/",
+              "x-amz-locale": "en_US",
+              "x-amz-marketplace-id": "ATVPDKIKX0DER",
+              "x-amz-platform": "web",
+              "x-amz-device-type": "browser",
+              "accept-language": "en-US"
+            },
+            "request": {
+              "timeout": 10000,
+              "featureScheme": "WEB_V1",
+              "searchContext": {
+                "query": "all_games",
+                "sort": "TITLE_A_TO_Z",
+                "filtersList": []
+              },
+              "pageContext": {
+                "pageType": "multistate_browse_results",
+                "pageId": "default"
+              },
+              "inputContext": {
+                "gamepadTypes": []
+              },
+              "dynamicFeatures": [],
+              "clientContext": {
+                "browserMetadata": {
+                  "browserClientRole": "browser",
+                  "browserType": "Chrome Headless",
+                  "browserVersion": "154.0.0.0",
+                  "deviceModel": "unknown",
+                  "deviceType": "unknown",
+                  "osName": "Linux",
+                  "osVersion": "0"
+                }
+              }
+            },
+            "response_page_type": "browse_results_all_games"
+          }
+        },
+        {
+          "query": "luna_premium",
+          "api": {
+            "count": 118,
+            "id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+            "first": "Alan Wake 2",
+            "last": "WRC Generations Fully Loaded Edition"
+          },
+          "rendered_count": 118,
+          "rendered_id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+          "api_minus_rendered": 0,
+          "rendered_minus_api": 0,
+          "probe_minus_api": 0,
+          "api_minus_probe": 0,
+          "title_mismatches": 0,
+          "missing_game_links": 0,
+          "probe_link_mismatches": 0,
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 118
+          },
+          "scroll_trace": [
+            {
+              "top": 0,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 720,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 1440,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 2160,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 2880,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 3320,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 118
+            },
+            {
+              "top": 3320,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 118
+            },
+            {
+              "top": 3320,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 118
+            },
+            {
+              "top": 3320,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 118
+            }
+          ],
+          "catalog_calls_during_scroll": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            }
+          ],
+          "failed_requests_during_scroll": {},
+          "request": {
+            "host": "proxy-prod.us-east-1.tempo.digital.a2z.com",
+            "path": "/getPage",
+            "status": 200,
+            "headers": {
+              "content-type": "text/plain;charset=UTF-8",
+              "origin": "https://luna.amazon.com",
+              "referer": "https://luna.amazon.com/",
+              "x-amz-locale": "en_US",
+              "x-amz-marketplace-id": "ATVPDKIKX0DER",
+              "x-amz-platform": "web",
+              "x-amz-device-type": "browser",
+              "accept-language": "en-US"
+            },
+            "request": {
+              "timeout": 10000,
+              "featureScheme": "WEB_V1",
+              "searchContext": {
+                "query": "luna_premium",
+                "sort": "TITLE_A_TO_Z",
+                "filtersList": []
+              },
+              "pageContext": {
+                "pageType": "multistate_browse_results",
+                "pageId": "default"
+              },
+              "inputContext": {
+                "gamepadTypes": []
+              },
+              "dynamicFeatures": [],
+              "clientContext": {
+                "browserMetadata": {
+                  "browserClientRole": "browser",
+                  "browserType": "Chrome Headless",
+                  "browserVersion": "154.0.0.0",
+                  "deviceModel": "unknown",
+                  "deviceType": "unknown",
+                  "osName": "Linux",
+                  "osVersion": "0"
+                }
+              }
+            },
+            "response_page_type": "browse_results_luna_premium"
+          }
+        },
+        {
+          "query": "game_night",
+          "api": {
+            "count": 50,
+            "id_set_sha256": "0a9f95f7a6eb90b83a649f982eb641f960bc35b186ca9804babaf219b7326b66",
+            "first": "Angry Birds Flock Party",
+            "last": "Worms W.M.D"
+          },
+          "rendered_count": 50,
+          "rendered_id_set_sha256": "0a9f95f7a6eb90b83a649f982eb641f960bc35b186ca9804babaf219b7326b66",
+          "api_minus_rendered": 0,
+          "rendered_minus_api": 0,
+          "probe_minus_api": 0,
+          "api_minus_probe": 0,
+          "title_mismatches": 0,
+          "missing_game_links": 0,
+          "probe_link_mismatches": 0,
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 50
+          },
+          "scroll_trace": [
+            {
+              "top": 0,
+              "height": 2192,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 50
+            },
+            {
+              "top": 720,
+              "height": 2192,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 50
+            },
+            {
+              "top": 1292,
+              "height": 2192,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 50
+            },
+            {
+              "top": 1292,
+              "height": 2192,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 50
+            },
+            {
+              "top": 1292,
+              "height": 2192,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 50
+            },
+            {
+              "top": 1292,
+              "height": 2192,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 50
+            }
+          ],
+          "catalog_calls_during_scroll": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            }
+          ],
+          "failed_requests_during_scroll": {},
+          "request": {
+            "host": "proxy-prod.us-east-1.tempo.digital.a2z.com",
+            "path": "/getPage",
+            "status": 200,
+            "headers": {
+              "content-type": "text/plain;charset=UTF-8",
+              "origin": "https://luna.amazon.com",
+              "referer": "https://luna.amazon.com/",
+              "x-amz-locale": "en_US",
+              "x-amz-marketplace-id": "ATVPDKIKX0DER",
+              "x-amz-platform": "web",
+              "x-amz-device-type": "browser",
+              "accept-language": "en-US"
+            },
+            "request": {
+              "timeout": 10000,
+              "featureScheme": "WEB_V1",
+              "searchContext": {
+                "query": "game_night",
+                "sort": "TITLE_A_TO_Z",
+                "filtersList": []
+              },
+              "pageContext": {
+                "pageType": "multistate_browse_results",
+                "pageId": "default"
+              },
+              "inputContext": {
+                "gamepadTypes": []
+              },
+              "dynamicFeatures": [],
+              "clientContext": {
+                "browserMetadata": {
+                  "browserClientRole": "browser",
+                  "browserType": "Chrome Headless",
+                  "browserVersion": "154.0.0.0",
+                  "deviceModel": "unknown",
+                  "deviceType": "unknown",
+                  "osName": "Linux",
+                  "osVersion": "0"
+                }
+              }
+            },
+            "response_page_type": "browse_results_game_night"
+          }
+        }
+      ],
+      "subscriptions_in_filter_menu": [
+        "Luna Standard",
+        "Luna Premium"
+      ],
+      "overlaps": {
+        "Standard & Premium": 90,
+        "Standard & GameNight": 50,
+        "Premium & GameNight": 50
+      },
+      "all_minus_category_union": 0,
+      "category_union_minus_all": 0,
+      "blocked_requests": {
+        "sentry.tempo.digital.a2z.com/api/5/envelope/ HTTP 403": 14,
+        "s.amazon-adsystem.com/ HTTP 403": 1,
+        "tempo-client-metric-prod.s3.amazonaws.com/ HTTP 403": 5,
+        "unagi-na.amazon.com/1/events/com.amazon.eel.katal.metrics.core.nexus HTTP 403": 4
+      }
+    },
+    {
+      "context": 2,
+      "default_view": {
+        "quick_search": "my_games",
+        "message": "Please login to see your games",
+        "rendered_game_count": 0
+      },
+      "config": {
+        "defaultLocale": "en_US",
+        "marketplaceId": "ATVPDKIKX0DER",
+        "clientProxy": "https://proxy-prod.us-east-1.tempo.digital.a2z.com"
+      },
+      "views": [
+        {
+          "query": "included_with_prime",
+          "api": {
+            "count": 90,
+            "id_set_sha256": "4b38baaf26c852030f1954c2b9a875230deb02e5ed8a7c5c76df0e8f1eefac9c",
+            "first": "Alan Wake 2",
+            "last": "WRC Generations Fully Loaded Edition"
+          },
+          "rendered_count": 90,
+          "rendered_id_set_sha256": "4b38baaf26c852030f1954c2b9a875230deb02e5ed8a7c5c76df0e8f1eefac9c",
+          "api_minus_rendered": 0,
+          "rendered_minus_api": 0,
+          "probe_minus_api": 0,
+          "api_minus_probe": 0,
+          "title_mismatches": 0,
+          "missing_game_links": 0,
+          "probe_link_mismatches": 0,
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 90
+          },
+          "scroll_trace": [
+            {
+              "top": 0,
+              "height": 3350,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 90
+            },
+            {
+              "top": 720,
+              "height": 3350,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 90
+            },
+            {
+              "top": 1440,
+              "height": 3350,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 90
+            },
+            {
+              "top": 2160,
+              "height": 3350,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 90
+            },
+            {
+              "top": 2450,
+              "height": 3350,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 90
+            },
+            {
+              "top": 2450,
+              "height": 3350,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 90
+            },
+            {
+              "top": 2450,
+              "height": 3350,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 90
+            },
+            {
+              "top": 2450,
+              "height": 3350,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 90
+            }
+          ],
+          "catalog_calls_during_scroll": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            }
+          ],
+          "failed_requests_during_scroll": {
+            "sentry.tempo.digital.a2z.com/api/5/envelope/ HTTP 403": 1,
+            "tempo-client-metric-prod.s3.amazonaws.com/ HTTP 403": 2,
+            "unagi-na.amazon.com/1/events/com.amazon.eel.katal.metrics.core.nexus HTTP 403": 1
+          },
+          "request": {
+            "host": "proxy-prod.us-east-1.tempo.digital.a2z.com",
+            "path": "/getPage",
+            "status": 200,
+            "headers": {
+              "content-type": "text/plain;charset=UTF-8",
+              "origin": "https://luna.amazon.com",
+              "referer": "https://luna.amazon.com/",
+              "x-amz-locale": "en_US",
+              "x-amz-marketplace-id": "ATVPDKIKX0DER",
+              "x-amz-platform": "web",
+              "x-amz-device-type": "browser",
+              "accept-language": "en-US"
+            },
+            "request": {
+              "timeout": 10000,
+              "featureScheme": "WEB_V1",
+              "searchContext": {
+                "query": "included_with_prime",
+                "sort": "TITLE_A_TO_Z",
+                "filtersList": []
+              },
+              "pageContext": {
+                "pageType": "multistate_browse_results",
+                "pageId": "default"
+              },
+              "inputContext": {
+                "gamepadTypes": []
+              },
+              "dynamicFeatures": [],
+              "clientContext": {
+                "browserMetadata": {
+                  "browserClientRole": "browser",
+                  "browserType": "Chrome Headless",
+                  "browserVersion": "154.0.0.0",
+                  "deviceModel": "unknown",
+                  "deviceType": "unknown",
+                  "osName": "Linux",
+                  "osVersion": "0"
+                }
+              }
+            },
+            "response_page_type": "browse_results_included_with_prime"
+          }
+        },
+        {
+          "query": "all_games",
+          "api": {
+            "count": 118,
+            "id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+            "first": "Alan Wake 2",
+            "last": "WRC Generations Fully Loaded Edition"
+          },
+          "rendered_count": 118,
+          "rendered_id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+          "api_minus_rendered": 0,
+          "rendered_minus_api": 0,
+          "probe_minus_api": 0,
+          "api_minus_probe": 0,
+          "title_mismatches": 0,
+          "missing_game_links": 0,
+          "probe_link_mismatches": 0,
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 118
+          },
+          "scroll_trace": [
+            {
+              "top": 0,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 720,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 1440,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 2160,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 2880,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 3320,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 118
+            },
+            {
+              "top": 3320,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 118
+            },
+            {
+              "top": 3320,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 118
+            },
+            {
+              "top": 3320,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 118
+            }
+          ],
+          "catalog_calls_during_scroll": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            }
+          ],
+          "failed_requests_during_scroll": {
+            "unagi-na.amazon.com/1/events/com.amazon.eel.katal.metrics.core.nexus HTTP 403": 1
+          },
+          "request": {
+            "host": "proxy-prod.us-east-1.tempo.digital.a2z.com",
+            "path": "/getPage",
+            "status": 200,
+            "headers": {
+              "content-type": "text/plain;charset=UTF-8",
+              "origin": "https://luna.amazon.com",
+              "referer": "https://luna.amazon.com/",
+              "x-amz-locale": "en_US",
+              "x-amz-marketplace-id": "ATVPDKIKX0DER",
+              "x-amz-platform": "web",
+              "x-amz-device-type": "browser",
+              "accept-language": "en-US"
+            },
+            "request": {
+              "timeout": 10000,
+              "featureScheme": "WEB_V1",
+              "searchContext": {
+                "query": "all_games",
+                "sort": "TITLE_A_TO_Z",
+                "filtersList": []
+              },
+              "pageContext": {
+                "pageType": "multistate_browse_results",
+                "pageId": "default"
+              },
+              "inputContext": {
+                "gamepadTypes": []
+              },
+              "dynamicFeatures": [],
+              "clientContext": {
+                "browserMetadata": {
+                  "browserClientRole": "browser",
+                  "browserType": "Chrome Headless",
+                  "browserVersion": "154.0.0.0",
+                  "deviceModel": "unknown",
+                  "deviceType": "unknown",
+                  "osName": "Linux",
+                  "osVersion": "0"
+                }
+              }
+            },
+            "response_page_type": "browse_results_all_games"
+          }
+        },
+        {
+          "query": "luna_premium",
+          "api": {
+            "count": 118,
+            "id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+            "first": "Alan Wake 2",
+            "last": "WRC Generations Fully Loaded Edition"
+          },
+          "rendered_count": 118,
+          "rendered_id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+          "api_minus_rendered": 0,
+          "rendered_minus_api": 0,
+          "probe_minus_api": 0,
+          "api_minus_probe": 0,
+          "title_mismatches": 0,
+          "missing_game_links": 0,
+          "probe_link_mismatches": 0,
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 118
+          },
+          "scroll_trace": [
+            {
+              "top": 0,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 720,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 1440,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 2160,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 2880,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 118
+            },
+            {
+              "top": 3320,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 118
+            },
+            {
+              "top": 3320,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 118
+            },
+            {
+              "top": 3320,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 118
+            },
+            {
+              "top": 3320,
+              "height": 4220,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 118
+            }
+          ],
+          "catalog_calls_during_scroll": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            }
+          ],
+          "failed_requests_during_scroll": {
+            "unagi-na.amazon.com/1/events/com.amazon.eel.katal.metrics.core.nexus HTTP 403": 1
+          },
+          "request": {
+            "host": "proxy-prod.us-east-1.tempo.digital.a2z.com",
+            "path": "/getPage",
+            "status": 200,
+            "headers": {
+              "content-type": "text/plain;charset=UTF-8",
+              "origin": "https://luna.amazon.com",
+              "referer": "https://luna.amazon.com/",
+              "x-amz-locale": "en_US",
+              "x-amz-marketplace-id": "ATVPDKIKX0DER",
+              "x-amz-platform": "web",
+              "x-amz-device-type": "browser",
+              "accept-language": "en-US"
+            },
+            "request": {
+              "timeout": 10000,
+              "featureScheme": "WEB_V1",
+              "searchContext": {
+                "query": "luna_premium",
+                "sort": "TITLE_A_TO_Z",
+                "filtersList": []
+              },
+              "pageContext": {
+                "pageType": "multistate_browse_results",
+                "pageId": "default"
+              },
+              "inputContext": {
+                "gamepadTypes": []
+              },
+              "dynamicFeatures": [],
+              "clientContext": {
+                "browserMetadata": {
+                  "browserClientRole": "browser",
+                  "browserType": "Chrome Headless",
+                  "browserVersion": "154.0.0.0",
+                  "deviceModel": "unknown",
+                  "deviceType": "unknown",
+                  "osName": "Linux",
+                  "osVersion": "0"
+                }
+              }
+            },
+            "response_page_type": "browse_results_luna_premium"
+          }
+        },
+        {
+          "query": "game_night",
+          "api": {
+            "count": 50,
+            "id_set_sha256": "0a9f95f7a6eb90b83a649f982eb641f960bc35b186ca9804babaf219b7326b66",
+            "first": "Angry Birds Flock Party",
+            "last": "Worms W.M.D"
+          },
+          "rendered_count": 50,
+          "rendered_id_set_sha256": "0a9f95f7a6eb90b83a649f982eb641f960bc35b186ca9804babaf219b7326b66",
+          "api_minus_rendered": 0,
+          "rendered_minus_api": 0,
+          "probe_minus_api": 0,
+          "api_minus_probe": 0,
+          "title_mismatches": 0,
+          "missing_game_links": 0,
+          "probe_link_mismatches": 0,
+          "widget_types": {
+            "GRID": 1,
+            "GAME_TILE": 50
+          },
+          "scroll_trace": [
+            {
+              "top": 0,
+              "height": 2192,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 50
+            },
+            {
+              "top": 720,
+              "height": 2192,
+              "client": 900,
+              "at_bottom": false,
+              "rendered_ids": 50
+            },
+            {
+              "top": 1292,
+              "height": 2192,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 50
+            },
+            {
+              "top": 1292,
+              "height": 2192,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 50
+            },
+            {
+              "top": 1292,
+              "height": 2192,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 50
+            },
+            {
+              "top": 1292,
+              "height": 2192,
+              "client": 900,
+              "at_bottom": true,
+              "rendered_ids": 50
+            }
+          ],
+          "catalog_calls_during_scroll": [
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            },
+            {
+              "path": "/getPage",
+              "status": 200,
+              "response_page_type": "game_detail_anonymous",
+              "search_query": null,
+              "request_page_type": null
+            }
+          ],
+          "failed_requests_during_scroll": {},
+          "request": {
+            "host": "proxy-prod.us-east-1.tempo.digital.a2z.com",
+            "path": "/getPage",
+            "status": 200,
+            "headers": {
+              "content-type": "text/plain;charset=UTF-8",
+              "origin": "https://luna.amazon.com",
+              "referer": "https://luna.amazon.com/",
+              "x-amz-locale": "en_US",
+              "x-amz-marketplace-id": "ATVPDKIKX0DER",
+              "x-amz-platform": "web",
+              "x-amz-device-type": "browser",
+              "accept-language": "en-US"
+            },
+            "request": {
+              "timeout": 10000,
+              "featureScheme": "WEB_V1",
+              "searchContext": {
+                "query": "game_night",
+                "sort": "TITLE_A_TO_Z",
+                "filtersList": []
+              },
+              "pageContext": {
+                "pageType": "multistate_browse_results",
+                "pageId": "default"
+              },
+              "inputContext": {
+                "gamepadTypes": []
+              },
+              "dynamicFeatures": [],
+              "clientContext": {
+                "browserMetadata": {
+                  "browserClientRole": "browser",
+                  "browserType": "Chrome Headless",
+                  "browserVersion": "154.0.0.0",
+                  "deviceModel": "unknown",
+                  "deviceType": "unknown",
+                  "osName": "Linux",
+                  "osVersion": "0"
+                }
+              }
+            },
+            "response_page_type": "browse_results_game_night"
+          }
+        }
+      ],
+      "subscriptions_in_filter_menu": [
+        "Luna Standard",
+        "Luna Premium"
+      ],
+      "overlaps": {
+        "Standard & Premium": 90,
+        "Standard & GameNight": 50,
+        "Premium & GameNight": 50
+      },
+      "all_minus_category_union": 0,
+      "category_union_minus_all": 0,
+      "blocked_requests": {
+        "sentry.tempo.digital.a2z.com/api/5/envelope/ HTTP 403": 14,
+        "s.amazon-adsystem.com/ HTTP 403": 1,
+        "tempo-client-metric-prod.s3.amazonaws.com/ HTTP 403": 5,
+        "unagi-na.amazon.com/1/events/com.amazon.eel.katal.metrics.core.nexus HTTP 403": 4,
+        "m.media-amazon.com/images/I/F1dMAXoQIKL.mp4 TimeoutError": 1
+      }
+    }
+  ],
+  "is_complete": false,
+  "coverage_status": "Unverified",
+  "browser_version": "154.0.8037.57",
+  "native_navigation": "ERR_CERT_AUTHORITY_INVALID"
+}

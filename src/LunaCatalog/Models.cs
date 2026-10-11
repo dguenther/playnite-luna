@@ -21,7 +21,7 @@ namespace LunaCatalog
 
         public static IReadOnlyList<CatalogQuery> UsQueries { get; } = new[]
         {
-            new CatalogQuery("AllGames", "", "browse_results_all_games", null),
+            new CatalogQuery("AllGames", "all_games", "browse_results_all_games", null),
             new CatalogQuery("Standard", "included_with_prime", "browse_results_included_with_prime", "Standard"),
             new CatalogQuery("Premium", "luna_premium", "browse_results_luna_premium", "Premium"),
             new CatalogQuery("GameNight", "game_night", "browse_results_game_night", "GameNight")
@@ -133,7 +133,7 @@ namespace LunaCatalog
                 .SelectMany(q => q.Games).Select(g => g.Region + ":" + g.Id), StringComparer.Ordinal);
             snapshot.Diagnostics.Add("AllGames minus category union: " + all.Except(categorized).Count());
             snapshot.Diagnostics.Add("Category union minus AllGames: " + categorized.Except(all).Count());
-            snapshot.Diagnostics.Add("Website coverage and scroll behavior remain unverified; this is a research snapshot.");
+            snapshot.Diagnostics.Add("Full website coverage remains unverified; separate browser evidence is required. This is a research snapshot.");
             return snapshot;
         }
 

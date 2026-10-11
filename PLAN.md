@@ -1,23 +1,24 @@
 # Amazon Luna Catalog Browser — implementation plan
 
-Reviewed October 10, 2026 against `dguenther/playnite-luna` main at
-[`f309b5b`](https://github.com/dguenther/playnite-luna/commit/f309b5bb7ba836b1bcfb37f978c871982876dece).
+Reconciled October 11, 2026 (UTC) against PR
+[#5](https://github.com/dguenther/playnite-luna/pull/5) in
+`dguenther/playnite-luna`. Evidence timestamps use UTC.
 
 This is the working checklist reconciled with the uploaded implementation plan.
 [docs/implementation-plan.md](docs/implementation-plan.md) already contains that
 plan; its text matches the attachment after whitespace normalization. Keep it as
 the original specification and update this file as milestones gain evidence.
 
-**Current state: Milestone A / Phase 0 is partially complete. Full US catalog
-completeness is unverified.** The repository has a reusable provider, a research
-CLI, fixtures, validation, and CI. It has no production cache, Playnite extension,
-browser UI, imports, or `.pext`. Resume the coverage investigation before advancing
-to those features.
+**Current state: Milestone A / Phase 0 passes for the public US streaming catalog
+recorded October 11, 2026.** The repository has a reusable provider, a research
+CLI, a full scoped audit/export command, fixtures, validation, and CI. It has no
+production cache, Playnite extension, browser UI, imports, or `.pext`.
+Proceed to Milestone B using the [recorded completeness contract](docs/streaming-completeness.md).
 
-A checked item below means the implementation or recorded evidence exists at the
-reviewed commit. It does not imply a whole phase has passed. Live findings and
-previous test results are attributed to repository records; this planning review
-did not repeat live retrieval or execute .NET tests.
+A checked item below means implementation or linked evidence exists in this
+working tree. Phase verdicts are stated separately; see
+[the validation record](docs/validation.md) for the completed scoped audit and
+earlier research runs.
 
 ## Goal and constraints
 
@@ -43,7 +44,7 @@ Amazon account connection.
 
 ### Already present
 
-- [x] Sequential anonymous `getPage` requests for All Games (empty query),
+- [x] Sequential anonymous `getPage` requests for All Games (`all_games`),
   Standard (`included_with_prime`), Premium (`luna_premium`), and GameNight
   (`game_night`), requesting `en_US` / marketplace `ATVPDKIKX0DER`.
 - [x] Nested `GAME_TILE` parsing within the direct
@@ -61,59 +62,91 @@ Amazon account connection.
 - [x] Fail closed for empty/malformed responses, unexpected page types, rejected
   tiles, unresolved continuation markers/actions, and reported totals exceeding
   observed tiles. Preserve existing exports and write separate failure diagnostics.
+- [x] Confirm applied policy allows the frontend configuration host; distinguish
+  anonymous My Games from public catalog tabs. No login was needed for public grids.
+- [x] Capture the frontend-selected US endpoint and explicit `all_games` query;
+  align provider requests with those observed fields.
+- [x] Compare all four rendered browse grids in two fresh anonymous contexts:
+  counts, IDs, titles, alphabetical boundaries, overlaps, and terminal scrolling.
+  [Sanitized evidence](docs/evidence/2026-10-11-anonymous-browser.json) records no
+  further browse-results calls; extra calls returned anonymous game details.
+- [x] Commit an optional reproducible browser-evidence tool using normal proxy
+  routing and verified Node TLS. Native Chromium certificate trust remains unfixed.
 
-### Remaining investigation
+### Latest continuation
 
-1. **Reproduce and resolve the browser evidence blocker.** The latest handoff
-   reports that frontend assets are accessible, but clean signed-out browse
-   navigation redirects to Luna's login route and the next Amazon sign-in
-   destination is denied by the proxy. Normal Chromium CA trust also remains to
-   be verified. Record environment, route, and observed failures using supported
-   network/TLS configuration. Do not assume the earlier asset-host blocker persists.
-2. **Capture actual browse requests.** Visit `https://luna.amazon.com/browse` and
-   the three `quick_search` URLs from the source plan in a clean anonymous context.
-   Compare headers, body, marketplace, query selection, and response structure with
-   [docs/luna-api.md](docs/luna-api.md). Determine necessary request fields.
-3. **Verify termination.** Scroll all four views to the end and record every
-   subsequent request. Implement a continuation protocol only if observed;
-   test traversal, repeated cursors, cancellation, and failed intermediate pages.
-   If no continuation exists, retain repeatable evidence of terminal scrolling.
-4. **Verify full coverage.** Compare native IDs, trustworthy website counts,
-   alphabetical endpoints, recognizable games from each membership, category
-   overlaps, search results, and catalog groups outside the three filters.
-   Confirm whether `GAME_TILE` records include promotions, DLC, editions, or other
-   non-playable storefront items.
-5. **Verify US interpretation and usable links.** Compare the rendered region and
-   representative game pages, including both ID namespaces and slug-only actions.
-   Explain the recorded anonymous "Not Available" detail buttons without treating
-   them as removals or proof of entitlement. Record any regional differences
-   relevant to US completeness; additional-region product support stays deferred.
-6. **Repeat independently and record the verdict.** Repeat anonymous availability
-   checks in a fresh context, commit sanitized evidence/fixtures, and update the
-   API documentation with exact request requirements, coverage, termination,
-   limitations, and reproduction commands.
+- [x] Recover normal proxy egress using supported command network permission;
+  rerun the cookie-free US CLI with all five detail checks.
+- [x] Repair browser cleanup hanging on background routes; require catalog
+  requests to drain within 30 seconds. Rerun the exact final tool in two contexts,
+  including every rendered card's probe link.
+- [x] Repeat eight nonempty searches and loaded Home/GameNight discovery groups
+  in two fresh contexts; compare rendered IDs/titles/links with API and All.
+- [x] Render all five representative action pages independently twice, including
+  Batman's `amzn1.luna.product` ID and Fortnite's slug-only URL. All document/detail
+  requests returned 200 and identity/canonical/title/primary-label checks passed.
+- [x] Distinguish main products, recommendation cards, DLC, editions, and marketing
+  placement in observed views. Alien has eight `ADD_ON_TILE` widgets; Tetris's
+  GameNight landing link does not imply filtered GameNight membership.
+- [x] Commit [search/discovery](docs/evidence/2026-10-11-search-discovery.json)
+  and the historical [search offset experiment](docs/evidence/2026-10-11-search-offsets.json).
+- [x] Resolve the observed search ambiguity: frontend scrolling slices one loaded
+  response; repeated `TITLE_A_TO_Z` offsets give 82 `a` and 39 `e` matches,
+  identical to larger/reverse-sorted requests in two anonymous contexts.
+  Exclude recommendations on explicit no-results pages. Commit
+  [source evidence](docs/evidence/2026-10-11-search-frontend.json) and
+  [validated traversals](docs/evidence/2026-10-11-stable-search-pagination.json).
+  Retain pagination/export regression checks in CI.
+- [x] Exclude Claims assets and PC giveaways from the streaming gate, per the
+  clarified scope. Historical Claims failures do not block streaming work.
+
+### Full streaming audit and verdict
+
+- [x] Close the advertised route graph at 13 streaming pages in two fresh browser
+  contexts, including the subscription listing, family-friendly filter, and all
+  three GameNight collections. Visit every carousel slide and terminal grid.
+- [x] Apply all 26 advertised genre filters anonymously; Home's My Games genre
+  links are tested with the same filter applied to All Games.
+- [x] Traverse all 36 letter/digit searches to explicit terminal states in two
+  anonymous request contexts. Each union equals All's 118 IDs; reverse-title
+  references match. Check the empty-query discovery recommendations separately.
+- [x] Validate all 118 main products twice: native ID, ASIN, title, and canonical
+  Luna URL. All 111 distinct recommendation IDs remain inside All. Final All
+  rechecks in both title orders confirm the catalog stayed unchanged.
+- [x] Commit a repeatable scoped audit and reduced evidence. Only a successful
+  full audit can export the checked snapshot as `Verified` / `isComplete: true`;
+  bind it to the source hash, scope, and verification time. Coverage failures
+  preserve existing evidence and verified exports. The Python
+  offline suite contains 24 tests, including eight full-audit regression checks.
+
+Native Chromium trust remains unresolved; verified Node forwarding works and
+does not repair it. This environment limitation does not block the scoped audit.
 
 **Gate A:** programmatic anonymous retrieval, all necessary pages, demonstrated US
 website coverage, stable identities, usable Luna links, explained memberships,
-and committed repeatable evidence must all pass. The existing absence of cursors,
-118-game count, query equality, frontend code inspection, and sample detail checks
-do not satisfy this gate. If verification remains blocked, retain a limited
-research result with an explicit blocker and leave Gate A open.
+and committed repeatable evidence must all pass. The current evidence supports
+the observed public US streaming catalog across the advertised route graph,
+genre filters, search, and product details. **Gate A passes for this scope.**
+Claims, PC giveaways, account libraries, and entitlement/playability are excluded.
+The raw C# fetch remains unverified; only the specific audited export is complete.
+See [the verdict and evidence](docs/streaming-completeness.md).
 
 ## B — Complete the production data layer (Phase 1)
 
 Depends on Gate A. Reuse existing models, provider abstraction, parsing, and
 transport; do not restart them.
 
-- [ ] Separate request success, page-traversal completion, and independently
-  supported catalog coverage in the snapshot contract. Retain retrieval time,
-  region/marketplace, queried memberships, diagnostics, and schema version.
-  Current `IsComplete` is always false; `CoverageStatus` is `Unverified` for usable
-  research results and `Incomplete` for failed checks. Replace that research
-  contract only with evidence-backed production validation.
+- [ ] Replace the research-only `Unverified` / `IsComplete: false` contract with
+  production refresh validation. Download the current API data through C# at
+  runtime using the browse protocol established by Gate A; validate required
+  queries, region, response structure, identities, and continuation/total fields.
+  Retain retrieval time, marketplace, queried memberships, diagnostics, and schema
+  version. The Python audit and its dated receipt are optional research artifacts;
+  neither a full audit per refresh nor receipt import is a production prerequisite.
 - [ ] Reconcile the current strict All Games/category-union equality rule with
-  Gate A findings. If legitimate games exist outside those memberships, retain
-  them in All rather than fabricating a category or rejecting a complete catalog.
+  production refresh validation. Gate A found equal sets, so the observed
+  contract supports the current rule. If future evidence establishes legitimate
+  unclassified games, retain them in All without inventing memberships.
 - [ ] Preserve native-ID-first identity with ASIN fallback. Define migration or
   reconciliation if an ASIN-only entry later gains a native ID; never merge by
   title or resolve conflicting identities silently.
@@ -132,7 +165,9 @@ transport; do not restart them.
   errors as distinct states. Load cached data when Luna is unavailable.
 - [ ] Add tests for validated-cache reload, atomic replacement and recovery,
   rejected partial/zero snapshots, region mismatch, and failed-refresh preservation;
-  extend traversal/category tests according to Gate A.
+  extend traversal/category tests according to Gate A. Continue using reduced,
+  representative first-party API samples; no complete response/catalog fixture
+  or fixed historical game count is required. Cache normalized runtime data.
 
 **Gate B:** retrieval still works independently of Playnite; overlapping games
 normalize once; a validated cache survives restart; failed refreshes preserve it;
@@ -207,7 +242,7 @@ Depends on Gates A–D. Retain the existing offline suite and CI.
 | --- | --- | --- |
 | Recorded responses, nested tiles, malformed presentation data | Parser/detail fixtures and tests; canonical browse-collection restrictions | Extend fixtures for any newly observed contract. |
 | Membership overlap, region identity, duplicate ASINs, title collisions | Parser/model/validation tests, including identity conflicts | Production identity migration and import behavior. |
-| Pagination and incomplete results | Marker/action/total rejection and category-set disagreement | Actual traversal and termination protocol, if discovered. |
+| Pagination and incomplete results | Marker/action/total rejection, category-set disagreement, and 36-query alphabetical traversal with explicit termination in the research audit | Future browse continuation, if observed; runtime validation using the established browse contract. |
 | 401/403/429/500, timeouts, cancellation | Provider/transport tests; bounded retry/deferral, body deadlines/limits, UTF-8/depth checks | Regressions across any new request types. |
 | Cache recovery and atomic replacement | Research-export success/failure tests only | Production cache restart, corruption, interrupted replacement, schema handling. |
 | Additions/removals across snapshots | No snapshot-diff implementation | Same-region complete-snapshot comparisons and failure safeguards; no MVP deletion. |
@@ -215,9 +250,12 @@ Depends on Gates A–D. Retain the existing offline suite and CI.
 
 - [x] .NET 8 SDK selection, committed NuGet lock files, locked restore, Release
   build, and offline tests in GitHub Actions.
-- [x] Repository validation record reports 97 passing cases and builds for
-  `net462` and `net8.0` with zero warnings/errors. This is prior evidence,
-  not a new test run from this planning change.
+- [x] This continuation repeated 97 passing cases and Release builds for
+  `net462` and `net8.0` with zero warnings/errors, including the US endpoint/query change.
+- [x] Twenty-four Python offline checks cover evidence safety, incomplete comparisons,
+  context cleanup, bounded catalog draining, search termination, and unstable
+  pages/reference disagreement, complete audit requirements, snapshot binding,
+  and export protection; both offline suites run in CI.
 - [ ] Complete the outstanding automated coverage above and retain sanitized,
   minimal fixtures rather than shipping a bulk catalog database.
 - [ ] Run and record the source plan's manual scenarios on Windows/Playnite 10:
@@ -277,11 +315,13 @@ A successful current live run also returns 2. Failures return 1 and write separa
 diagnostics without replacing the existing export; invalid arguments return 64
 and cancellation returns 130.
 
-**Next increment:** reproduce the signed-out browse/TLS blocker, obtain normal
-browser request/scroll evidence where feasible, and commit the Gate A verdict
-with sanitized supporting evidence. Keep increments independently testable and
-follow A → B → C → D → E. If Gate A cannot close, report the reproducible blocker
-and working limited probe without labeling it a complete catalog.
+For the full scoped audit and optional verified export, follow
+[README's streaming verification commands](README.md#verify-a-streaming-snapshot).
+That audit returns 0 on success; the C# probe keeps its research exit code 2.
+
+**Next increment:** Milestone B's production data layer and versioned cache,
+using runtime C# downloads, response validation, and failure safeguards. Keep
+increments independently testable and follow B → C → D → E.
 
 ## Deferred improvements
 

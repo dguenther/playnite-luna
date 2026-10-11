@@ -1,0 +1,1136 @@
+{
+  "schema_version": 1,
+  "scope": "PublicUSStreamingCatalog",
+  "observed_at_utc": "2026-10-11T15:17:09.621826+00:00",
+  "source_snapshot_sha256": "9e33ced96e22ac9f1c911aed24f4c64841f733088714ea26ca5316671b3e98d3",
+  "catalog_id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+  "catalog_count": 118,
+  "exclusions": [
+    "Claims/PC giveaways",
+    "Account library and entitlements",
+    "Account-specific streaming eligibility"
+  ],
+  "method": "Public route graph and all carousel slides in two fresh Chromium contexts; advertised genre filters, 36 paginated searches, every product detail and final browse rechecks in two anonymous Node contexts. Configured proxy and verified TLS.",
+  "completed_at_utc": "2026-10-11T15:24:11.772494+00:00",
+  "is_complete": true,
+  "coverage_status": "Verified",
+  "reduction": "Counts, hashes, route/filter manifest, and comparison outcomes retained. Repeated request traces and identical second-context rows omitted. Full results can be regenerated with streaming_audit.py; full datasets stay in ignored artifacts/.",
+  "browser_comparison": {
+    "contexts": 2,
+    "config": {
+      "defaultLocale": "en_US",
+      "marketplaceId": "ATVPDKIKX0DER",
+      "clientProxy": "https://proxy-prod.us-east-1.tempo.digital.a2z.com"
+    },
+    "route_graph_matches": true,
+    "genre_route_manifest_matches": true,
+    "carousel_instances_per_context": [
+      27,
+      27
+    ],
+    "slide_positions_per_context": [
+      229,
+      229
+    ],
+    "account_routes_excluded": [
+      "/browse?genre=ACTION&quick_search=my_games",
+      "/browse?genre=ADVENTURE&quick_search=my_games",
+      "/browse?genre=ARCADE&quick_search=my_games",
+      "/browse?genre=FIGHTING&quick_search=my_games",
+      "/browse?genre=HORROR&quick_search=my_games",
+      "/browse?genre=PARTY&quick_search=my_games",
+      "/browse?genre=PUZZLE&quick_search=my_games",
+      "/browse?genre=RACING&quick_search=my_games",
+      "/browse?genre=RPG&quick_search=my_games",
+      "/browse?genre=SHOOTER&quick_search=my_games",
+      "/browse?genre=SIMULATION&quick_search=my_games",
+      "/browse?genre=SPORTS&quick_search=my_games",
+      "/browse?genre=STRATEGY&quick_search=my_games",
+      "/browse?genre=TABLETOP&quick_search=my_games"
+    ],
+    "pages": [
+      {
+        "path": "/",
+        "document_http_status": 200,
+        "loaded_count": 36,
+        "loaded_id_set_sha256": "57ca720657f1ad3b6b87035253209b737f01599fcd8c6d5f59ae817772d3138f",
+        "outside_browse_count": 0,
+        "game_link_count": 38,
+        "outside_browse_link_count": 0,
+        "card_count": 36,
+        "card_link_mismatches": 0,
+        "card_title_mismatches": 0,
+        "scroll_terminal": true,
+        "failed_catalog_requests": {},
+        "cross_context_id_set_matches": true,
+        "carousel_count": 8,
+        "all_carousels_terminal": true,
+        "catalog_response_status_counts": {
+          "200": 4
+        }
+      },
+      {
+        "path": "/gamenight",
+        "document_http_status": 200,
+        "loaded_count": 50,
+        "loaded_id_set_sha256": "0a9f95f7a6eb90b83a649f982eb641f960bc35b186ca9804babaf219b7326b66",
+        "outside_browse_count": 0,
+        "game_link_count": 50,
+        "outside_browse_link_count": 0,
+        "card_count": 50,
+        "card_link_mismatches": 0,
+        "card_title_mismatches": 0,
+        "scroll_terminal": true,
+        "failed_catalog_requests": {},
+        "cross_context_id_set_matches": true,
+        "carousel_count": 8,
+        "all_carousels_terminal": true,
+        "catalog_response_status_counts": {
+          "200": 3
+        }
+      },
+      {
+        "path": "/browse?quick_search=all_games",
+        "document_http_status": 200,
+        "loaded_count": 118,
+        "loaded_id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+        "outside_browse_count": 0,
+        "game_link_count": 118,
+        "outside_browse_link_count": 0,
+        "card_count": 118,
+        "card_link_mismatches": 0,
+        "card_title_mismatches": 0,
+        "scroll_terminal": true,
+        "failed_catalog_requests": {},
+        "all_games_id_difference": 0,
+        "all_games_rendered_id_difference": 0,
+        "cross_context_id_set_matches": true,
+        "carousel_count": 1,
+        "all_carousels_terminal": true,
+        "catalog_response_status_counts": {
+          "200": 5
+        }
+      },
+      {
+        "path": "/browse?quick_search=included_with_prime",
+        "document_http_status": 200,
+        "loaded_count": 90,
+        "loaded_id_set_sha256": "4b38baaf26c852030f1954c2b9a875230deb02e5ed8a7c5c76df0e8f1eefac9c",
+        "outside_browse_count": 0,
+        "game_link_count": 90,
+        "outside_browse_link_count": 0,
+        "card_count": 90,
+        "card_link_mismatches": 0,
+        "card_title_mismatches": 0,
+        "scroll_terminal": true,
+        "failed_catalog_requests": {},
+        "cross_context_id_set_matches": true,
+        "carousel_count": 1,
+        "all_carousels_terminal": true,
+        "catalog_response_status_counts": {
+          "200": 4
+        }
+      },
+      {
+        "path": "/browse?quick_search=luna_premium",
+        "document_http_status": 200,
+        "loaded_count": 118,
+        "loaded_id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+        "outside_browse_count": 0,
+        "game_link_count": 118,
+        "outside_browse_link_count": 0,
+        "card_count": 118,
+        "card_link_mismatches": 0,
+        "card_title_mismatches": 0,
+        "scroll_terminal": true,
+        "failed_catalog_requests": {},
+        "cross_context_id_set_matches": true,
+        "carousel_count": 1,
+        "all_carousels_terminal": true,
+        "catalog_response_status_counts": {
+          "200": 4
+        }
+      },
+      {
+        "path": "/browse?quick_search=game_night",
+        "document_http_status": 200,
+        "loaded_count": 50,
+        "loaded_id_set_sha256": "0a9f95f7a6eb90b83a649f982eb641f960bc35b186ca9804babaf219b7326b66",
+        "outside_browse_count": 0,
+        "game_link_count": 50,
+        "outside_browse_link_count": 0,
+        "card_count": 50,
+        "card_link_mismatches": 0,
+        "card_title_mismatches": 0,
+        "scroll_terminal": true,
+        "failed_catalog_requests": {},
+        "cross_context_id_set_matches": true,
+        "carousel_count": 1,
+        "all_carousels_terminal": true,
+        "catalog_response_status_counts": {
+          "200": 4
+        }
+      },
+      {
+        "path": "/gamenight/browse?quick_search=game_night",
+        "document_http_status": 200,
+        "loaded_count": 50,
+        "loaded_id_set_sha256": "0a9f95f7a6eb90b83a649f982eb641f960bc35b186ca9804babaf219b7326b66",
+        "outside_browse_count": 0,
+        "game_link_count": 50,
+        "outside_browse_link_count": 0,
+        "card_count": 50,
+        "card_link_mismatches": 0,
+        "card_title_mismatches": 0,
+        "scroll_terminal": true,
+        "failed_catalog_requests": {},
+        "cross_context_id_set_matches": true,
+        "carousel_count": 1,
+        "all_carousels_terminal": true,
+        "catalog_response_status_counts": {
+          "200": 5
+        }
+      },
+      {
+        "path": "/subscription/luna-standard",
+        "document_http_status": 200,
+        "loaded_count": 90,
+        "loaded_id_set_sha256": "4b38baaf26c852030f1954c2b9a875230deb02e5ed8a7c5c76df0e8f1eefac9c",
+        "outside_browse_count": 0,
+        "game_link_count": 90,
+        "outside_browse_link_count": 0,
+        "card_count": 90,
+        "card_link_mismatches": 0,
+        "card_title_mismatches": 0,
+        "scroll_terminal": true,
+        "failed_catalog_requests": {},
+        "cross_context_id_set_matches": true,
+        "carousel_count": 1,
+        "all_carousels_terminal": true,
+        "catalog_response_status_counts": {
+          "200": 5
+        }
+      },
+      {
+        "path": "/gamenight/browse",
+        "document_http_status": 200,
+        "loaded_count": 50,
+        "loaded_id_set_sha256": "0a9f95f7a6eb90b83a649f982eb641f960bc35b186ca9804babaf219b7326b66",
+        "outside_browse_count": 0,
+        "game_link_count": 50,
+        "outside_browse_link_count": 0,
+        "card_count": 50,
+        "card_link_mismatches": 0,
+        "card_title_mismatches": 0,
+        "scroll_terminal": true,
+        "failed_catalog_requests": {},
+        "cross_context_id_set_matches": true,
+        "carousel_count": 1,
+        "all_carousels_terminal": true,
+        "catalog_response_status_counts": {
+          "200": 4
+        }
+      },
+      {
+        "path": "/gamenight/browse?quick_search=family_friendly",
+        "document_http_status": 200,
+        "loaded_count": 26,
+        "loaded_id_set_sha256": "a77cccc00f0eb3164d7f3265e184e8cdbea887f1e904da322e48b24c3b833c91",
+        "outside_browse_count": 0,
+        "game_link_count": 26,
+        "outside_browse_link_count": 0,
+        "card_count": 26,
+        "card_link_mismatches": 0,
+        "card_title_mismatches": 0,
+        "scroll_terminal": true,
+        "failed_catalog_requests": {},
+        "cross_context_id_set_matches": true,
+        "carousel_count": 1,
+        "all_carousels_terminal": true,
+        "catalog_response_status_counts": {
+          "200": 4
+        }
+      },
+      {
+        "path": "/gamenight/collection/clash-and-compete",
+        "document_http_status": 200,
+        "loaded_count": 6,
+        "loaded_id_set_sha256": "419243442e175b4b04fae53030a355580f8e54997c42419389f0baf0ab3063b1",
+        "outside_browse_count": 0,
+        "game_link_count": 6,
+        "outside_browse_link_count": 0,
+        "card_count": 6,
+        "card_link_mismatches": 0,
+        "card_title_mismatches": 0,
+        "scroll_terminal": true,
+        "failed_catalog_requests": {},
+        "cross_context_id_set_matches": true,
+        "carousel_count": 1,
+        "all_carousels_terminal": true,
+        "catalog_response_status_counts": {
+          "200": 4
+        }
+      },
+      {
+        "path": "/gamenight/collection/quickplay",
+        "document_http_status": 200,
+        "loaded_count": 6,
+        "loaded_id_set_sha256": "77ef56c9f3f2d42090bbbe3fd6f8c80480d10be799ea75f73300afbf26168a87",
+        "outside_browse_count": 0,
+        "game_link_count": 6,
+        "outside_browse_link_count": 0,
+        "card_count": 6,
+        "card_link_mismatches": 0,
+        "card_title_mismatches": 0,
+        "scroll_terminal": true,
+        "failed_catalog_requests": {},
+        "cross_context_id_set_matches": true,
+        "carousel_count": 1,
+        "all_carousels_terminal": true,
+        "catalog_response_status_counts": {
+          "200": 4
+        }
+      },
+      {
+        "path": "/gamenight/collection/working-together",
+        "document_http_status": 200,
+        "loaded_count": 6,
+        "loaded_id_set_sha256": "7cfbadeaace6d8bcfd49cf9b77134194d0087736d20e10ef9a331e0a85c16757",
+        "outside_browse_count": 0,
+        "game_link_count": 6,
+        "outside_browse_link_count": 0,
+        "card_count": 6,
+        "card_link_mismatches": 0,
+        "card_title_mismatches": 0,
+        "scroll_terminal": true,
+        "failed_catalog_requests": {},
+        "cross_context_id_set_matches": true,
+        "carousel_count": 1,
+        "all_carousels_terminal": true,
+        "catalog_response_status_counts": {
+          "200": 4
+        }
+      }
+    ]
+  },
+  "api_comparison": {
+    "contexts": 2,
+    "genre_rows_match": true,
+    "genres": [
+      {
+        "path": "/browse?genre=ACTION&quick_search=all_games",
+        "response_page_type": "browse_results_all_games",
+        "count": 58,
+        "id_set_sha256": "96d450dc738cbc978af19be47bc4adc329914db5ecd490491dcf5304325f1d9d",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/browse?genre=ADVENTURE&quick_search=all_games",
+        "response_page_type": "browse_results_all_games",
+        "count": 43,
+        "id_set_sha256": "3dfd2e5d1e91789a8f97d0955c5b5f23855bdc75a60c5946ae304795853cd16b",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/browse?genre=ARCADE&quick_search=all_games",
+        "response_page_type": "browse_results_all_games",
+        "count": 21,
+        "id_set_sha256": "aa4a14e9c40afeefb2f75a01762247eb5001f8642297e367ca918ccf24105ef6",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/browse?genre=FIGHTING&quick_search=all_games",
+        "response_page_type": "browse_results_all_games",
+        "count": 1,
+        "id_set_sha256": "4d605ef4ef99fd4c6b6b3c76257c86c4c16da1ac73b8c82fff00ce1ec8622ce7",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/browse?genre=HORROR&quick_search=all_games",
+        "response_page_type": "browse_results_all_games",
+        "count": 5,
+        "id_set_sha256": "35057891b030c7ddb1977aa1b903941f1705742ccffa9775d9de4183e2a256bd",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/browse?genre=PARTY&quick_search=all_games",
+        "response_page_type": "browse_results_all_games",
+        "count": 28,
+        "id_set_sha256": "18b934681dc92311de4fc799fd589e209332a85952c585441116c5806bfa517b",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/browse?genre=PUZZLE&quick_search=all_games",
+        "response_page_type": "browse_results_all_games",
+        "count": 22,
+        "id_set_sha256": "e837450c5fccf6dba0089e96d12abc021f16b4b7f32e15bbf39dee5437b337df",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/browse?genre=RACING&quick_search=all_games",
+        "response_page_type": "browse_results_all_games",
+        "count": 11,
+        "id_set_sha256": "554fca7dccd25bf4c3a8cdcdc986eae8e0e923498f62637023d3f429553c7abf",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/browse?genre=RPG&quick_search=all_games",
+        "response_page_type": "browse_results_all_games",
+        "count": 6,
+        "id_set_sha256": "0640be495b56bf179299dc8363748a1c99fd13d57def5455d59a54dedfec03d7",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/browse?genre=SHOOTER&quick_search=all_games",
+        "response_page_type": "browse_results_all_games",
+        "count": 13,
+        "id_set_sha256": "9083e7f69253156dfea28ea654f4e77488adeec6797226d2f705a2c1bd5f71a2",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/browse?genre=SIMULATION&quick_search=all_games",
+        "response_page_type": "browse_results_all_games",
+        "count": 17,
+        "id_set_sha256": "7a4f41b52f027437d3dfdc47293401486aa6ffcfff7eaf9a97611aa24987d962",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/browse?genre=SPORTS&quick_search=all_games",
+        "response_page_type": "browse_results_all_games",
+        "count": 11,
+        "id_set_sha256": "a3bff52977bac175e6bb390c564408febac13c3dd9dc2b8764913540cc79b7c6",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/browse?genre=STRATEGY&quick_search=all_games",
+        "response_page_type": "browse_results_all_games",
+        "count": 16,
+        "id_set_sha256": "b9282702d59e3e34b8fb6783f9435be21aa111d73e73a63229fc470f1a96d5b4",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/browse?genre=TABLETOP&quick_search=all_games",
+        "response_page_type": "browse_results_all_games",
+        "count": 9,
+        "id_set_sha256": "f239723708aa4541ba27b0e8ad089a258a06c95d23d5b2117badbe39b675800e",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/gamenight/browse?genre=ACTION&quick_search=game_night",
+        "response_page_type": "browse_results_game_night",
+        "count": 12,
+        "id_set_sha256": "a572ecb47f407a5a29bdc96346483910b5303d07dcbc2dc417c50f53d9723e17",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/gamenight/browse?genre=ADVENTURE&quick_search=game_night",
+        "response_page_type": "browse_results_game_night",
+        "count": 8,
+        "id_set_sha256": "a5b911594b29b48885af13e2341b63e70bd802ad8f97b567d20c5288e8059261",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/gamenight/browse?genre=ARCADE&quick_search=game_night",
+        "response_page_type": "browse_results_game_night",
+        "count": 16,
+        "id_set_sha256": "73edd8aa7e262eeed144483b569a1c37c16d07bcdda9e57b9741b575b0c97671",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/gamenight/browse?genre=FIGHTING&quick_search=game_night",
+        "response_page_type": "browse_results_game_night",
+        "count": 1,
+        "id_set_sha256": "4d605ef4ef99fd4c6b6b3c76257c86c4c16da1ac73b8c82fff00ce1ec8622ce7",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/gamenight/browse?genre=PARTY&quick_search=game_night",
+        "response_page_type": "browse_results_game_night",
+        "count": 28,
+        "id_set_sha256": "18b934681dc92311de4fc799fd589e209332a85952c585441116c5806bfa517b",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/gamenight/browse?genre=PUZZLE&quick_search=game_night",
+        "response_page_type": "browse_results_game_night",
+        "count": 19,
+        "id_set_sha256": "b741430337ab4b6ebbae6bbd4f690fda7d01888ade96382748e1f8bcf6bb58b6",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/gamenight/browse?genre=RACING&quick_search=game_night",
+        "response_page_type": "browse_results_game_night",
+        "count": 3,
+        "id_set_sha256": "ae0ae7489d165c89ebd7c8f68639237cbf55d14bd231c6e2ce225d6ccbde1439",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/gamenight/browse?genre=SHOOTER&quick_search=game_night",
+        "response_page_type": "browse_results_game_night",
+        "count": 3,
+        "id_set_sha256": "eb3ab98bcbfadf1b523e622b0f91eeb78284b3da7f90ef21778926085b8c2827",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/gamenight/browse?genre=SIMULATION&quick_search=game_night",
+        "response_page_type": "browse_results_game_night",
+        "count": 7,
+        "id_set_sha256": "985e427ac7897f0130149120f443755cf409f843edca0146d788d7c934a435f2",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/gamenight/browse?genre=SPORTS&quick_search=game_night",
+        "response_page_type": "browse_results_game_night",
+        "count": 6,
+        "id_set_sha256": "3329efa091f71379c7a5935fe34caee8fb37b42f696584e15dd984c2ef356835",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/gamenight/browse?genre=STRATEGY&quick_search=game_night",
+        "response_page_type": "browse_results_game_night",
+        "count": 14,
+        "id_set_sha256": "52c29456b69cdc7dd1d7e4ce5cd795e3413174a2a98eef6960ce7e985b6c0704",
+        "outside_browse_count": 0
+      },
+      {
+        "path": "/gamenight/browse?genre=TABLETOP&quick_search=game_night",
+        "response_page_type": "browse_results_game_night",
+        "count": 9,
+        "id_set_sha256": "f239723708aa4541ba27b0e8ad089a258a06c95d23d5b2117badbe39b675800e",
+        "outside_browse_count": 0
+      }
+    ],
+    "search_landing": [
+      {
+        "count": 20,
+        "id_set_sha256": "fe4f52c497d880d5dc48b8a35fb0d476ad8ea4fec613f72abdbfabecbee683dd",
+        "outside_browse_count": 0
+      },
+      {
+        "count": 20,
+        "id_set_sha256": "fe4f52c497d880d5dc48b8a35fb0d476ad8ea4fec613f72abdbfabecbee683dd",
+        "outside_browse_count": 0
+      }
+    ],
+    "search": [
+      {
+        "query": "a",
+        "matching_count": 82,
+        "id_set_sha256": "d2b9739c6303e9b622590bedbca5b825ac9952fe805821a362e29c4e53277b82",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          50,
+          32,
+          0
+        ],
+        "terminal_index": 100,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "b",
+        "matching_count": 27,
+        "id_set_sha256": "248081b88580766fcf83842b2cb50d6e14e152c71b3458842958a0f9937add76",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          27,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "c",
+        "matching_count": 79,
+        "id_set_sha256": "61fe3e46d81db0ed0e8d06b951760fe752ea09d4946acbb3b7b10f018ecdefcf",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          50,
+          29,
+          0
+        ],
+        "terminal_index": 100,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "d",
+        "matching_count": 28,
+        "id_set_sha256": "624dd7a3ce48d326b7db6d89d12f2b52d79da5a23982c458749a05d0b3f1ad38",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          28,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "e",
+        "matching_count": 39,
+        "id_set_sha256": "a632ce3946f336d274a71427ca58246dc257beb7171796c57a4c66d1d129b409",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          39,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "f",
+        "matching_count": 18,
+        "id_set_sha256": "a7ad91aa3b2443c12ffed44128039b488a4496b2db18ccb2f42a2638fae3a74e",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          18,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "g",
+        "matching_count": 56,
+        "id_set_sha256": "4c8738757d6dad074de271d91ccac8d39a83d467db94c317206342f5bedec379",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          50,
+          6,
+          0
+        ],
+        "terminal_index": 100,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "h",
+        "matching_count": 20,
+        "id_set_sha256": "5919ee4fa1c9f3316cfb81dd5277a25e25b8705b1837b3bb142dc71440fb0fb0",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          20,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "i",
+        "matching_count": 18,
+        "id_set_sha256": "3ce65df926614afaa1fa932ad01ca0823278d26b9e236babc143bae943ef85b2",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          18,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "j",
+        "matching_count": 9,
+        "id_set_sha256": "8641a7176c84687cc1051841338193e5d4e218174c2ec88139e3b4d7524f1d93",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          9,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "k",
+        "matching_count": 116,
+        "id_set_sha256": "8a7c95860ba0de8b8dc70546fb92bc7e3af49c419f9807fb8183be77285a375a",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          50,
+          50,
+          16,
+          0
+        ],
+        "terminal_index": 150,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "l",
+        "matching_count": 102,
+        "id_set_sha256": "d83d1f1931a6990bb81b263609a89c492e9fc88bbb187d38827272960a4d5085",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          50,
+          50,
+          2,
+          0
+        ],
+        "terminal_index": 150,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "m",
+        "matching_count": 59,
+        "id_set_sha256": "b75eeaf939c43405d544d3b90495c727c4ccc4543d9e7a3037b51178248e9783",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          50,
+          9,
+          0
+        ],
+        "terminal_index": 100,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "n",
+        "matching_count": 11,
+        "id_set_sha256": "84325f185b2db51c70f4a7efe3446e7118e14e20c1fdee97ad923c6ceee8c505",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          11,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "o",
+        "matching_count": 19,
+        "id_set_sha256": "d73c129d9b501bf4d5f6795fc7ce83484d8120747627b78f6f7ba991685edcc9",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          19,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "p",
+        "matching_count": 118,
+        "id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          50,
+          50,
+          18,
+          0
+        ],
+        "terminal_index": 150,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "q",
+        "matching_count": 3,
+        "id_set_sha256": "ee927caeb7e71b5b3227b73ae903c2b1b90af8cb9ae872e251287bd6f50de3c9",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          3,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "r",
+        "matching_count": 94,
+        "id_set_sha256": "4a78d8e1914d46be0fc669d2e71c82fb2575e9f8a42afc758f850bbba0177a1b",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          50,
+          44,
+          0
+        ],
+        "terminal_index": 100,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "s",
+        "matching_count": 118,
+        "id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          50,
+          50,
+          18,
+          0
+        ],
+        "terminal_index": 150,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "t",
+        "matching_count": 30,
+        "id_set_sha256": "8ef11f5e4a173ece29781d36c036422b72aa1f26996e0f6f65ec379612ffeab1",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          30,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "u",
+        "matching_count": 12,
+        "id_set_sha256": "d40e68f749a9a09b2d14e161cb7ef70f59184f8762a71d9bd56d37aa65019f6d",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          12,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "v",
+        "matching_count": 35,
+        "id_set_sha256": "b5c8b51eb1d8bab06a5d42d31ff95d47b32a1f70f1dcdd4017b6ac2062894c52",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          35,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "w",
+        "matching_count": 20,
+        "id_set_sha256": "700905316870c1d88823c61470e2f49d67988194f19bbdd97c9de042c5e208a0",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          20,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "x",
+        "matching_count": 2,
+        "id_set_sha256": "716e9571855e0caf321aef7b8e4ba488f22aed672c8bbd6cd04430574587c27a",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          2,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "y",
+        "matching_count": 7,
+        "id_set_sha256": "2cdbf6a0353790d6b98206a8be66ddb228af2bed4d3080da55c3c1951101b152",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          7,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "z",
+        "matching_count": 1,
+        "id_set_sha256": "5a9c6e45f132557108febde57dcd7aa20d7fd6f3a3423a7d641ddc164c0a3dd1",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          1,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "0",
+        "matching_count": 0,
+        "id_set_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          0
+        ],
+        "terminal_index": 0,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "1",
+        "matching_count": 32,
+        "id_set_sha256": "89f18252efac92d0c2f9f1def15575abc90b8c049971459b1db62d6786c89c05",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          32,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "2",
+        "matching_count": 9,
+        "id_set_sha256": "f436a29603247722462d33adb2ef834e37778422f6807511f6735207e403d8fe",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          9,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "3",
+        "matching_count": 1,
+        "id_set_sha256": "675885ebf95e03374bcd0c6ce74814770333f4e6afa9e207275b9c9c90983df8",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          1,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "4",
+        "matching_count": 9,
+        "id_set_sha256": "be54740da085a8e522067f993d9e2584fa9f110d748b1888ad00299c6ec1fcab",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          9,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "5",
+        "matching_count": 32,
+        "id_set_sha256": "3186c95b2991607fbf230a5545c495076e097999563dfb76f2a63b21c6fa6377",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          32,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "6",
+        "matching_count": 0,
+        "id_set_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          0
+        ],
+        "terminal_index": 0,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "7",
+        "matching_count": 17,
+        "id_set_sha256": "21d1d50b1d6a699c40842ecd2f43e659f05c57dd247cc264d68f06e73cf54c8b",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          17,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "8",
+        "matching_count": 1,
+        "id_set_sha256": "517aad0bdaab3d632bdcf86497a5e2952fd40a57ca04c1b5b0d4bea578171b06",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          1,
+          0
+        ],
+        "terminal_index": 50,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      },
+      {
+        "query": "9",
+        "matching_count": 0,
+        "id_set_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "page_overlap": 0,
+        "outside_browse_count": 0,
+        "reverse_reference_difference": 0,
+        "page_matching_counts": [
+          0
+        ],
+        "terminal_index": 0,
+        "terminal_recommendation_count": 20,
+        "cross_context_pages_and_order_match": true
+      }
+    ],
+    "search_union_count": [
+      118,
+      118
+    ],
+    "search_union_id_set_sha256": [
+      "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+      "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2"
+    ],
+    "search_union_difference": [
+      0,
+      0
+    ],
+    "details": [
+      {
+        "checked": 118,
+        "failures": [],
+        "primary_labels": {
+          "Play free with Prime": 90,
+          "Included in Luna Premium": 28
+        },
+        "recommendation_count": 111,
+        "recommendations_outside_browse_count": 0
+      },
+      {
+        "checked": 118,
+        "failures": [],
+        "primary_labels": {
+          "Play free with Prime": 90,
+          "Included in Luna Premium": 28
+        },
+        "recommendation_count": 111,
+        "recommendations_outside_browse_count": 0
+      }
+    ],
+    "browse_rechecks": [
+      [
+        {
+          "sort": "TITLE_A_TO_Z",
+          "count": 118,
+          "id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+          "difference": 0,
+          "response_page_type": "browse_results_all_games"
+        },
+        {
+          "sort": "TITLE_Z_TO_A",
+          "count": 118,
+          "id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+          "difference": 0,
+          "response_page_type": "browse_results_all_games"
+        }
+      ],
+      [
+        {
+          "sort": "TITLE_A_TO_Z",
+          "count": 118,
+          "id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+          "difference": 0,
+          "response_page_type": "browse_results_all_games"
+        },
+        {
+          "sort": "TITLE_Z_TO_A",
+          "count": 118,
+          "id_set_sha256": "dcdae9e7fb31405cdcafd481dc08cfeede0ed2f73322f9cd1e40e1034a051be2",
+          "difference": 0,
+          "response_page_type": "browse_results_all_games"
+        }
+      ]
+    ]
+  }
+}
