@@ -1,6 +1,6 @@
 # Amazon Luna Catalog Browser for Playnite
 
-Milestone D preview for Playnite 10: a WPF catalog browser with saved offline data, runtime C# refreshes, local search/category filters, artwork, Open in Luna actions, and optional selected/bulk library imports. The provider and browser model build for .NET Framework 4.6.2 and .NET 8; the library plugin targets `net462` with Playnite SDK 6.17.0. Host validation is in progress; restart/persistence, theme, and clean-install checks remain pending.
+Playnite 10 preview: an inline sidebar catalog browser with an optional separate window, saved offline data, runtime C# refreshes, local search/category filters, artwork, Open in Luna actions, and selected/bulk library imports. The provider and browser model build for .NET Framework 4.6.2 and .NET 8; the library plugin targets `net462` with Playnite SDK 6.17.0. Host validation is in progress; sidebar, restart/persistence, theme, and clean-install checks remain pending.
 
 See [PLAN.md](PLAN.md) for the implementation checklist reconciled with the original plan and the current repository.
 
@@ -8,11 +8,15 @@ See [PLAN.md](PLAN.md) for the implementation checklist reconciled with the orig
 
 Windows CI packages a `.pext` with the official Playnite 10.62 Toolbox and uploads
 it as `luna-playnite-preview`. Download that artifact from the successful Windows
-workflow run on [PR #8](https://github.com/dguenther/playnite-luna/pull/8), extract
+workflow run on [PR #9](https://github.com/dguenther/playnite-luna/pull/9), extract
 the `.pext`, and open it with Playnite. This is a development preview awaiting
 host validation, not a verified release.
 
-In Playnite Desktop Mode, open **Amazon Luna Catalog Browser** from the main menu.
+In Playnite Desktop Mode, click the monochrome Luna symbol labeled **Browse Amazon Luna Catalog**
+in the sidebar to browse inside Playnite. **Amazon Luna Catalog Browser** in the
+main menu opens an optional separate window. Both views share filters, selection,
+and operations. Switching away from the last open view cancels unfinished work;
+already imported games remain in the library.
 Saved games appear without an API request. On first use, choose **Refresh** to
 download the public US streaming catalog. Search, category filters, and title
 sorting work locally; select a game and choose **Open in Luna**. Failed or
@@ -56,7 +60,7 @@ dotnet build AmazonLuna.sln -c Release --no-restore
 dotnet test tests/LunaCatalog.Tests/LunaCatalog.Tests.csproj -c Release --no-build
 ```
 
-The suite has 262 .NET tests and 24 Python offline checks. After installing the
+The suite has 267 .NET tests and 24 Python offline checks. After installing the
 [pinned Python dependency](tools/LunaBrowserEvidence/README.md#setup), run:
 
 ```sh

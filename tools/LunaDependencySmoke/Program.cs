@@ -3,6 +3,8 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Resources;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,6 +24,17 @@ namespace LunaDependencySmoke
                 var hostJson = Assembly.LoadFrom(Path.Combine(host, "Newtonsoft.Json.dll"));
                 var hostSdk = Assembly.LoadFrom(Path.Combine(host, "Playnite.SDK.dll"));
                 var plugin = Assembly.LoadFrom(Path.Combine(package, "LunaPlaynite.dll"));
+                using (var resources = plugin.GetManifestResourceStream("LunaPlaynite.g.resources"))
+                using (var reader = new ResourceReader(resources!))
+                {
+                    var logo = reader.Cast<DictionaryEntry>().Single(entry => (string)entry.Key == "resources/luna-symbol.path");
+                    using (var bytes = (Stream)logo.Value)
+                    using (var sha = SHA256.Create())
+                        if (BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-", "").ToLowerInvariant() !=
+                            "49d9bad571e99a91efd31d671b550d39ec14bc84388af064f097a0ab26f97c4c")
+                            throw new InvalidOperationException("The installed archive does not contain the official standalone Luna vector geometry.");
+                    Console.WriteLine("Installed official Luna vector resource checks passed.");
+                }
                 var pluginType = plugin.GetTypes().Single(type => type.Name == "LunaPlugin");
                 if (pluginType.BaseType!.Assembly != hostSdk) throw new InvalidOperationException("Plugin did not bind to the host SDK.");
                 if (pluginType.BaseType.Name != "LibraryPlugin" || !File.ReadAllText(Path.Combine(package, "extension.yaml")).Contains("Type: GameLibrary"))

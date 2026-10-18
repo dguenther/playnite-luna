@@ -1,5 +1,69 @@
 # Catalog validation record
 
+## Monochrome sidebar symbol — preview 0.2.4
+
+The user screenshot shows the official circular purple favicon in Playnite and
+requests a monochrome symbol matching the other sidebar icons. This preview
+uses the exact standalone path from the official website's `TempoLogoSVG`
+component. WPF renders the embedded geometry without a circle and inherits the
+host sidebar foreground, including theme and selection changes. Coordinates,
+source, conversion details, and SHA-256 are recorded in the
+[resource notes](../src/LunaPlaynite/Resources/README.md) and packaged notices.
+
+The Windows WPF harness checks offline vector parsing, transparent surroundings
+and center, and foreground updates inherited from the parent button. The
+installed-archive check verifies the embedded geometry resource's SHA-256.
+The .NET/Python suites remain 267/24. Actual host appearance across themes and
+DPI settings remains a manual check.
+
+## Official sidebar logo — preview 0.2.3
+
+The user screenshot confirms that the sidebar catalog renders inside Playnite.
+The requested branding update replaces the placeholder moon with the unmodified
+128×128 PNG linked as Luna's official website icon. The asset is embedded in
+`LunaPlaynite.dll`, loaded through a local WPF resource URI, and rendered with
+high-quality scaling at sidebar size. No network icon request or extra runtime
+file is introduced; source, SHA-256, and attribution are recorded in the
+resource notes and packaged notices at that version. Preview `0.2.4` replaces
+that asset with the standalone symbol described above.
+
+The existing Windows sidebar check now verifies offline logo decoding and
+dimensions. The installed-archive check verifies the embedded PNG's SHA-256
+against the original. The .NET/Python suites remain 267/24; host logo appearance
+at different DPI/theme settings still requires manual checking.
+
+## October 18 inline sidebar follow-up — preview 0.2.2
+
+Merged Milestone D PR #8 is the baseline (`7c21d4f`). The extension now offers a
+Desktop sidebar moon icon titled **Browse Amazon Luna Catalog**. It uses the SDK's
+native view callback to return the catalog control inline, with no eager catalog
+initialization or network request during sidebar registration. The optional
+main-menu window remains available. Separate controls share one browsing model,
+service/cache pair, artwork cache, import service, and busy state. Filters wrap
+to fit narrower inline content areas.
+
+`CatalogBrowserSession` coordinates active hosts. Leaving the last view cancels
+unfinished work, preserves committed games, and saves preferences. Another open
+host keeps work running. Reopening waits for cancellation to settle, then loads
+cached state and reconciles imports without an API fetch. Hidden controls stop
+their timers/handlers and unloaded artwork requests; shutdown hides the sidebar
+registration and cancels the shared session.
+
+Five new session regressions bring the .NET total to **267**, alongside the
+existing **24 Python checks**. They cover offline restoration, filters/selection,
+one/last-host cancellation, rapid reopening, duplicate imports across hosts, and
+retaining committed entries on disposal. Windows smoke checks invoke production
+sidebar and main-menu callbacks with actual SDK/WPF controls, switch inline
+content away/back, open both hosts, check shared selection/filters/preferences,
+verify Fullscreen exclusion, and dispose without new library entries or changed
+catalog cache bytes. The preview remains the same six runtime files, with a
+vector icon in the DLL and shared host JSON 10.
+
+These checks do not establish actual Playnite sidebar/theme/keyboard/DPI behavior.
+Complete [the sidebar host checks](playnite-browser.md#outstanding-windows-host-checks)
+and the remaining C/D checklists before closing those gates. No new live catalog
+audit or full saved API fixture is needed.
+
 ## Host feedback follow-up — preview 0.2.1
 
 The user reports that the `0.2.0` browser opens in Playnite and imported games

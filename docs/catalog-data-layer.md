@@ -110,7 +110,7 @@ older candidates. It reports additions, removals, metadata/membership changes,
 and identity migrations. Titles never define identity.
 
 An ASIN-only ID gaining a native product ID with the same ASIN is one retained
-game. `IdentityMigrations` records the old/new IDs for the future import service.
+game. `IdentityMigrations` records the old/new IDs for import reconciliation.
 Both snapshots retain ASIN metadata, allowing later reconciliation after a
 restart. A native ID changing its ASIN, a conflicting native ID for the same
 ASIN, or a downgrade from native ID to ASIN-only is rejected pending evidence.
@@ -123,8 +123,9 @@ removal confirmation and departed-game tags remain deferred.
 
 ## Verification and next step
 
-The suite contains 262 .NET tests, including 88 production data-layer cases,
-26 browser/artwork cases, and 51 import/mapping/browser cases, plus 24 Python checks. Production tests use the existing
+The suite contains 267 .NET tests, including 88 production data-layer cases,
+26 browser/artwork cases, 51 import/mapping/browser cases, and five session lifecycle
+cases, plus 24 Python checks. Production tests use the existing
 five-game API samples
 and targeted edge cases, with an injected HTTP handler and real temporary cache
 files. CI builds both library targets and runs both suites on Linux and Windows.

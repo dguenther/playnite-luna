@@ -15,6 +15,8 @@ using System.Windows.Threading;
 using LunaCatalog;
 using LunaCatalogBrowser;
 using LunaPlaynite;
+using Playnite.SDK;
+using Playnite.SDK.Events;
 using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
 
@@ -116,6 +118,7 @@ namespace LunaPlayniteSmoke
         private static async Task RunAsync()
         {
             var application = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+            SmokeDatabase.InitializeSdkSettings();
             application.Resources["TextBrush"] = Brushes.White;
             application.Resources["TextBrushDark"] = Brushes.Black;
             var itemTheme = new Style(typeof(ListBoxItem));
@@ -135,6 +138,7 @@ namespace LunaPlayniteSmoke
                     Check(!plugin.GetGames(new LibraryGetGamesArgs()).Any(), "A library update would automatically import the catalog.");
                 }
                 CheckLegacyMigration(directory);
+                await CheckSidebarAsync(directory);
                 var cache = new JsonCatalogCache(directory, () => time);
                 await cache.SaveAsync(CatalogValidator.ValidateSnapshot(Snapshot(), "US", time), CancellationToken.None);
                 var originalBytes = File.ReadAllBytes(Path.Combine(directory, "catalog-US.json"));
@@ -285,6 +289,90 @@ namespace LunaPlayniteSmoke
                 "Library migration overwrote user metadata.");
             Check(manual.PluginId == Guid.Empty && foreign.PluginId != LunaImportIdentity.PluginId && adapter.MigrateLegacyImports() == 0 && library.Games.Values.Count == 4,
                 "Repeated migration changed unmarked/foreign games or duplicated imports.");
+        }
+
+        private static async Task CheckSidebarAsync(string directory)
+        {
+            var root = Path.Combine(directory, "sidebar-host");
+            var library = new SmokeDatabase(Path.Combine(root, "library"));
+            var host = new SmokeDatabase.Host(library, root);
+            var accepted = CatalogValidator.ValidateSnapshot(Snapshot(), "US", time);
+            foreach (var game in accepted.Games) game.CoverUrl = null; // No live artwork requests in this host check.
+            var cache = new JsonCatalogCache(Path.Combine(root, LunaImportIdentity.PluginId.ToString()));
+            await cache.SaveAsync(accepted, CancellationToken.None);
+            var bytes = File.ReadAllBytes(Path.Combine(root, LunaImportIdentity.PluginId.ToString(), "catalog-US.json"));
+            using var plugin = new LunaPlugin(host.Api);
+            var tab = plugin.GetSidebarItems().Single();
+            Check(tab.Type == SiderbarItemType.View && tab.Title == "Browse Amazon Luna Catalog" && tab.Icon != null,
+                "Luna did not register an inline sidebar view with an icon.");
+            var icon = tab.Icon as System.Windows.Shapes.Path;
+            Check(icon?.Data != null && icon.Data.IsFrozen && icon.Width == 22 && icon.Height == 22 &&
+                icon.Data.FillContains(new Point(9.64, 3)) && !icon.Data.FillContains(new Point(9.64, 11.5)) &&
+                !icon.Data.FillContains(new Point(0, 0)),
+                "The sidebar did not load the standalone official Luna vector with transparent surroundings and center.");
+            Check(ReferenceEquals(tab, plugin.GetSidebarItems().Single()), "Sidebar enumeration recreated the view registration.");
+            host.Mode = ApplicationMode.Fullscreen;
+            Check(!plugin.GetSidebarItems().Any(), "The WPF sidebar is exposed in Fullscreen mode.");
+            host.Mode = ApplicationMode.Desktop;
+            var view = tab.Opened() as CatalogBrowserView;
+            Check(view != null, "The sidebar callback did not return the catalog control.");
+            Check(host.DialogWindow == null, "The sidebar opened a separate window instead of an inline control.");
+            var model = (CatalogBrowserModel)view!.DataContext;
+            var frame = new ContentControl { Content = view };
+            Application.Current.Resources["GlyphBrush"] = Brushes.Gray;
+            var sidebarButton = new Button { Content = icon };
+            sidebarButton.SetResourceReference(Button.ForegroundProperty, "GlyphBrush");
+            var layout = new DockPanel();
+            DockPanel.SetDock(sidebarButton, Dock.Top); layout.Children.Add(sidebarButton); layout.Children.Add(frame);
+            var window = new Window { Content = layout, Width = 760, Height = 720 };
+            host.MainWindow = window;
+            try
+            {
+                window.Show(); await Until(() => !model.IsBusy && model.TotalCount == 5 && view.IsLoaded);
+                await Until(() => ReferenceEquals(icon!.Fill, Brushes.Gray));
+                Application.Current.Resources["GlyphBrush"] = Brushes.DodgerBlue;
+                await Until(() => ReferenceEquals(icon!.Fill, Brushes.DodgerBlue));
+                sidebarButton.Foreground = Brushes.White;
+                await Until(() => ReferenceEquals(icon!.Fill, Brushes.White));
+                Console.WriteLine("Windows monochrome Luna sidebar icon checks passed (offline vector, inherited theme/selection foreground).");
+                Control<TextBox>(view, "SearchBox").Text = "Alan";
+                model.Category = CatalogCategory.Premium; model.TitleSort = CatalogTitleSort.Descending;
+                model.SelectedGame = model.VisibleGames.Single(); var selectedId = model.SelectedGame.Id;
+                tab.Closed(); frame.Content = new TextBlock { Text = "Library" };
+                await Until(() => !view.IsLoaded);
+                var firstPreferences = plugin.LoadPluginSettings<BrowserPreferences>();
+                Check(firstPreferences?.Category == CatalogCategory.Premium && firstPreferences.TitleSort == CatalogTitleSort.Descending,
+                    "Leaving the sidebar did not save category and sort preferences.");
+                Check(ReferenceEquals(tab.Opened(), view), "Reopening the tab discarded its catalog control.");
+                frame.Content = view;
+                await Until(() => view.IsLoaded && !model.IsBusy);
+                Check(model.SearchText == "Alan" && model.SelectedGame?.Id == selectedId && Control<ListBox>(view, "GamesList").SelectedItems.Count == 1,
+                    "Sidebar reopen lost local filters or selection.");
+
+                model.Category = CatalogCategory.All;
+                var menu = plugin.GetMainMenuItems(new GetMainMenuItemsArgs()).Single();
+                menu.Action(new MainMenuItemActionArgs());
+                await Until(() => host.DialogWindow?.IsVisible == true && !model.IsBusy);
+                var popout = (CatalogBrowserView)host.DialogWindow!.Content;
+                Check(!ReferenceEquals(popout, view) && ReferenceEquals(popout.DataContext, model), "Window and sidebar do not safely share browser state.");
+                Control<TextBox>(popout, "SearchBox").Text = "WRC";
+                Check(model.VisibleCount == 1 && Control<TextBox>(view, "SearchBox").Text == "WRC", "Window filters did not update the sidebar.");
+                model.SearchText = "Alan";
+                model.SelectedGame = model.VisibleGames.Single();
+                host.DialogWindow.Close();
+                Check(model.SelectedGame?.Id == selectedId && Control<ListBox>(view, "GamesList").SelectedItems.Count == 1,
+                    "Closing the window cleared the sidebar's shared selection.");
+                tab.Closed(); frame.Content = new TextBlock { Text = "Library" };
+                var preferences = plugin.LoadPluginSettings<BrowserPreferences>();
+                Check(preferences != null && preferences.SchemaVersion == 1, "Sidebar close did not persist browser preferences.");
+                frame.Content = tab.Opened(); await Until(() => view.IsLoaded && !model.IsBusy);
+                Check(bytes.SequenceEqual(File.ReadAllBytes(Path.Combine(root, LunaImportIdentity.PluginId.ToString(), "catalog-US.json"))),
+                    "Sidebar/window switching modified the accepted catalog cache.");
+                Check(host.Errors == 0 && library.Games.Values.Count == 0, "Opening the browser caused an error or imported games.");
+                plugin.Dispose();
+                Check(!tab.Visible && !plugin.GetSidebarItems().Any(), "Shutdown left an active sidebar registration.");
+            }
+            finally { host.DialogWindow?.Close(); window.Close(); }
         }
     }
 }

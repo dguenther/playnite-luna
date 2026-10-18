@@ -2,9 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 using LunaCatalog;
 using LunaCatalogBrowser;
@@ -23,7 +29,11 @@ namespace LunaPlaynite
         private CatalogService? service;
         private CoverImageCache? covers;
         private Window? browser;
-        private CatalogBrowserModel? model;
+        private CatalogBrowserSession? session;
+        private CatalogBrowserView? sidebarView;
+        private SidebarItem? sidebarItem;
+        private BrowserPreferences preferences = new BrowserPreferences();
+        private bool savePreferences;
         private CatalogImportService? imports;
         private PlayniteImportDatabase? importDatabase;
         private DispatcherTimer? importChanges;
@@ -66,6 +76,127 @@ namespace LunaPlaynite
             yield return new MainMenuItem { Description = "Amazon Luna Catalog Browser", Action = _ => OpenBrowser() };
         }
 
+        public override IEnumerable<SidebarItem> GetSidebarItems()
+        {
+            if (disposed || PlayniteApi.ApplicationInfo.Mode != ApplicationMode.Desktop) yield break;
+            if (sidebarItem == null)
+            {
+                Geometry logo;
+                var resource = Application.GetResourceStream(new Uri("pack://application:,,,/LunaPlaynite;component/Resources/luna-symbol.path", UriKind.Absolute));
+                using (var reader = new StreamReader(resource.Stream)) logo = Geometry.Parse(reader.ReadToEnd());
+                logo.Freeze();
+                var icon = new System.Windows.Shapes.Path
+                {
+                    Data = logo, Width = 22, Height = 22, Stretch = Stretch.Uniform
+                };
+                // Inherit the host sidebar's normal/selected/theme foreground, like its native glyphs.
+                icon.SetBinding(Shape.FillProperty, new Binding
+                {
+                    Path = new PropertyPath(TextElement.ForegroundProperty),
+                    RelativeSource = new RelativeSource(RelativeSourceMode.Self)
+                });
+                sidebarItem = new SidebarItem
+                {
+                    Type = SiderbarItemType.View, Title = "Browse Amazon Luna Catalog", Icon = icon,
+                    Opened = OpenSidebar, Closed = () => sidebarView?.Deactivate()
+                };
+            }
+            yield return sidebarItem;
+        }
+
+        private Control OpenSidebar()
+        {
+            try
+            {
+                if (disposed) throw new ObjectDisposedException(nameof(LunaPlugin));
+                if (sidebarView != null) { MigrateLegacyImports(); return sidebarView; }
+                return sidebarView = CreateBrowserView();
+            }
+            catch (Exception)
+            {
+                logger.Error("Luna catalog sidebar could not be opened.");
+                var error = new TextBlock
+                {
+                    Text = "The Luna catalog could not be opened. Check the extension installation and data folder, then select the tab again to retry.",
+                    Margin = new Thickness(20), TextWrapping = TextWrapping.Wrap
+                };
+                error.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
+                return new UserControl { Content = error };
+            }
+        }
+
+        private CatalogBrowserSession EnsureBrowserSession()
+        {
+            if (session != null) return session;
+            var dispatcher = Dispatcher.CurrentDispatcher;
+            if (importChanges == null)
+            {
+                // Plugin construction can happen off the UI thread; initialize on first view opening.
+                importChanges = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
+                importChanges.Tick += async (_, __) =>
+                {
+                    if (session == null || !session.HasActiveHosts) { importChanges.Stop(); return; }
+                    if (session.Model.IsBusy || !importsChanged) return;
+                    importsChanged = false;
+                    await session.Model.ReconcileImportsAsync(CancellationToken.None);
+                    if (!importsChanged) importChanges.Stop();
+                };
+            }
+            if (service == null)
+            {
+                var provider = new LunaCatalogProvider(catalogClient,
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36", "154.0.0.0");
+                var catalogService = new CatalogService(provider, new JsonCatalogCache(GetPluginUserDataPath()));
+                var artwork = new CatalogArtworkClient(artworkClient);
+                covers = new CoverImageCache(artwork);
+                importDatabase = new PlayniteImportDatabase(PlayniteApi.Database, dispatcher, GetPluginUserDataPath());
+                importDatabase.LibraryChanged += () =>
+                {
+                    if (disposed || dispatcher.HasShutdownStarted) return;
+                    dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        if (disposed || session == null || !session.HasActiveHosts) return;
+                        importsChanged = true; importChanges.Start();
+                    }));
+                };
+                imports = new CatalogImportService(importDatabase, new JsonImportMappingStore(GetPluginUserDataPath()),
+                    artwork.DownloadAsync, message => logger.Error(message));
+                service = catalogService;
+            }
+            try { preferences = LoadPluginSettings<BrowserPreferences>() ?? new BrowserPreferences(); }
+            catch (Exception) { logger.Warn("Luna browser preferences could not be read; defaults will be used."); preferences = new BrowserPreferences(); }
+            savePreferences = preferences.SchemaVersion == 1;
+            if (!savePreferences) preferences = new BrowserPreferences();
+            var model = new CatalogBrowserModel(service, message => logger.Error(message), imports);
+            if (Enum.IsDefined(typeof(CatalogCategory), preferences.Category)) model.Category = preferences.Category;
+            if (Enum.IsDefined(typeof(CatalogTitleSort), preferences.TitleSort)) model.TitleSort = preferences.TitleSort;
+            session = new CatalogBrowserSession(model);
+            session.ActivityChanged += (_, __) =>
+            {
+                if (session.HasActiveHosts) return;
+                importChanges.Stop(); SavePreferences();
+            };
+            return session;
+        }
+
+        private CatalogBrowserView CreateBrowserView()
+        {
+            var activeSession = EnsureBrowserSession();
+            MigrateLegacyImports();
+            return new CatalogBrowserView(activeSession, covers!, OpenInLuna, count =>
+                PlayniteApi.Dialogs.ShowMessage("Import all " + count + " games from the complete US Luna catalog?\n\n" +
+                    "Search and category filters are ignored. Existing Luna imports will be skipped. Games will be added as uninstalled entries with an Open in Luna action.",
+                    "Import all Luna games", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+        }
+
+        private void SavePreferences()
+        {
+            if (!savePreferences || session == null) return;
+            preferences.Category = session.Model.Category; preferences.TitleSort = session.Model.TitleSort;
+            try { SavePluginSettings(preferences); }
+            catch (Exception) { logger.Warn("Luna browser preferences could not be saved."); }
+        }
+
         private void OpenBrowser()
         {
             if (disposed) return;
@@ -77,48 +208,7 @@ namespace LunaPlaynite
             }
             try
             {
-                if (importChanges == null)
-                {
-                    // Plugin construction can happen off the UI thread; attach the timer when the menu opens.
-                    importChanges = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
-                    importChanges.Tick += async (_, __) =>
-                    {
-                        if (model == null) { importChanges.Stop(); return; }
-                        if (model.IsBusy || !importsChanged) return;
-                        importsChanged = false;
-                        await model.ReconcileImportsAsync(CancellationToken.None);
-                        if (!importsChanged) importChanges.Stop();
-                    };
-                }
-                if (service == null)
-                {
-                    var provider = new LunaCatalogProvider(catalogClient,
-                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36", "154.0.0.0");
-                    var catalogService = new CatalogService(provider, new JsonCatalogCache(GetPluginUserDataPath()));
-                    var artwork = new CatalogArtworkClient(artworkClient);
-                    covers = new CoverImageCache(artwork);
-                    importDatabase = new PlayniteImportDatabase(PlayniteApi.Database, Dispatcher.CurrentDispatcher, GetPluginUserDataPath());
-                    importDatabase.LibraryChanged += () =>
-                    {
-                        browser?.Dispatcher.BeginInvoke(new Action(() => { importsChanged = true; importChanges.Start(); }));
-                    };
-                    imports = new CatalogImportService(importDatabase, new JsonImportMappingStore(GetPluginUserDataPath()),
-                        artwork.DownloadAsync, message => logger.Error(message));
-                    service = catalogService;
-                }
-                MigrateLegacyImports();
-                BrowserPreferences preferences;
-                try { preferences = LoadPluginSettings<BrowserPreferences>() ?? new BrowserPreferences(); }
-                catch (Exception) { logger.Warn("Luna browser preferences could not be read; defaults will be used."); preferences = new BrowserPreferences(); }
-                var savePreferences = preferences.SchemaVersion == 1;
-                if (!savePreferences) preferences = new BrowserPreferences();
-                var viewModel = new CatalogBrowserModel(service, message => logger.Error(message), imports);
-                if (Enum.IsDefined(typeof(CatalogCategory), preferences.Category)) viewModel.Category = preferences.Category;
-                if (Enum.IsDefined(typeof(CatalogTitleSort), preferences.TitleSort)) viewModel.TitleSort = preferences.TitleSort;
-                var view = new CatalogBrowserView(viewModel, covers!, OpenInLuna, count =>
-                    PlayniteApi.Dialogs.ShowMessage("Import all " + count + " games from the complete US Luna catalog?\n\n" +
-                        "Search and category filters are ignored. Existing Luna imports will be skipped. Games will be added as uninstalled entries with an Open in Luna action.",
-                        "Import all Luna games", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+                var view = CreateBrowserView();
                 var window = PlayniteApi.Dialogs.CreateWindow(new WindowCreationOptions());
                 window.Title = "Amazon Luna Catalog Browser";
                 window.Content = view;
@@ -129,24 +219,18 @@ namespace LunaPlaynite
                 window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 window.Closed += (_, __) =>
                 {
-                    viewModel.CancelCurrentOperation();
-                    importChanges.Stop();
-                    if (savePreferences)
-                    {
-                        var size = window.WindowState == WindowState.Normal ? new Size(window.ActualWidth, window.ActualHeight) : window.RestoreBounds.Size;
-                        try { SavePluginSettings(new BrowserPreferences { Category = viewModel.Category, TitleSort = viewModel.TitleSort,
-                            Width = size.Width, Height = size.Height }); }
-                        catch (Exception) { logger.Warn("Luna browser preferences could not be saved."); }
-                    }
-                    browser = null; model = null;
+                    view.Deactivate();
+                    var size = window.WindowState == WindowState.Normal ? new Size(window.ActualWidth, window.ActualHeight) : window.RestoreBounds.Size;
+                    preferences.Width = size.Width; preferences.Height = size.Height;
+                    SavePreferences(); browser = null;
                 };
-                browser = window; model = viewModel;
-                window.Activated += async (_, __) => await viewModel.ReconcileImportsAsync(CancellationToken.None);
+                browser = window;
+                window.Activated += async (_, __) => await session!.Model.ReconcileImportsAsync(CancellationToken.None);
                 window.Show();
             }
             catch (Exception)
             {
-                browser = null; model = null;
+                browser = null;
                 logger.Error("Luna catalog browser could not be opened.");
                 PlayniteApi.Dialogs.ShowErrorMessage("The Luna catalog browser could not be opened. Check that the extension is installed completely and its data folder is writable.", "Amazon Luna");
             }
@@ -169,7 +253,9 @@ namespace LunaPlaynite
         {
             if (disposed) return;
             disposed = true;
-            model?.CancelCurrentOperation();
+            session?.Dispose();
+            sidebarView?.Deactivate();
+            if (sidebarItem != null) sidebarItem.Visible = false;
             browser?.Close();
             importChanges?.Stop(); importDatabase?.Dispose();
             catalogClient.Dispose(); artworkClient.Dispose();

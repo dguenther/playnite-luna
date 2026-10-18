@@ -1,11 +1,12 @@
 # Amazon Luna Catalog Browser — implementation plan
 
-Reconciled October 11, 2026 (UTC) after merged PRs
+Reconciled October 18, 2026 (America/New_York) after merged PRs
 [#5](https://github.com/dguenther/playnite-luna/pull/5) and
 [#6](https://github.com/dguenther/playnite-luna/pull/6), and
-[#7](https://github.com/dguenther/playnite-luna/pull/7), with Milestone D in draft
-[#8](https://github.com/dguenther/playnite-luna/pull/8), branch
-`feature/playnite-library-imports`, in
+[#7](https://github.com/dguenther/playnite-luna/pull/7), and
+[#8](https://github.com/dguenther/playnite-luna/pull/8), with the inline sidebar
+follow-up in draft [PR #9](https://github.com/dguenther/playnite-luna/pull/9),
+branch `feature/luna-sidebar-browser`, in
 `dguenther/playnite-luna`. Evidence timestamps use UTC.
 
 This is the working checklist reconciled with the uploaded implementation plan.
@@ -19,9 +20,14 @@ runtime refreshes, versioned cache/recovery, identity-aware comparisons, optiona
 research tools, representative fixtures, and CI. Milestone C now adds a Playnite
 WPF browser, a testable local browsing model, and Toolbox preview packaging.
 Milestone D adds reconciled import status, single/multi-selection imports, and
-confirmed full-catalog imports in preview `0.2.1`, with **Library → Amazon Luna**
+confirmed full-catalog imports in preview `0.2.4`, with **Library → Amazon Luna**
 ownership and migration from marked manual imports. Initial host opening/imports
 were reported working; the remaining host checks stay open.
+The sidebar follow-up shares browsing state between an inline Desktop view and
+the optional separate window, with coordinated cancellation and lazy startup.
+The sidebar uses Luna's exact standalone official symbol as an embedded offline
+vector resource, without a circle and with the host's theme/selection foreground.
+The user screenshot confirms basic inline host rendering; broader checks remain.
 **Gates C and D remain pending Windows Playnite host validation.** See
 [browser behavior and host checks](docs/playnite-browser.md),
 [library imports](docs/library-imports.md), and the
@@ -206,7 +212,8 @@ Depends on Gate B; Windows is required for Playnite runtime verification.
 - [x] Verify basic loading inside the Playnite Desktop host on Windows (user report).
   Theme readability, restart, and clean-install checks remain pending.
 - [x] Add the main-menu entry **Amazon Luna Catalog Browser** and a WPF window.
-  A sidebar shortcut is optional.
+- [x] Add the Desktop sidebar entry **Browse Amazon Luna Catalog** opening the
+  browser inline. Keep the optional window, share its model, and manage view lifetime.
 - [x] Display the entire validated cached catalog with cover artwork, titles,
   multiple membership indicators, visible-game count, and last successful refresh.
 - [x] Add local title search, All/Standard/Premium/GameNight filters, and a stable
@@ -269,7 +276,8 @@ Depends on the validated data and browser; finish the status integration in C.
 - [ ] Validate persistence and working URL actions inside Playnite.
 
 **Implementation status:** 51 new import/mapping/browser cases bring the suite
-to 262 .NET tests. The Windows WPF harness uses real SDK models and the production
+to 262 .NET tests; five sidebar/session lifecycle cases bring the current total
+to 267. The Windows WPF harness uses real SDK models and the production
 adapter through an isolated database API. The package compatibility process checks
 mapping persistence with host Newtonsoft JSON 10. These checks support the
 implementation; [actual host checks](docs/library-imports.md#verification-and-remaining-host-checks)
@@ -301,6 +309,8 @@ Depends on Gates A–D. Retain the existing offline suite and CI.
   Windows dispatcher/binding smoke checks, and official Toolbox preview packaging.
 - [x] Milestone D expands the suite to 262 .NET cases with 51 import cases and
   extends Windows SDK/WPF and host JSON compatibility checks for imports.
+- [x] The inline sidebar follow-up adds five session lifecycle regressions (267
+  .NET total) and Windows checks for real sidebar callbacks and shared WPF hosts.
 - [x] Twenty-four Python offline checks cover evidence safety, incomplete comparisons,
   context cleanup, bounded catalog draining, search termination, and unstable
   pages/reference disagreement, complete audit requirements, snapshot binding,

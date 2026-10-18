@@ -1,7 +1,7 @@
 # Playnite catalog browser preview
 
-Milestones C and D add a Playnite 10 `LibraryPlugin`, WPF catalog window, and
-optional library imports in preview `0.2.1`. The project started from the official
+Milestones C and D add a Playnite 10 `LibraryPlugin`, inline sidebar and optional
+WPF catalog window, and library imports in preview `0.2.4`. The project started from the official
 [10.62 GenericPlugin template](https://github.com/JosefNemec/Playnite/tree/10.62/source/Tools/Playnite.Toolbox/Templates/Extensions/GenericPlugin)
 and now registers as a game library to provide **Library → Amazon Luna**,
 targeting `net462` and SDK `6.17.0`. The preview packaging target is Playnite
@@ -13,16 +13,47 @@ host checks, including theme readability in the updated preview.**
 
 Download the `luna-playnite-preview` artifact from a successful Windows CI run,
 extract its `.pext`, and open that file with Playnite. Restart if Playnite asks.
-The extension adds **Amazon Luna Catalog Browser** to the Desktop main menu.
-The Fullscreen menu does not expose the WPF browser. Opening the menu item again
-activates the existing window rather than starting another cache writer.
+The extension adds the monochrome Luna symbol titled **Browse Amazon Luna Catalog** to the
+Desktop sidebar. Clicking it displays the catalog inline in Playnite's main
+content area. The Desktop main-menu item **Amazon Luna Catalog Browser** opens
+an optional separate window; opening that item again activates the same window.
+Fullscreen mode exposes neither WPF entry point.
+
+## Sidebar and window lifecycle
+
+The sidebar is a native SDK `SidebarItem` with `SiderbarItemType.View`; its
+`Opened` callback returns the existing catalog UI. Registration creates no
+catalog services or requests. Services and the shared browser session initialize
+on first opening. The exact standalone symbol path from Luna's official website
+is embedded in the DLL and parsed locally as vector geometry, without a circle.
+Its monochrome fill inherits the sidebar's foreground, following theme and
+selection changes like the native icons.
+No network icon request or separate runtime file is needed. See
+[the asset's source and SHA-256](../src/LunaPlaynite/Resources/README.md).
+
+The sidebar keeps its control while switching tabs. The separate window has its
+own control; both bind to one `CatalogBrowserSession` and model. Search, category,
+sorting, selection, import status/summaries, and busy state stay synchronized.
+Refresh/import clicks cannot queue duplicate operations from the other view.
+Filters wrap onto additional lines when the available inline width is narrow.
+
+Switching away stops that view's timer, subscriptions, and artwork requests.
+If another catalog view remains open, its current work continues. Leaving the
+last view cancels unfinished catalog/import work and saves preferences; committed
+imports remain. Reopening waits for cancellation to settle, then restores cached
+data and reconciles library status without a catalog API request. Search and
+selection survive reopening during the current Playnite session; only category,
+sort, and separate-window size persist across restarts. Shutdown cancels the
+shared session and hides its sidebar registration.
+
+## Catalog behavior
 
 Opening the browser loads the last validated US catalog from the plugin data
 directory without requesting API data. With no saved catalog, choose **Refresh**.
 Refresh downloads the four required browse queries through C#, validates and
 saves the result, then publishes it. Saved games remain usable during refresh
 and after network, validation, storage, or cancellation failures. **Cancel**
-stops a pending operation; closing the window also requests cancellation.
+stops a pending shared operation. Hiding/closing the last view also requests cancellation.
 See [the runtime contract](catalog-data-layer.md) for acceptance and recovery.
 
 Search matches titles without case sensitivity. All, Standard, Premium, and
@@ -41,7 +72,7 @@ choose **Open in Luna**, or double-click a game row, to open its validated Luna
 page in the default browser. Double-clicking blank space does nothing.
 
 Category, sort, and window size are saved through Playnite's plugin-settings
-API. Search and selection are temporary. The plugin's stable GUID is
+API. Search and selection last for the current Playnite session. The plugin's stable GUID is
 `6f4229ca-70a9-4c65-ae9f-047a367beda9`; catalog files and settings belong to
 Playnite's corresponding extension data directory. Unsupported future preference
 schemas use defaults without overwriting those settings.
@@ -121,6 +152,12 @@ Record these results before declaring Gate C passed:
 
 - Install the preview on a clean Playnite 10.62 installation; confirm the plugin
   loads without dependency errors and its Desktop main-menu item opens the view.
+- Select the Luna logo sidebar icon and confirm the catalog renders inside Playnite.
+  Switch between Library and Luna repeatedly, retaining search and selection.
+  Open the separate window alongside it; confirm shared filters, selection,
+  and operations without control-parent errors. Check a narrow content area.
+- Start a slow refresh/import and leave the last view; verify cancellation and
+  retained commits. With the other view still open, confirm work continues there.
 - Start with no cache, refresh the live US catalog, and confirm all validated
   games appear once, counts are correct, and overlapping memberships remain.
 - Search, combine each category filter, switch title ordering, and open a Luna
@@ -138,6 +175,9 @@ The automated harness opens a real WPF window and exercises representative
 data, bindings, selection, refresh/cancellation, artwork decoding, dispatcher
 affinity, stale-failure behavior on recycled artwork rows, and restart persistence.
 It also uses real SDK models and an isolated API for production import-adapter checks.
+Sidebar checks invoke the production plugin callbacks, host the returned control
+inline, switch away/back, open the window alongside it, verify shared filters and
+selection, save preferences, reject Fullscreen registration, and dispose cleanly.
 Rows extend the host's implicit `ListBoxItem` style, keeping its normal/selected
 text colors, templates, and dynamic theme resources. Detail text uses full opacity.
 It does not load `LunaPlugin` in Playnite or replace these host checks. Import

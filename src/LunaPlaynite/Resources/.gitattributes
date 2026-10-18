@@ -1,0 +1,2 @@
+# Keep the embedded geometry's documented checksum identical on Windows/Linux.
+luna-symbol.path text eol=lf

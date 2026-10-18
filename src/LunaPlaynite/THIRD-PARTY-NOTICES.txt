@@ -24,3 +24,14 @@ THE SOFTWARE.
 PlayniteSDK 6.17.0 is a build dependency (MIT, Copyright Josef Nemec).
 Playnite provides Playnite.SDK.dll at runtime; it is not bundled here.
 The plugin project follows Playnite 10's official GenericPlugin template.
+
+Amazon Luna logo
+
+The standalone symbol path from luna.amazon.com's TempoLogoSVG component is
+embedded in LunaPlaynite.dll for sidebar identification. Its coordinates are
+unchanged; WPF's F1 nonzero fill-rule prefix and a newline wrap the original
+SVG path. The displayed fill inherits the host sidebar foreground. Source:
+https://m.media-amazon.com/images/S/sash/pvahmxrO0Vmzxiy.js?name=resources
+Resource SHA-256: 49d9bad571e99a91efd31d671b550d39ec14bc84388af064f097a0ab26f97c4c
+Amazon Luna and its logo are Amazon brand assets, separate from this
+project's MIT-licensed code.

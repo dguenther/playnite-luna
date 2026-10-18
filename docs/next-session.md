@@ -6,9 +6,10 @@ Repository: `dguenther/playnite-luna`. PR
 [#5](https://github.com/dguenther/playnite-luna/pull/5) merged into `main` as
 `b3b29fa`; [PR #6](https://github.com/dguenther/playnite-luna/pull/6) merged as
 `abd2260`. [PR #7](https://github.com/dguenther/playnite-luna/pull/7) merged as
-`f85bde1`. Milestone D is in draft [PR #8](https://github.com/dguenther/playnite-luna/pull/8),
-branch `feature/playnite-library-imports`, preview
-`0.2.1`. Check current
+`f85bde1`. Milestone D [PR #8](https://github.com/dguenther/playnite-luna/pull/8)
+merged as `7c21d4f`. The inline sidebar follow-up is in draft
+[PR #9](https://github.com/dguenther/playnite-luna/pull/9), branch
+`feature/luna-sidebar-browser`, preview `0.2.4`. Check current
 Git/PR state and preserve existing edits before resuming. No applicable
 `AGENTS.md` was found during this work.
 
@@ -28,6 +29,13 @@ registers **Amazon Luna** as a library, and migrates only marked manual imports
 by changing library ownership. Imports remain explicit; global library updates
 do not fetch or add catalog games. Automatic metadata download has no public
 SDK trigger for these imports; use Playnite's manual Download Metadata command.
+The `0.2.2` follow-up adds a sidebar tab for inline browsing; `0.2.3` replaces its
+placeholder moon with Luna's official circular logo. Preview `0.2.4` uses the
+exact standalone official symbol path without a circle, embedded for offline
+use, and inherits the sidebar's theme/selection foreground.
+The user screenshot confirms basic inline rendering in Playnite. The sidebar and the
+optional window have separate controls sharing one `CatalogBrowserSession`/model;
+last-host departure cancels work, and reopening restores offline data and status.
 **Gates C and D still need Windows Playnite host checks.**
 See [the import contract](library-imports.md).
 
@@ -42,7 +50,8 @@ and atomic replacement protect writes; a validated backup recovers corrupt or
 missing primary data. The host supplies the plugin data directory and owns a
 single service/cache pair. Cross-process writers are not coordinated.
 
-The Desktop main menu opens one catalog window with cached startup, local title
+The Desktop sidebar opens an inline catalog and the main menu opens an optional
+separate window. Both share cached startup, local title
 search, All/Standard/Premium/GameNight filters, deterministic title/ID sorting,
 membership overlap, counts, refresh time, and Open in Luna. Refresh/cancel leave
 browsing available; failed refreshes retain previous data. Preferences save
@@ -62,14 +71,14 @@ The parser/validator retain All/category-union equality and reject empty queries
 unknown browse continuation, wrong scope, unsafe links, and conflicting identities.
 There is no historical game-count threshold. ASIN-only IDs gaining native IDs
 produce migration records rather than additions/removals. Native-ID conflicts and
-downgrades fail validation; titles never define identity. The future import
-service must consume/reconcile stable IDs and ASIN metadata without deleting
-Playnite games based on a single observed removal.
+downgrades fail validation; titles never define identity. The import service
+reconciles stable IDs and ASIN metadata without deleting Playnite games based on
+a single observed removal.
 
 ## Verification
 
 - Locked restore and Release builds for both library targets pass with zero
-  warnings/errors, including WPF and the Windows smoke harness. All 262 .NET
+  warnings/errors, including WPF and the Windows smoke harness. All 267 .NET
   tests and 24 Python offline checks pass.
 - The 88 production data-layer cases cover validation, restart reload, malformed/schema
   checks, backup recovery, atomic replacement, cancellation/write failures,
@@ -89,6 +98,13 @@ Playnite games based on a single observed removal.
   The current adapter recognizes both modern library-owned and legacy manual
   markers. Windows also checks theme resource changes and migration without
   overwriting edits or adopting foreign/unmarked games.
+- Five session lifecycle cases cover reopening, shared hosts, rapid cancellation,
+  duplicate import prevention, and retaining commits during shutdown. Windows
+  invokes actual sidebar callbacks and checks inline/window coexistence,
+  selection/filters, settings persistence, Desktop-only registration, and shutdown.
+  Its icon checks cover offline vector loading, transparent surroundings/center,
+  and inherited theme/selection colors; the installed archive checks the exact
+  geometry resource hash.
 - The `net462` build shares Playnite 10.62's JSON 10.0.3; no JSON DLL or private
   loader is packaged. Standalone .NET 8 keeps JSON 13.0.3. The independent
   installed-package check verifies host reuse and duplicate/depth rejection.
@@ -112,7 +128,7 @@ Playnite games based on a single observed removal.
 ## Next work
 
 **Finish Gates C and D's Windows host checks, then proceed to Milestone E.** Download the
-`luna-playnite-preview` CI artifact from PR #8, or use `tools/PackageLuna.ps1` with
+`luna-playnite-preview` CI artifact from PR #9, or use `tools/PackageLuna.ps1` with
 an installed Playnite 10 Toolbox. Follow the [host checklist](playnite-browser.md#outstanding-windows-host-checks),
 record actual loading/theme/browser/offline/restart results, and keep Gate C
 pending until those pass. Also follow [the import checklist](library-imports.md#verification-and-remaining-host-checks).

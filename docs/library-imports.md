@@ -1,7 +1,7 @@
 # Optional Playnite library imports
 
 Milestone D adds explicit single/bulk imports to the Playnite 10 browser preview
-(`0.2.1`). Catalog viewing and runtime refresh remain independent of importing.
+(`0.2.4`). Catalog viewing and runtime refresh remain independent of importing.
 The public US streaming scope and [runtime acceptance contract](catalog-data-layer.md)
 are unchanged. No account connection or complete saved API fixture is required.
 **Gates C and D still require actual Windows Playnite host validation.**
@@ -24,8 +24,10 @@ skipped. Imports can use saved offline catalog data; unavailable optional covers
 do not prevent game creation.
 
 Local search/filter/sort remain usable during imports. Refresh and additional
-imports are disabled while a batch runs. **Cancel** or closing the browser stops
-remaining work; already committed games stay in the library. A summary reports
+imports are disabled while a batch runs. **Cancel** or hiding/closing the last
+catalog view stops remaining work; already committed games stay in the library.
+The sidebar and separate window share a session, so closing one leaves a batch
+running when the other remains open. A summary reports
 added, already imported, failed, and cancelled counts, with per-entry errors or
 warnings. Retrying the batch skips committed entries and retries failures.
 
