@@ -1,10 +1,13 @@
 # Playnite catalog browser preview
 
-Milestone C adds a Playnite 10 `GenericPlugin` and WPF catalog window. The project
-follows the official [10.62 GenericPlugin template](https://github.com/JosefNemec/Playnite/tree/10.62/source/Tools/Playnite.Toolbox/Templates/Extensions/GenericPlugin),
+Milestones C and D add a Playnite 10 `LibraryPlugin`, WPF catalog window, and
+optional library imports in preview `0.2.1`. The project started from the official
+[10.62 GenericPlugin template](https://github.com/JosefNemec/Playnite/tree/10.62/source/Tools/Playnite.Toolbox/Templates/Extensions/GenericPlugin)
+and now registers as a game library to provide **Library → Amazon Luna**,
 targeting `net462` and SDK `6.17.0`. The preview packaging target is Playnite
-10.62; older host versions have not been verified. **Gate C remains pending
-until the browser is checked inside Playnite Desktop Mode.**
+10.62; older host versions have not been verified. The user reports that `0.2.0`
+opens in the host and imports appear. **Gate C remains pending the remaining
+host checks, including theme readability in the updated preview.**
 
 ## Installation and use
 
@@ -29,7 +32,8 @@ sorting change the displayed items, never the cached snapshot, and make no API
 requests. A game appears once with all observed memberships. Memberships do not
 establish account entitlement.
 
-The window shows visible/total counts, saved/stale/loading/error state, and the
+The window starts with search/category/sort controls and shows visible/total
+counts, saved/stale/loading/error state, and the
 last successful refresh. Timestamps display in the Windows user's local time;
 research evidence remains explicitly UTC. Age is rechecked every minute while
 the view is open. The default stale threshold is 24 hours. Select a game and
@@ -51,9 +55,13 @@ unloaded rows cancel their requests and cannot display a previous row's cover.
 Missing/invalid/offline images use a placeholder. Artwork is not persisted to
 disk, so an offline restart may show placeholders while keeping all saved games.
 
-This phase does not write to the Playnite game database. Import controls and
-Imported/Not imported indicators depend on Milestone D's stable-ID mapping and
-database reconciliation; they are not inferred from matching titles.
+Viewing and refreshing do not create games or update game metadata. Opening the
+browser migrates earlier marked manual imports to the Amazon Luna library by
+changing only library ownership. Explicit **Import Selected** and confirmed
+**Import All (N)** create Luna library entries.
+Ctrl/Shift-click selects multiple rows; each row's import status comes from
+stable identity markers and database reconciliation. Import All covers the
+complete catalog, even while filtered. See [import behavior and recovery](library-imports.md).
 
 ## Build and package
 
@@ -123,10 +131,14 @@ Record these results before declaring Gate C passed:
   window behavior. Check the default browser, keyboard focus, DPI scaling, and
   light/dark/custom-theme readability.
 - Confirm the package installs without copying or replacing Playnite's SDK/root
-  JSON assembly, contains no JSON DLL, and does not modify library entries.
+  JSON assembly and contains no JSON DLL. Browsing/refresh must preserve existing
+  library entries; explicit imports follow [the import checklist](library-imports.md#verification-and-remaining-host-checks).
 
 The automated harness opens a real WPF window and exercises representative
 data, bindings, selection, refresh/cancellation, artwork decoding, dispatcher
 affinity, stale-failure behavior on recycled artwork rows, and restart persistence.
+It also uses real SDK models and an isolated API for production import-adapter checks.
+Rows extend the host's implicit `ListBoxItem` style, keeping its normal/selected
+text colors, templates, and dynamic theme resources. Detail text uses full opacity.
 It does not load `LunaPlugin` in Playnite or replace these host checks. Import
 acceptance belongs to Milestone D.

@@ -24,6 +24,8 @@ namespace LunaDependencySmoke
                 var plugin = Assembly.LoadFrom(Path.Combine(package, "LunaPlaynite.dll"));
                 var pluginType = plugin.GetTypes().Single(type => type.Name == "LunaPlugin");
                 if (pluginType.BaseType!.Assembly != hostSdk) throw new InvalidOperationException("Plugin did not bind to the host SDK.");
+                if (pluginType.BaseType.Name != "LibraryPlugin" || !File.ReadAllText(Path.Combine(package, "extension.yaml")).Contains("Type: GameLibrary"))
+                    throw new InvalidOperationException("Installed Luna extension is not registered as a game library.");
                 var catalog = Assembly.LoadFrom(Path.Combine(package, "LunaCatalog.dll"));
                 var queryType = catalog.GetType("LunaCatalog.CatalogQuery", true)!;
                 var queries = ((IEnumerable)queryType.GetProperty("UsQueries")!.GetValue(null)).Cast<object>().ToArray();
@@ -71,6 +73,7 @@ namespace LunaDependencySmoke
                     throw new InvalidOperationException("Catalog did not share the single host JSON 10 assembly.");
                 if (Directory.GetFiles(package, "Newtonsoft.Json.dll", SearchOption.AllDirectories).Length != 0)
                     throw new InvalidOperationException("The package bundles a JSON library.");
+                CheckImportMappings(catalog, dataDirectory, savedCatalog);
                 Console.WriteLine("Installed archive dependency checks passed using only host JSON 10, including duplicate-property and depth limits.");
                 return 0;
             }
@@ -84,6 +87,29 @@ namespace LunaDependencySmoke
             loaded.GetAwaiter().GetResult();
             var read = loaded.GetType().GetProperty("Result")!.GetValue(loaded);
             return read!.GetType().GetProperty("Catalog")!.GetValue(read);
+        }
+
+        private static void CheckImportMappings(Assembly catalog, string directory, object savedCatalog)
+        {
+            var game = ((IList)savedCatalog.GetType().GetProperty("Games")!.GetValue(savedCatalog))[0];
+            var documentType = catalog.GetType("LunaCatalog.ImportMappingDocument", true)!;
+            var mappingType = catalog.GetType("LunaCatalog.ImportMapping", true)!;
+            var document = Activator.CreateInstance(documentType)!; var mapping = Activator.CreateInstance(mappingType)!;
+            mappingType.GetProperty("Region")!.SetValue(mapping, "US");
+            mappingType.GetProperty("LunaId")!.SetValue(mapping, game.GetType().GetProperty("Id")!.GetValue(game));
+            mappingType.GetProperty("Asin")!.SetValue(mapping, game.GetType().GetProperty("Asin")!.GetValue(game));
+            mappingType.GetProperty("PlayniteId")!.SetValue(mapping, Guid.NewGuid());
+            ((IList)documentType.GetProperty("Mappings")!.GetValue(document)).Add(mapping);
+            var storeType = catalog.GetType("LunaCatalog.JsonImportMappingStore", true)!;
+            var store = Activator.CreateInstance(storeType, directory)!;
+            storeType.GetMethod("Save")!.Invoke(store, new[] { document });
+            var result = storeType.GetMethod("Load")!.Invoke(store, null)!;
+            if (result.GetType().GetProperty("Document")!.GetValue(result) == null) throw new InvalidOperationException("Host JSON could not reload import mappings.");
+            var path = Path.Combine(directory, "imports-US.json");
+            File.WriteAllText(path, File.ReadAllText(path).Replace("\"region\":", "\"region\":\"US\",\"region\":"));
+            result = storeType.GetMethod("Load")!.Invoke(store, null)!;
+            if (result.GetType().GetProperty("Document")!.GetValue(result) != null) throw new InvalidOperationException("Host JSON accepted duplicate import mapping properties.");
+            Console.WriteLine("Installed import mapping checks passed using host JSON 10.");
         }
     }
 }

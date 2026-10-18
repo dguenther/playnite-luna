@@ -26,7 +26,7 @@ try {
     $destination = (Resolve-Path -LiteralPath $OutputDirectory).Path
     & $toolbox pack $stage $destination
     if ($LASTEXITCODE -ne 0) { throw "Playnite Toolbox packaging failed." }
-    $package = Join-Path $destination "LunaPlaynite_6f4229ca-70a9-4c65-ae9f-047a367beda9_0_1_0.pext"
+    $package = Join-Path $destination "LunaPlaynite_6f4229ca-70a9-4c65-ae9f-047a367beda9_0_2_1.pext"
     if (-not (Test-Path -LiteralPath $package)) { throw "Toolbox did not produce the expected package." }
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $archive = [IO.Compression.ZipFile]::OpenRead($package)

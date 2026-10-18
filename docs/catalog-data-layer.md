@@ -117,13 +117,14 @@ ASIN, or a downgrade from native ID to ASIN-only is rejected pending evidence.
 Mixed/conflicting identities within a single fetch still fail validation.
 
 Reported removals are observations between accepted snapshots, not permission
-to delete Playnite entries or a confirmed removal notification. Imports and
-cross-refresh removal confirmation remain separate work.
+to delete Playnite entries or a confirmed removal notification. Explicit
+[library imports](library-imports.md) preserve those entries. Cross-refresh
+removal confirmation and departed-game tags remain deferred.
 
 ## Verification and next step
 
-The suite contains 211 .NET tests, including 88 production data-layer cases and
-26 browser/artwork cases, and 24 Python checks. Production tests use the existing
+The suite contains 262 .NET tests, including 88 production data-layer cases,
+26 browser/artwork cases, and 51 import/mapping/browser cases, plus 24 Python checks. Production tests use the existing
 five-game API samples
 and targeted edge cases, with an injected HTTP handler and real temporary cache
 files. CI builds both library targets and runs both suites on Linux and Windows.
@@ -131,7 +132,7 @@ See [validation](validation.md) for the live runtime smoke test and offline
 failure/restart results.
 
 Gate B passes for this data layer. Milestone C connects `CatalogService` to
-a Playnite 10 WPF `GenericPlugin`, with local search/filtering and cached offline
+a Playnite 10 WPF `LibraryPlugin`, with local search/filtering and cached offline
 display. Windows CI checks WPF bindings and produces a Toolbox preview package;
 host loading, real-host UI behavior, and clean installation remain Windows
 Playnite checks before Gate C passes.

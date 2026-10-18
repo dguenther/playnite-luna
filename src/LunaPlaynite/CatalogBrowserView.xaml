@@ -12,13 +12,9 @@
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <DockPanel Margin="0,0,0,16">
-            <TextBlock Text="US streaming catalog" FontSize="22" FontWeight="SemiBold"/>
-            <TextBlock Text="Browse here, play on Luna" HorizontalAlignment="Right" VerticalAlignment="Center" Opacity="0.7"/>
-        </DockPanel>
-        <Grid Grid.Row="1" Margin="0,0,0,12">
+        <Grid Margin="0,0,0,12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/>
@@ -34,7 +30,7 @@
             <Label Grid.Column="4" Content="Title sort" Target="{Binding ElementName=SortBox}" VerticalAlignment="Center" Padding="0,0,8,0"/>
             <ComboBox x:Name="SortBox" Grid.Column="5" Width="120" ItemsSource="{Binding TitleSorts}" SelectedItem="{Binding TitleSort}"/>
         </Grid>
-        <StackPanel Grid.Row="2" Margin="0,0,0,12">
+        <StackPanel Grid.Row="1" Margin="0,0,0,12">
             <DockPanel>
                 <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center"/>
                 <TextBlock Text="{Binding CountText}" HorizontalAlignment="Right" FontWeight="SemiBold"/>
@@ -49,13 +45,16 @@
                 </ProgressBar.Style>
             </ProgressBar>
         </StackPanel>
-        <Grid Grid.Row="3">
-            <ListBox x:Name="GamesList" ItemsSource="{Binding VisibleGames}" SelectedItem="{Binding SelectedGame}"
-                SelectionMode="Single" MouseDoubleClick="GameDoubleClick"
+        <Grid Grid.Row="2">
+            <ListBox x:Name="GamesList" ItemsSource="{Binding VisibleGames}"
+                SelectionMode="Extended" SelectionChanged="GamesSelectionChanged" MouseDoubleClick="GameDoubleClick"
                 ScrollViewer.CanContentScroll="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
                 AutomationProperties.Name="Luna catalog games">
                 <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem"><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Padding" Value="8"/></Style>
+                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Padding" Value="8"/>
+                    </Style>
                 </ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -71,7 +70,8 @@
                             <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Text="{Binding Title}" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap"/>
                                 <TextBlock Text="{Binding MembershipText}" Margin="0,8,0,0" FontWeight="SemiBold"/>
-                                <TextBlock Text="{Binding Details}" Margin="0,6,0,0" Opacity="0.65" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding Details}" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding ImportStatusText}" Margin="0,6,0,0" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Grid>
                     </DataTemplate>
@@ -86,13 +86,23 @@
                 </TextBlock.Style>
             </TextBlock>
         </Grid>
-        <DockPanel Grid.Row="4" Margin="0,14,0,0">
+        <StackPanel Grid.Row="3" Margin="0,10,0,0">
+            <TextBlock Text="{Binding SelectionText}" TextWrapping="Wrap" Opacity="0.7"/>
+            <TextBlock Text="{Binding ImportSummaryText}" TextWrapping="Wrap" Margin="0,4,0,0" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding ImportErrorText}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+            <ScrollViewer MaxHeight="100" VerticalScrollBarVisibility="Auto">
+                <TextBlock Text="{Binding ImportDetailsText}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+            </ScrollViewer>
+        </StackPanel>
+        <StackPanel Grid.Row="4" Margin="0,14,0,0">
             <TextBlock Text="{Binding LastRefreshText}" VerticalAlignment="Center" Opacity="0.7"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button x:Name="CancelButton" Content="Cancel" IsEnabled="{Binding IsBusy}" Click="CancelClick" MinWidth="72" Margin="0,0,8,0"/>
+            <WrapPanel HorizontalAlignment="Right" Margin="0,8,0,0">
+                <Button x:Name="CancelButton" Content="Cancel" IsEnabled="{Binding CanCancel}" Click="CancelClick" MinWidth="72" Margin="0,0,8,0"/>
                 <Button x:Name="RefreshButton" Content="Refresh" IsEnabled="{Binding CanRefresh}" Click="RefreshClick" MinWidth="90" Margin="0,0,8,0"/>
-                <Button x:Name="OpenButton" Content="Open in Luna" IsEnabled="{Binding CanOpenSelected}" Click="OpenClick" MinWidth="120"/>
-            </StackPanel>
-        </DockPanel>
+                <Button x:Name="OpenButton" Content="Open in Luna" IsEnabled="{Binding CanOpenSelected}" Click="OpenClick" MinWidth="120" Margin="0,0,8,0"/>
+                <Button x:Name="ImportSelectedButton" Content="Import Selected" IsEnabled="{Binding CanImportSelected}" Click="ImportSelectedClick" MinWidth="120" Margin="0,0,8,0"/>
+                <Button x:Name="ImportAllButton" Content="{Binding ImportAllText}" IsEnabled="{Binding CanImportAll}" Click="ImportAllClick" MinWidth="120"/>
+            </WrapPanel>
+        </StackPanel>
     </Grid>
 </UserControl>

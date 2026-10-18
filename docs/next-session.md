@@ -1,13 +1,14 @@
-# Validate the Playnite browser and continue with imports
+# Validate the Playnite browser and library imports
 
 ## Current state
 
 Repository: `dguenther/playnite-luna`. PR
 [#5](https://github.com/dguenther/playnite-luna/pull/5) merged into `main` as
 `b3b29fa`; [PR #6](https://github.com/dguenther/playnite-luna/pull/6) merged as
-`abd2260`. Milestone C is in draft
-[PR #7](https://github.com/dguenther/playnite-luna/pull/7), branch
-`feature/playnite-catalog-browser`. Check current
+`abd2260`. [PR #7](https://github.com/dguenther/playnite-luna/pull/7) merged as
+`f85bde1`. Milestone D is in draft [PR #8](https://github.com/dguenther/playnite-luna/pull/8),
+branch `feature/playnite-library-imports`, preview
+`0.2.1`. Check current
 Git/PR state and preserve existing edits before resuming. No applicable
 `AGENTS.md` was found during this work.
 
@@ -17,10 +18,18 @@ dependencies. It now includes `CatalogValidator`, `ValidatedCatalog`,
 `CatalogService`, `ICatalogCache` / `JsonCatalogCache`, and `CatalogComparer`.
 See [the runtime contract](catalog-data-layer.md) and [architecture](architecture.md).
 `src/LunaCatalogBrowser` provides a read-only local browsing model and bounded
-artwork downloads. `src/LunaPlaynite` is a `net462` WPF `GenericPlugin` using
+artwork downloads. `src/LunaPlaynite` is a `net462` WPF `LibraryPlugin` using
 SDK 6.17.0, matching the official Playnite 10 template. CI generates a Toolbox
-preview package. **Gate C still needs Windows Playnite Desktop host checks.**
-There is no import service or import-status mapping yet.
+preview package. Milestone D adds optional selected/bulk imports, atomically
+persisted mappings, durable host recovery markers, and a production SDK adapter.
+Host feedback confirmed basic opening and imported entries in `0.2.0`. The
+`0.2.1` follow-up removes the heading row, inherits host list-item/theme colors,
+registers **Amazon Luna** as a library, and migrates only marked manual imports
+by changing library ownership. Imports remain explicit; global library updates
+do not fetch or add catalog games. Automatic metadata download has no public
+SDK trigger for these imports; use Playnite's manual Download Metadata command.
+**Gates C and D still need Windows Playnite host checks.**
+See [the import contract](library-imports.md).
 
 The browser will download current API data directly through C# at runtime.
 `CatalogService.LoadAsync` opens the cache without networking;
@@ -60,7 +69,7 @@ Playnite games based on a single observed removal.
 ## Verification
 
 - Locked restore and Release builds for both library targets pass with zero
-  warnings/errors, including WPF and the Windows smoke harness. All 211 .NET
+  warnings/errors, including WPF and the Windows smoke harness. All 262 .NET
   tests and 24 Python offline checks pass.
 - The 88 production data-layer cases cover validation, restart reload, malformed/schema
   checks, backup recovery, atomic replacement, cancellation/write failures,
@@ -72,6 +81,14 @@ Playnite games based on a single observed removal.
   cancellation, real-provider offline retention, bounded artwork, and concurrency.
   CI covers Linux and Windows, with actual WPF bindings/dispatcher smoke checks
   and official Toolbox packaging on Windows. It does not load inside Playnite.
+- Fifty-one import/mapping/browser cases cover representative single/bulk
+  imports, repeated/partial/concurrent retries, deletion/recovery, migration and
+  conflicts, metadata preservation, cancellation, bounded state parsing, and
+  confirmed full-catalog scope. Windows exercises the production adapter with
+  actual SDK models and an isolated database API. Real-host persistence is pending.
+  The current adapter recognizes both modern library-owned and legacy manual
+  markers. Windows also checks theme resource changes and migration without
+  overwriting edits or adopting foreign/unmarked games.
 - The `net462` build shares Playnite 10.62's JSON 10.0.3; no JSON DLL or private
   loader is packaged. Standalone .NET 8 keeps JSON 13.0.3. The independent
   installed-package check verifies host reuse and duplicate/depth rejection.
@@ -94,13 +111,14 @@ Playnite games based on a single observed removal.
 
 ## Next work
 
-**Finish Gate C's Windows host checks, then start Milestone D.** Download the
-`luna-playnite-preview` CI artifact from PR #7, or use `tools/PackageLuna.ps1` with
+**Finish Gates C and D's Windows host checks, then proceed to Milestone E.** Download the
+`luna-playnite-preview` CI artifact from PR #8, or use `tools/PackageLuna.ps1` with
 an installed Playnite 10 Toolbox. Follow the [host checklist](playnite-browser.md#outstanding-windows-host-checks),
 record actual loading/theme/browser/offline/restart results, and keep Gate C
-pending until those pass. Playnite 10.62 is the preview packaging target.
+pending until those pass. Also follow [the import checklist](library-imports.md#verification-and-remaining-host-checks).
+Playnite 10.62 is the preview packaging target.
 
-Milestone D adds optional selected/bulk imports and Imported/Not imported status,
+Milestone D implements optional selected/bulk imports and Imported/Not imported status,
 backed by versioned `(region, LunaId) -> Playnite GUID` mappings reconciled with
 the real database. Same-title copies in another library never establish Luna
 identity. Preserve user edits, never delete games automatically, and keep catalog

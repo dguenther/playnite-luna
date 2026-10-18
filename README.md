@@ -1,6 +1,6 @@
 # Amazon Luna Catalog Browser for Playnite
 
-Milestone C preview for Playnite 10: a WPF catalog browser with saved offline data, runtime C# refreshes, local search and category filters, artwork, and Open in Luna actions. The provider and browser model build for .NET Framework 4.6.2 and .NET 8; the plugin targets `net462` with Playnite SDK 6.17.0. Optional library imports come in Milestone D. Loading inside Playnite and clean-install validation remain pending.
+Milestone D preview for Playnite 10: a WPF catalog browser with saved offline data, runtime C# refreshes, local search/category filters, artwork, Open in Luna actions, and optional selected/bulk library imports. The provider and browser model build for .NET Framework 4.6.2 and .NET 8; the library plugin targets `net462` with Playnite SDK 6.17.0. Host validation is in progress; restart/persistence, theme, and clean-install checks remain pending.
 
 See [PLAN.md](PLAN.md) for the implementation checklist reconciled with the original plan and the current repository.
 
@@ -8,7 +8,7 @@ See [PLAN.md](PLAN.md) for the implementation checklist reconciled with the orig
 
 Windows CI packages a `.pext` with the official Playnite 10.62 Toolbox and uploads
 it as `luna-playnite-preview`. Download that artifact from the successful Windows
-workflow run on [PR #7](https://github.com/dguenther/playnite-luna/pull/7), extract
+workflow run on [PR #8](https://github.com/dguenther/playnite-luna/pull/8), extract
 the `.pext`, and open it with Playnite. This is a development preview awaiting
 host validation, not a verified release.
 
@@ -16,8 +16,15 @@ In Playnite Desktop Mode, open **Amazon Luna Catalog Browser** from the main men
 Saved games appear without an API request. On first use, choose **Refresh** to
 download the public US streaming catalog. Search, category filters, and title
 sorting work locally; select a game and choose **Open in Luna**. Failed or
-cancelled refreshes retain the previous catalog. No games are imported by this
-phase. See [browser behavior, packaging, and host checks](docs/playnite-browser.md).
+cancelled refreshes retain the previous catalog. Select one or multiple rows and
+choose **Import Selected**, or confirm **Import All (N)** for the complete catalog.
+Imported entries appear under **Library → Amazon Luna**, have Luna URL actions,
+and remain uninstalled. Earlier marked manual imports move to that library on
+upgrade without changing their edited metadata. For additional metadata, select
+the games in Playnite and use **Download Metadata**; automatic downloading is not
+triggered by browser imports. Repeated imports
+skip existing entries and preserve user edits. See [imports and recovery](docs/library-imports.md)
+and [browser behavior, packaging, and host checks](docs/playnite-browser.md).
 
 ## Current findings
 
@@ -49,7 +56,7 @@ dotnet build AmazonLuna.sln -c Release --no-restore
 dotnet test tests/LunaCatalog.Tests/LunaCatalog.Tests.csproj -c Release --no-build
 ```
 
-The suite has 211 .NET tests and 24 Python offline checks. After installing the
+The suite has 262 .NET tests and 24 Python offline checks. After installing the
 [pinned Python dependency](tools/LunaBrowserEvidence/README.md#setup), run:
 
 ```sh
@@ -117,9 +124,11 @@ See [the export contract](docs/streaming-completeness.md#repeat-and-export).
 
 Gates A and B pass for the scoped investigation and production data layer.
 Milestone C's browser implementation is present, with local browsing and runtime
-refreshes. Gate C still requires loading and checking it inside Playnite Desktop
-Mode on Windows. Milestone D will add explicit imports and reconciled import
-status; viewing the catalog will continue to work independently of importing.
+refreshes. Initial host opening/imports were reported working. Gate C still
+requires the remaining Desktop Mode host checks on Windows. Milestone D implements explicit imports and reconciled import
+status; viewing the catalog remains independent of importing. Gate D requires
+real-host persistence, URL actions, repeated imports, and preservation of edits.
+Complete those checks before Milestone E release validation.
 
 See [the next-session handoff](docs/next-session.md) for the current evidence and
 limits, and [the original implementation plan](docs/implementation-plan.md) for

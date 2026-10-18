@@ -1,5 +1,70 @@
 # Catalog validation record
 
+## Host feedback follow-up — preview 0.2.1
+
+The user reports that the `0.2.0` browser opens in Playnite and imported games
+appear in the library. This establishes basic host loading/use, but does not
+close the broader C/D host checklists. They identified an unnecessary heading,
+low-contrast list text, and Luna games grouped under **Library → Playnite**.
+
+The `0.2.1` follow-up removes the heading and extends Playnite's implicit
+`ListBoxItem` style, preserving normal/selected theme colors and templates;
+detail text uses full opacity. The extension now registers as a `LibraryPlugin`
+named **Amazon Luna**. New entries belong to it; earlier marked manual imports
+migrate by changing only `PluginId`, retaining GUIDs and edited metadata.
+Foreign/unmarked entries remain untouched. Global library updates perform no
+catalog fetching or automatic importing.
+
+The suite now contains **262 .NET tests**, including **51 import cases**. New
+regressions cover current and legacy ownership. Windows harness checks also
+cover dynamic theme colors, library registration, an empty automatic import
+enumeration, repeated legacy migration, and preservation of edited fields.
+Package checks require `LibraryPlugin`/`GameLibrary` with the actual host SDK.
+
+The public SDK has no direct trigger for Playnite's built-in metadata-download
+workflow, and `Database.ImportGame` only creates a game. Library registration
+does not trigger that workflow for explicit browser imports. The supported
+workflow is selecting the imported games and using **Download Metadata** in
+Playnite; [the import documentation](library-imports.md#metadata-downloads)
+records this limit. Updated theme/grouping/migration and broader persistence,
+actions/restart/clean-install results still require actual host checks.
+
+## October 11 library imports implementation — Gates C/D host checks pending
+
+Milestone D implements optional single/multi-selection imports and confirmed
+complete-catalog Import All. The import service reconciles versioned mappings
+with durable host markers, prunes deleted/foreign mappings, recovers missing
+state, supports ASIN-to-native-ID migration, and rejects conflicts. SDK creates
+are manual/uninstalled games with Luna source/tags, direct links, additional URL
+actions, and optional artwork through host storage. Refresh/reimport preserve
+existing user metadata, and catalog removals never delete library entries.
+
+The **260 .NET tests** include **49 new import/mapping/browser cases** using the
+existing reduced API samples and real temporary mapping files. They cover
+partial/concurrent retries, before/after-commit write failures, cancellation,
+malformed/future/oversized/duplicate/deep state, backup recovery, foreign entries,
+deleted-game reconciliation, migration/conflicts, metadata preservation,
+full-catalog scope while filtered, and a confirmed import awaiting activation
+reconciliation. Cancelling/closing during that check also discards the pending
+import; the regression reproduced unwanted creates before the fix. The known
+JSON 10 nesting advisory remains mitigated by explicit
+depth 64 in catalog and mapping readers/serializers.
+
+Windows CI extends the real WPF harness to the production import adapter using
+SDK models and an isolated database API: extended selection, rejected/confirmed
+Import All, source/tags/actions/manual flags, optional file storage, unchanged
+user edits after repeats, deletion/reimport, and mapping reload. The extracted
+`.pext` process checks mapping round-trip and duplicate rejection using only the
+actual host JSON 10 DLL. The package version is `0.2.0`; no new dependency DLL,
+full catalog response, or API fixture is bundled.
+
+**Gates C and D remain pending actual Playnite host tests.** Automated SDK/WPF
+checks do not establish real database persistence, action menu behavior, host
+themes, restart behavior, or clean installation. Complete the
+[browser](playnite-browser.md#outstanding-windows-host-checks) and
+[import](library-imports.md#verification-and-remaining-host-checks) checklists
+before final release validation. The following sections preserve earlier results.
+
 ## October 11 Playnite browser implementation — Gate C host checks pending
 
 Milestone C adds the official-template `net462` / SDK 6.17.0 GenericPlugin,

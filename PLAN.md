@@ -2,8 +2,10 @@
 
 Reconciled October 11, 2026 (UTC) after merged PRs
 [#5](https://github.com/dguenther/playnite-luna/pull/5) and
-[#6](https://github.com/dguenther/playnite-luna/pull/6), with Milestone C in
-[#7](https://github.com/dguenther/playnite-luna/pull/7), in
+[#6](https://github.com/dguenther/playnite-luna/pull/6), and
+[#7](https://github.com/dguenther/playnite-luna/pull/7), with Milestone D in draft
+[#8](https://github.com/dguenther/playnite-luna/pull/8), branch
+`feature/playnite-library-imports`, in
 `dguenther/playnite-luna`. Evidence timestamps use UTC.
 
 This is the working checklist reconciled with the uploaded implementation plan.
@@ -16,9 +18,14 @@ and production data layer.** The repository has a reusable provider, validated
 runtime refreshes, versioned cache/recovery, identity-aware comparisons, optional
 research tools, representative fixtures, and CI. Milestone C now adds a Playnite
 WPF browser, a testable local browsing model, and Toolbox preview packaging.
-**Gate C remains pending Windows Playnite host validation.** Imports remain
-Milestone D. See [browser behavior and host checks](docs/playnite-browser.md) and
-the [runtime data-layer contract](docs/catalog-data-layer.md).
+Milestone D adds reconciled import status, single/multi-selection imports, and
+confirmed full-catalog imports in preview `0.2.1`, with **Library → Amazon Luna**
+ownership and migration from marked manual imports. Initial host opening/imports
+were reported working; the remaining host checks stay open.
+**Gates C and D remain pending Windows Playnite host validation.** See
+[browser behavior and host checks](docs/playnite-browser.md),
+[library imports](docs/library-imports.md), and the
+[runtime data-layer contract](docs/catalog-data-layer.md).
 
 A checked item below means implementation or linked evidence exists in this
 working tree. Phase verdicts are stated separately; see
@@ -31,7 +38,10 @@ Build an open-source Playnite 10.x extension for Windows that browses the comple
 US Amazon Luna cloud catalog and optionally imports selected games without an
 Amazon account connection.
 
-- Use C#, a `GenericPlugin`, WPF, and .NET Framework 4.6.2 for the extension.
+- Use C#, a `LibraryPlugin`, WPF, and .NET Framework 4.6.2 for the extension.
+  The original specification used `GenericPlugin`; host feedback requested an
+  Amazon Luna Library group, which requires library registration. Imports remain
+  explicit browser actions and global library updates do not import the catalog.
   Retain the existing provider's `net462;net8.0` targets and .NET 8 research tooling.
 - Obtain data directly from Amazon Luna; do not introduce third-party catalog
   providers. The undocumented first-party API is a dependency, not a stable contract.
@@ -193,7 +203,8 @@ Depends on Gate B; Windows is required for Playnite runtime verification.
 - [x] Add `src/LunaPlaynite` using the compatible Playnite 10 Toolbox template,
   targeting `net462`. Add the extension manifest, stable plugin ID, settings/data
   integration, and dependency packaging. SDK 6.17.0 matches the official template.
-- [ ] Verify loading inside the Playnite Desktop host on Windows.
+- [x] Verify basic loading inside the Playnite Desktop host on Windows (user report).
+  Theme readability, restart, and clean-install checks remain pending.
 - [x] Add the main-menu entry **Amazon Luna Catalog Browser** and a WPF window.
   A sidebar shortcut is optional.
 - [x] Display the entire validated cached catalog with cover artwork, titles,
@@ -204,10 +215,10 @@ Depends on Gate B; Windows is required for Playnite runtime verification.
   keep the UI responsive and show cached/offline, loading, empty-cache, and
   refresh-failure states clearly.
 - [x] Add manual Refresh and Open in Luna using the default browser.
-- [ ] Add Not imported / Imported indicators backed by the mapping and actual
+- [x] Add Not imported / Imported indicators backed by the mapping and actual
   Playnite database reconciliation from Milestone D. Same-title Steam/GOG games
   must not count as Luna imports.
-- [ ] Provide selection, Import Selected, and explicit Import All controls wired
+- [x] Provide selection, Import Selected, and explicit Import All controls wired
   to Milestone D. Browser viewing must not require importing.
 
 **Gate C:** the browser opens in Playnite Desktop Mode, shows all validated games
@@ -222,36 +233,47 @@ dispatcher notifications, image decoding, and cache restart without live Amazon
 requests. CI packages a preview with official Playnite 10.62 Toolbox and checks
 staging/archive dependencies. These checks do not establish Playnite host loading;
 the [manual checklist](docs/playnite-browser.md#outstanding-windows-host-checks)
-still gates C. Imports/status controls remain explicitly deferred to D.
+still gates C. Milestone D implements import/status controls and extends the
+Windows harness with SDK database adapter checks; actual host checks remain open.
 
 ## D — Implement optional library imports (Phase 3)
 
 Depends on the validated data and browser; finish the status integration in C.
 
-- [ ] Add single and multi-selection imports through the Playnite SDK database API.
+- [x] Add single and multi-selection imports through the Playnite SDK database API.
   Produce added/skipped/failed counts and actionable per-entry errors.
-- [ ] Provide Import All with explicit confirmation of the scope and count.
+- [x] Provide Import All with explicit confirmation of the scope and count.
   Define complete-catalog versus filtered-view scope clearly in the UI.
-- [ ] Create entries with the correct title, an `Amazon Luna` source, a direct Luna
+- [x] Create entries with the correct title, an `Amazon Luna` source, a direct Luna
   link, an `Open in Luna` URL game action, relevant managed membership tags, and
   optional Luna artwork.
-- [ ] Keep cloud games uninstalled by default and avoid assigning PC Windows solely
+- [x] Keep cloud games uninstalled by default and avoid assigning PC Windows solely
   because the extension runs on Windows. Use `GameActionType.URL`; defer any native
   Play-button/installed-state option until verified. Do not infer session duration.
-- [ ] Persist versioned `(region, LunaId) -> Playnite game GUID` mappings atomically.
+- [x] Persist versioned `(region, LunaId) -> Playnite game GUID` mappings atomically.
   Reconcile deleted entries before status checks/imports; where practical, recover
-  mappings from trustworthy stored Luna URLs after plugin-state restoration.
-- [ ] Make repeated imports idempotent, including bulk retries and partial failures.
+  mappings from validated durable Luna identity markers after plugin-state
+  restoration. Unmarked URLs alone cannot establish ownership safely.
+- [x] Make repeated imports idempotent, including bulk retries and partial failures.
   Never overwrite another library's same-title game or use titles as identity.
-- [ ] Update only reliably extension-managed properties. Preserve title overrides,
+- [x] Update only reliably extension-managed properties. Preserve title overrides,
   favorites, completion, playtime, notes, manual artwork, and user tags/categories;
-  skip automatic updates when ownership cannot be established.
-- [ ] Never automatically delete imported games for MVP. Removal detection/tagging
+  skip automatic updates when ownership cannot be established. This implementation
+  preserves existing metadata. The `0.2.1` upgrade changes only library ownership
+  for earlier manual entries with a valid Luna marker.
+- [x] Never automatically delete imported games for MVP. Removal detection/tagging
   remains deferred and must require complete successful same-region snapshots and
   confirmation across refreshes.
-- [ ] Add tests for identity/mapping reconciliation, deleted games, repeated/bulk
+- [x] Add tests for identity/mapping reconciliation, deleted games, repeated/bulk
   imports, partial failures, untouched non-Luna copies, and preserved user edits.
-  Validate persistence and working URL actions inside Playnite.
+- [ ] Validate persistence and working URL actions inside Playnite.
+
+**Implementation status:** 51 new import/mapping/browser cases bring the suite
+to 262 .NET tests. The Windows WPF harness uses real SDK models and the production
+adapter through an isolated database API. The package compatibility process checks
+mapping persistence with host Newtonsoft JSON 10. These checks support the
+implementation; [actual host checks](docs/library-imports.md#verification-and-remaining-host-checks)
+still gate D.
 
 **Gate D:** single/bulk imports persist across restart, repeated imports create no
 duplicates, links work, existing libraries and user edits remain intact, and
@@ -264,19 +286,21 @@ Depends on Gates A–D. Retain the existing offline suite and CI.
 | Original automated-test requirement | Coverage already present | Remaining verification |
 | --- | --- | --- |
 | Recorded responses, nested tiles, malformed presentation data | Parser/detail fixtures and tests; canonical browse-collection restrictions | Extend fixtures for any newly observed contract. |
-| Membership overlap, region identity, duplicate ASINs, title collisions | Parser/model/validation tests and production identity migration/conflict checks | Import behavior. |
+| Membership overlap, region identity, duplicate ASINs, title collisions | Parser/model/validation tests and production/import identity migration/conflict checks | Windows Playnite host integration. |
 | Pagination and incomplete results | Runtime browse validation, marker/action/total rejection, category-set disagreement, and 36-query alphabetical research traversal | Future browse continuation, if observed. |
 | 401/403/429/500, timeouts, cancellation | Provider/transport tests; bounded retry/deferral, body deadlines/limits, UTF-8/depth checks | Regressions across any new request types. |
 | Cache recovery and atomic replacement | Production restart, corruption/backup recovery, schema validation, cancellation, failed replacement, and byte preservation | Windows Playnite host integration. |
-| Additions/removals across snapshots | Validated same-scope comparisons, migration, metadata changes, and failed-refresh safeguards | Import integration; no MVP deletion. |
-| Import idempotency and stale mappings | No import implementation | Milestone D service tests plus Playnite database integration. |
+| Additions/removals across snapshots | Validated same-scope comparisons, migration, metadata changes, failed-refresh safeguards, and no deletion of imported entries | Windows Playnite host integration. |
+| Import idempotency and stale mappings | Milestone D service, mapping-file, browser, and SDK adapter checks | Actual Playnite database persistence, restart, and action behavior. |
 
 - [x] .NET 8 SDK selection, committed NuGet lock files, locked restore, Release
   build, and offline tests in GitHub Actions.
 - [x] Milestone B passes 182 .NET cases and Release builds for
   `net462` and `net8.0` with zero warnings/errors. CI covers Linux and Windows.
-- [x] Milestone C expands the suite to 208 .NET cases, adds full WPF compilation,
+- [x] Milestone C expands the suite to 211 .NET cases after review, adds full WPF compilation,
   Windows dispatcher/binding smoke checks, and official Toolbox preview packaging.
+- [x] Milestone D expands the suite to 262 .NET cases with 51 import cases and
+  extends Windows SDK/WPF and host JSON compatibility checks for imports.
 - [x] Twenty-four Python offline checks cover evidence safety, incomplete comparisons,
   context cleanup, bounded catalog draining, search termination, and unstable
   pages/reference disagreement, complete audit requirements, snapshot binding,
@@ -345,9 +369,9 @@ For the full scoped audit and optional verified export, follow
 [README's streaming verification commands](README.md#verify-a-streaming-snapshot).
 That audit returns 0 on success; the C# probe keeps its research exit code 2.
 
-**Next increment:** Milestone C's Playnite 10 WPF browser, consuming the production
-catalog service for cached startup and explicit runtime refresh. Keep search and
-filters local, and validate the host on Windows. Follow C → D → E.
+**Next increment:** finish the actual Windows Playnite host checks for browser
+and imports, then Milestone E hardening, clean-install validation, and packaging.
+Keep runtime fetching and representative tests; no bulk catalog fixture is needed.
 
 ## Deferred improvements
 

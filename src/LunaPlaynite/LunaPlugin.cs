@@ -5,15 +5,17 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Threading;
 using System.Windows;
+using System.Windows.Threading;
 using LunaCatalog;
 using LunaCatalogBrowser;
 using Playnite.SDK;
 using Playnite.SDK.Events;
+using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
 
 namespace LunaPlaynite
 {
-    public sealed class LunaPlugin : GenericPlugin
+    public sealed class LunaPlugin : LibraryPlugin
     {
         private static readonly ILogger logger = LogManager.GetLogger();
         private readonly HttpClient catalogClient = AnonymousClient();
@@ -22,12 +24,37 @@ namespace LunaPlaynite
         private CoverImageCache? covers;
         private Window? browser;
         private CatalogBrowserModel? model;
+        private CatalogImportService? imports;
+        private PlayniteImportDatabase? importDatabase;
+        private DispatcherTimer? importChanges;
+        private bool importsChanged;
         private bool disposed;
-        public override Guid Id { get; } = Guid.Parse("6f4229ca-70a9-4c65-ae9f-047a367beda9");
+        public override Guid Id => LunaImportIdentity.PluginId;
+        public override string Name => "Amazon Luna";
 
         public LunaPlugin(IPlayniteAPI api) : base(api)
         {
-            Properties = new GenericPluginProperties { HasSettings = false };
+            Properties = new LibraryPluginProperties { HasSettings = false, HasCustomizedGameImport = true };
+        }
+
+        // Library registration supplies the Amazon Luna group; importing remains an explicit browser action.
+        public override IEnumerable<GameMetadata> GetGames(LibraryGetGamesArgs args) => Array.Empty<GameMetadata>();
+        public override IEnumerable<Game> ImportGames(LibraryImportGamesArgs args)
+        {
+            if (!disposed && !args.CancelToken.IsCancellationRequested) MigrateLegacyImports();
+            return Array.Empty<Game>();
+        }
+        public override void OnApplicationStarted(OnApplicationStartedEventArgs args) => MigrateLegacyImports();
+        private void MigrateLegacyImports()
+        {
+            if (disposed) return;
+            try
+            {
+                if (importDatabase != null) { importDatabase.MigrateLegacyImports(); return; }
+                using (var database = new PlayniteImportDatabase(PlayniteApi.Database, PlayniteApi.MainView.UIDispatcher, GetPluginUserDataPath()))
+                    database.MigrateLegacyImports();
+            }
+            catch (Exception) { logger.Warn("Legacy Luna library assignment could not be saved. Reopen the catalog to retry."); }
         }
 
         private static HttpClient AnonymousClient() => new HttpClient(new HttpClientHandler
@@ -50,22 +77,48 @@ namespace LunaPlaynite
             }
             try
             {
+                if (importChanges == null)
+                {
+                    // Plugin construction can happen off the UI thread; attach the timer when the menu opens.
+                    importChanges = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
+                    importChanges.Tick += async (_, __) =>
+                    {
+                        if (model == null) { importChanges.Stop(); return; }
+                        if (model.IsBusy || !importsChanged) return;
+                        importsChanged = false;
+                        await model.ReconcileImportsAsync(CancellationToken.None);
+                        if (!importsChanged) importChanges.Stop();
+                    };
+                }
                 if (service == null)
                 {
                     var provider = new LunaCatalogProvider(catalogClient,
                         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36", "154.0.0.0");
-                    service = new CatalogService(provider, new JsonCatalogCache(GetPluginUserDataPath()));
-                    covers = new CoverImageCache(new CatalogArtworkClient(artworkClient));
+                    var catalogService = new CatalogService(provider, new JsonCatalogCache(GetPluginUserDataPath()));
+                    var artwork = new CatalogArtworkClient(artworkClient);
+                    covers = new CoverImageCache(artwork);
+                    importDatabase = new PlayniteImportDatabase(PlayniteApi.Database, Dispatcher.CurrentDispatcher, GetPluginUserDataPath());
+                    importDatabase.LibraryChanged += () =>
+                    {
+                        browser?.Dispatcher.BeginInvoke(new Action(() => { importsChanged = true; importChanges.Start(); }));
+                    };
+                    imports = new CatalogImportService(importDatabase, new JsonImportMappingStore(GetPluginUserDataPath()),
+                        artwork.DownloadAsync, message => logger.Error(message));
+                    service = catalogService;
                 }
+                MigrateLegacyImports();
                 BrowserPreferences preferences;
                 try { preferences = LoadPluginSettings<BrowserPreferences>() ?? new BrowserPreferences(); }
                 catch (Exception) { logger.Warn("Luna browser preferences could not be read; defaults will be used."); preferences = new BrowserPreferences(); }
                 var savePreferences = preferences.SchemaVersion == 1;
                 if (!savePreferences) preferences = new BrowserPreferences();
-                var viewModel = new CatalogBrowserModel(service, message => logger.Error(message));
+                var viewModel = new CatalogBrowserModel(service, message => logger.Error(message), imports);
                 if (Enum.IsDefined(typeof(CatalogCategory), preferences.Category)) viewModel.Category = preferences.Category;
                 if (Enum.IsDefined(typeof(CatalogTitleSort), preferences.TitleSort)) viewModel.TitleSort = preferences.TitleSort;
-                var view = new CatalogBrowserView(viewModel, covers!, OpenInLuna);
+                var view = new CatalogBrowserView(viewModel, covers!, OpenInLuna, count =>
+                    PlayniteApi.Dialogs.ShowMessage("Import all " + count + " games from the complete US Luna catalog?\n\n" +
+                        "Search and category filters are ignored. Existing Luna imports will be skipped. Games will be added as uninstalled entries with an Open in Luna action.",
+                        "Import all Luna games", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
                 var window = PlayniteApi.Dialogs.CreateWindow(new WindowCreationOptions());
                 window.Title = "Amazon Luna Catalog Browser";
                 window.Content = view;
@@ -77,6 +130,7 @@ namespace LunaPlaynite
                 window.Closed += (_, __) =>
                 {
                     viewModel.CancelCurrentOperation();
+                    importChanges.Stop();
                     if (savePreferences)
                     {
                         var size = window.WindowState == WindowState.Normal ? new Size(window.ActualWidth, window.ActualHeight) : window.RestoreBounds.Size;
@@ -87,6 +141,7 @@ namespace LunaPlaynite
                     browser = null; model = null;
                 };
                 browser = window; model = viewModel;
+                window.Activated += async (_, __) => await viewModel.ReconcileImportsAsync(CancellationToken.None);
                 window.Show();
             }
             catch (Exception)
@@ -116,6 +171,7 @@ namespace LunaPlaynite
             disposed = true;
             model?.CancelCurrentOperation();
             browser?.Close();
+            importChanges?.Stop(); importDatabase?.Dispose();
             catalogClient.Dispose(); artworkClient.Dispose();
             base.Dispose();
         }
