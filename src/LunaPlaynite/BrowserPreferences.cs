@@ -6,6 +6,7 @@ namespace LunaPlaynite
     public sealed class BrowserPreferences
     {
         public int SchemaVersion { get; set; } = 1;
+        public bool MarkGamesInstalled { get; set; } = true;
         public CatalogCategory Category { get; set; }
         public CatalogTitleSort TitleSort { get; set; }
         public double Width { get; set; } = 1060;

@@ -4,9 +4,10 @@ Reconciled October 18, 2026 (America/New_York) after merged PRs
 [#5](https://github.com/dguenther/playnite-luna/pull/5) and
 [#6](https://github.com/dguenther/playnite-luna/pull/6), and
 [#7](https://github.com/dguenther/playnite-luna/pull/7), and
-[#8](https://github.com/dguenther/playnite-luna/pull/8), with the inline sidebar
-follow-up in draft [PR #9](https://github.com/dguenther/playnite-luna/pull/9),
-branch `feature/luna-sidebar-browser`, in
+[#8](https://github.com/dguenther/playnite-luna/pull/8), and the inline sidebar
+follow-up [PR #9](https://github.com/dguenther/playnite-luna/pull/9), merged as
+`77196e0`. The Play/Install settings follow-up is in draft
+[PR #10](https://github.com/dguenther/playnite-luna/pull/10), branch `feature/luna-install-website`, in
 `dguenther/playnite-luna`. Evidence timestamps use UTC.
 
 This is the working checklist reconciled with the uploaded implementation plan.
@@ -20,7 +21,7 @@ runtime refreshes, versioned cache/recovery, identity-aware comparisons, optiona
 research tools, representative fixtures, and CI. Milestone C now adds a Playnite
 WPF browser, a testable local browsing model, and Toolbox preview packaging.
 Milestone D adds reconciled import status, single/multi-selection imports, and
-confirmed full-catalog imports in preview `0.2.4`, with **Library → Amazon Luna**
+confirmed full-catalog imports in preview `0.2.6`, with **Library → Amazon Luna**
 ownership and migration from marked manual imports. Initial host opening/imports
 were reported working; the remaining host checks stay open.
 The sidebar follow-up shares browsing state between an inline Desktop view and
@@ -28,6 +29,9 @@ the optional separate window, with coordinated cancellation and lazy startup.
 The sidebar uses Luna's exact standalone official symbol as an embedded offline
 vector resource, without a circle and with the host's theme/selection foreground.
 The user screenshot confirms basic inline host rendering; broader checks remain.
+The default-enabled installed-state setting marks owned imports installed and
+shows Play; disabling it shows Install. Both buttons open the stored Luna page,
+and the setting applies to existing/new entries. Host checks cover both modes.
 **Gates C and D remain pending Windows Playnite host validation.** See
 [browser behavior and host checks](docs/playnite-browser.md),
 [library imports](docs/library-imports.md), and the
@@ -254,9 +258,11 @@ Depends on the validated data and browser; finish the status integration in C.
 - [x] Create entries with the correct title, an `Amazon Luna` source, a direct Luna
   link, an `Open in Luna` URL game action, relevant managed membership tags, and
   optional Luna artwork.
-- [x] Keep cloud games uninstalled by default and avoid assigning PC Windows solely
-  because the extension runs on Windows. Use `GameActionType.URL`; defer any native
-  Play-button/installed-state option until verified. Do not infer session duration.
+- [x] Provide a default-enabled setting that marks owned Luna entries installed
+  and supplies a native Play controller. Disabled entries remain uninstalled
+  with an Install controller. Both open the stored website URL, clear transient
+  states, and infer no session duration. Apply changes to existing and new imports,
+  preserving descriptive metadata and saved actions. Infer no Windows platform.
 - [x] Persist versioned `(region, LunaId) -> Playnite game GUID` mappings atomically.
   Reconcile deleted entries before status checks/imports; where practical, recover
   mappings from validated durable Luna identity markers after plugin-state

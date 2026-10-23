@@ -112,9 +112,25 @@ durable host `GameId` markers. The Playnite adapter reads/creates SDK entries on
 the dispatcher and checks identity atomically before creation. Its library entries
 carry the Luna source, memberships, direct link and additional URL action, and
 optional covers through host storage. Existing metadata is never updated by
-refresh/reimport, and games are never deleted. The local browser model provides
+refresh/reimport, apart from the explicit installed-state/library-action setting,
+and games are never deleted. The local browser model provides
 multi-selection, import status, confirmed complete-catalog imports, cancellation,
 and partial-failure summaries. See [the import contract](library-imports.md).
+
+The plugin exposes SDK `ISettings` and a WPF settings view. Its default-enabled
+installed-state setting shares the versioned preferences file, loads once per
+plugin lifetime, and applies only to owned marked imports. The adapter changes
+`IsInstalled`/`IncludeLibraryPluginAction` on existing entries and reads the saved
+choice for new creates. Save/Cancel and persistence failure rollback retain the
+current effective choice. Newer schemas are not overwritten or used to rewrite
+installed flags. Browser preference saves retain the setting.
+
+`GetPlayActions` and `GetInstallActions` supply website controllers sharing
+`LunaGamePage` URL/ownership validation. Play completes with a zero-duration
+Stopped event and no Started event; Install completes through cancellation.
+Both clear host transient states even after browser failure, without tracking
+streaming sessions or modifying saved URL actions. Windows checks cover both
+handoffs, settings UI/persistence, old/new imports, and preserved metadata.
 
 `global.json`, committed NuGet lock files, pinned Python dependencies, and GitHub
 Actions make offline validation repeatable: locked restore, Release builds for

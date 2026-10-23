@@ -1,7 +1,7 @@
 # Playnite catalog browser preview
 
 Milestones C and D add a Playnite 10 `LibraryPlugin`, inline sidebar and optional
-WPF catalog window, and library imports in preview `0.2.4`. The project started from the official
+WPF catalog window, and library imports in preview `0.2.6`. The project started from the official
 [10.62 GenericPlugin template](https://github.com/JosefNemec/Playnite/tree/10.62/source/Tools/Playnite.Toolbox/Templates/Extensions/GenericPlugin)
 and now registers as a game library to provide **Library → Amazon Luna**,
 targeting `net462` and SDK `6.17.0`. The preview packaging target is Playnite

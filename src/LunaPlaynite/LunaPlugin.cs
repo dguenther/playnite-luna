@@ -33,6 +33,8 @@ namespace LunaPlaynite
         private CatalogBrowserView? sidebarView;
         private SidebarItem? sidebarItem;
         private BrowserPreferences preferences = new BrowserPreferences();
+        private bool preferencesLoaded;
+        private LunaSettings? settings;
         private bool savePreferences;
         private CatalogImportService? imports;
         private PlayniteImportDatabase? importDatabase;
@@ -44,27 +46,84 @@ namespace LunaPlaynite
 
         public LunaPlugin(IPlayniteAPI api) : base(api)
         {
-            Properties = new LibraryPluginProperties { HasSettings = false, HasCustomizedGameImport = true };
+            Properties = new LibraryPluginProperties { HasSettings = true, HasCustomizedGameImport = true };
+        }
+
+        private void LoadPreferences()
+        {
+            if (preferencesLoaded) return;
+            preferencesLoaded = true;
+            try { preferences = LoadPluginSettings<BrowserPreferences>() ?? new BrowserPreferences(); }
+            catch (Exception) { logger.Warn("Luna preferences could not be read; defaults will be used."); preferences = new BrowserPreferences(); }
+            savePreferences = preferences.SchemaVersion == 1;
+            if (!savePreferences) preferences = new BrowserPreferences();
+        }
+
+        public override ISettings GetSettings(bool firstRunSettings)
+        {
+            LoadPreferences();
+            return settings ?? (settings = new LunaSettings(() => preferences.MarkGamesInstalled, SaveInstalledSetting, () => savePreferences && !disposed));
+        }
+        public override UserControl GetSettingsView(bool firstRunView) => new LunaSettingsView { DataContext = GetSettings(firstRunView) };
+
+        private void SaveInstalledSetting(bool installed)
+        {
+            if (disposed || !savePreferences) throw new InvalidOperationException("Luna settings cannot be saved by this extension version.");
+            var previous = preferences.MarkGamesInstalled;
+            preferences.MarkGamesInstalled = installed;
+            try { SavePluginSettings(preferences); }
+            catch { preferences.MarkGamesInstalled = previous; throw; }
+            if (!ReconcileLibraryGames())
+                PlayniteApi.Dialogs.ShowErrorMessage("The Luna setting was saved, but some library entries could not be updated. Reopen the Luna catalog or restart Playnite to retry.", "Amazon Luna");
         }
 
         // Library registration supplies the Amazon Luna group; importing remains an explicit browser action.
         public override IEnumerable<GameMetadata> GetGames(LibraryGetGamesArgs args) => Array.Empty<GameMetadata>();
         public override IEnumerable<Game> ImportGames(LibraryImportGamesArgs args)
         {
-            if (!disposed && !args.CancelToken.IsCancellationRequested) MigrateLegacyImports();
+            if (!disposed && !args.CancelToken.IsCancellationRequested) ReconcileLibraryGames();
             return Array.Empty<Game>();
         }
-        public override void OnApplicationStarted(OnApplicationStartedEventArgs args) => MigrateLegacyImports();
-        private void MigrateLegacyImports()
+        public override void OnApplicationStarted(OnApplicationStartedEventArgs args) => ReconcileLibraryGames();
+
+        public override IEnumerable<PlayController> GetPlayActions(GetPlayActionsArgs args)
         {
-            if (disposed) return;
+            if (disposed) yield break;
+            LoadPreferences();
+            if (!preferences.MarkGamesInstalled) yield break;
+            var controller = LunaWebsitePlayController.ForGame(args.Game, OpenWebsite);
+            if (controller != null) yield return controller;
+        }
+
+        public override IEnumerable<InstallController> GetInstallActions(GetInstallActionsArgs args)
+        {
+            if (disposed) yield break;
+            var controller = LunaWebsiteInstallController.ForGame(args.Game, OpenWebsite);
+            if (controller != null) yield return controller;
+        }
+
+        private bool ReconcileLibraryGames()
+        {
+            if (disposed) return false;
+            LoadPreferences();
             try
             {
-                if (importDatabase != null) { importDatabase.MigrateLegacyImports(); return; }
-                using (var database = new PlayniteImportDatabase(PlayniteApi.Database, PlayniteApi.MainView.UIDispatcher, GetPluginUserDataPath()))
-                    database.MigrateLegacyImports();
+                if (importDatabase != null)
+                {
+                    importDatabase.MigrateLegacyImports();
+                    if (savePreferences) importDatabase.ApplyInstalledState(preferences.MarkGamesInstalled);
+                }
+                else
+                {
+                    using (var database = new PlayniteImportDatabase(PlayniteApi.Database, PlayniteApi.MainView.UIDispatcher, GetPluginUserDataPath()))
+                    {
+                        database.MigrateLegacyImports();
+                        if (savePreferences) database.ApplyInstalledState(preferences.MarkGamesInstalled);
+                    }
+                }
+                return true;
             }
-            catch (Exception) { logger.Warn("Legacy Luna library assignment could not be saved. Reopen the catalog to retry."); }
+            catch (Exception) { logger.Warn("Luna library ownership or installed state could not be saved. Reopen the catalog to retry."); return false; }
         }
 
         private static HttpClient AnonymousClient() => new HttpClient(new HttpClientHandler
@@ -109,7 +168,7 @@ namespace LunaPlaynite
             try
             {
                 if (disposed) throw new ObjectDisposedException(nameof(LunaPlugin));
-                if (sidebarView != null) { MigrateLegacyImports(); return sidebarView; }
+                if (sidebarView != null) { ReconcileLibraryGames(); return sidebarView; }
                 return sidebarView = CreateBrowserView();
             }
             catch (Exception)
@@ -149,7 +208,8 @@ namespace LunaPlaynite
                 var catalogService = new CatalogService(provider, new JsonCatalogCache(GetPluginUserDataPath()));
                 var artwork = new CatalogArtworkClient(artworkClient);
                 covers = new CoverImageCache(artwork);
-                importDatabase = new PlayniteImportDatabase(PlayniteApi.Database, dispatcher, GetPluginUserDataPath());
+                LoadPreferences();
+                importDatabase = new PlayniteImportDatabase(PlayniteApi.Database, dispatcher, GetPluginUserDataPath(), () => preferences.MarkGamesInstalled);
                 importDatabase.LibraryChanged += () =>
                 {
                     if (disposed || dispatcher.HasShutdownStarted) return;
@@ -163,10 +223,7 @@ namespace LunaPlaynite
                     artwork.DownloadAsync, message => logger.Error(message));
                 service = catalogService;
             }
-            try { preferences = LoadPluginSettings<BrowserPreferences>() ?? new BrowserPreferences(); }
-            catch (Exception) { logger.Warn("Luna browser preferences could not be read; defaults will be used."); preferences = new BrowserPreferences(); }
-            savePreferences = preferences.SchemaVersion == 1;
-            if (!savePreferences) preferences = new BrowserPreferences();
+            LoadPreferences();
             var model = new CatalogBrowserModel(service, message => logger.Error(message), imports);
             if (Enum.IsDefined(typeof(CatalogCategory), preferences.Category)) model.Category = preferences.Category;
             if (Enum.IsDefined(typeof(CatalogTitleSort), preferences.TitleSort)) model.TitleSort = preferences.TitleSort;
@@ -182,10 +239,10 @@ namespace LunaPlaynite
         private CatalogBrowserView CreateBrowserView()
         {
             var activeSession = EnsureBrowserSession();
-            MigrateLegacyImports();
+            ReconcileLibraryGames();
             return new CatalogBrowserView(activeSession, covers!, OpenInLuna, count =>
                 PlayniteApi.Dialogs.ShowMessage("Import all " + count + " games from the complete US Luna catalog?\n\n" +
-                    "Search and category filters are ignored. Existing Luna imports will be skipped. Games will be added as uninstalled entries with an Open in Luna action.",
+                    "Search and category filters are ignored. Existing Luna imports will be skipped. Games will be added to the Amazon Luna library with an Open in Luna action.",
                     "Import all Luna games", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
         }
 
@@ -243,10 +300,12 @@ namespace LunaPlaynite
         {
             if (!Uri.TryCreate(game.Url, UriKind.Absolute, out var uri) || uri.Scheme != "https" || uri.Host != "luna.amazon.com" ||
                 uri.Port != 443 || uri.UserInfo.Length != 0 || !uri.AbsolutePath.StartsWith("/game/", StringComparison.Ordinal)) return;
-            try { Process.Start(new ProcessStartInfo(uri.AbsoluteUri) { UseShellExecute = true }); }
+            try { OpenWebsite(uri); }
             catch (Exception ex) when (ex is Win32Exception || ex is InvalidOperationException)
             { PlayniteApi.Dialogs.ShowErrorMessage("The Luna page could not be opened. Check your default browser.", "Amazon Luna"); }
         }
+
+        private static void OpenWebsite(Uri uri) => Process.Start(new ProcessStartInfo(uri.AbsoluteUri) { UseShellExecute = true });
 
         public override void OnApplicationStopped(OnApplicationStoppedEventArgs args) => Dispose();
         public override void Dispose()

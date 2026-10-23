@@ -1,0 +1,9 @@
+<UserControl x:Class="LunaPlaynite.LunaSettingsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Foreground="{DynamicResource TextBrush}">
+    <StackPanel Margin="16">
+        <CheckBox x:Name="InstalledBox" Content="Mark Luna games as installed"
+            IsChecked="{Binding MarkGamesInstalled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+    </StackPanel>
+</UserControl>

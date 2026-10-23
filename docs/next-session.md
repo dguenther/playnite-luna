@@ -7,9 +7,9 @@ Repository: `dguenther/playnite-luna`. PR
 `b3b29fa`; [PR #6](https://github.com/dguenther/playnite-luna/pull/6) merged as
 `abd2260`. [PR #7](https://github.com/dguenther/playnite-luna/pull/7) merged as
 `f85bde1`. Milestone D [PR #8](https://github.com/dguenther/playnite-luna/pull/8)
-merged as `7c21d4f`. The inline sidebar follow-up is in draft
-[PR #9](https://github.com/dguenther/playnite-luna/pull/9), branch
-`feature/luna-sidebar-browser`, preview `0.2.4`. Check current
+merged as `7c21d4f`. The inline sidebar follow-up
+[PR #9](https://github.com/dguenther/playnite-luna/pull/9) merged as `77196e0`.
+The Install-button follow-up is on `feature/luna-install-website`, preview `0.2.6`. Check current
 Git/PR state and preserve existing edits before resuming. No applicable
 `AGENTS.md` was found during this work.
 
@@ -38,6 +38,24 @@ optional window have separate controls sharing one `CatalogBrowserSession`/model
 last-host departure cancels work, and reopening restores offline data and status.
 **Gates C and D still need Windows Playnite host checks.**
 See [the import contract](library-imports.md).
+
+Preview `0.2.6` adds **Mark Luna games as installed**, enabled by
+default, through SDK extension settings (draft PR #10). Save reconciles existing
+owned marked games' `IsInstalled`/`IncludeLibraryPluginAction`; new creates read
+the saved choice. Startup/open/library update also reconcile. Cancel preserves
+the saved choice. The preferences file retains category/sort/window size and
+backfills true when an older file lacks the new property. Future schemas block
+settings writes and installed-state rewrites.
+
+Enabled games use a native website Play controller; disabled games use the
+Install website controller. Both share safe stored-URL/identity validation and
+require no API fetch. Play completes with Stopped(0), without Started or stream
+tracking; Install completes through SDK cancellation. Browser failures still
+clear transient states. Saved URL actions and descriptive metadata are preserved.
+Windows checks cover settings UI Save/Cancel, restart and save failure, old/new
+imports, untouched other libraries, both handoffs, and browser preference saves.
+Actual host behavior remains part of the user's C/D/E manual checks. Regional
+endpoint discovery remains a researched proposal; runtime scope is still US.
 
 The browser will download current API data directly through C# at runtime.
 `CatalogService.LoadAsync` opens the cache without networking;
@@ -128,7 +146,7 @@ a single observed removal.
 ## Next work
 
 **Finish Gates C and D's Windows host checks, then proceed to Milestone E.** Download the
-`luna-playnite-preview` CI artifact from PR #9, or use `tools/PackageLuna.ps1` with
+`luna-playnite-preview` CI artifact for `feature/luna-install-website`, or use `tools/PackageLuna.ps1` with
 an installed Playnite 10 Toolbox. Follow the [host checklist](playnite-browser.md#outstanding-windows-host-checks),
 record actual loading/theme/browser/offline/restart results, and keep Gate C
 pending until those pass. Also follow [the import checklist](library-imports.md#verification-and-remaining-host-checks).

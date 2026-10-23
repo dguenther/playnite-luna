@@ -138,6 +138,9 @@ namespace LunaPlayniteSmoke
                     Check(!plugin.GetGames(new LibraryGetGamesArgs()).Any(), "A library update would automatically import the catalog.");
                 }
                 CheckLegacyMigration(directory);
+                CheckInstallWebsite();
+                await CheckInstalledSettingAsync(directory);
+                CheckPlayWebsite();
                 await CheckSidebarAsync(directory);
                 var cache = new JsonCatalogCache(directory, () => time);
                 await cache.SaveAsync(CatalogValidator.ValidateSnapshot(Snapshot(), "US", time), CancellationToken.None);
@@ -203,8 +206,8 @@ namespace LunaPlayniteSmoke
                     Check(model.ImportSummaryText.Contains("2 added"), "Selected import summary is incorrect.");
                     foreach (var imported in library.Games.Values)
                     {
-                        Check(imported.PluginId == LunaImportIdentity.PluginId && !imported.IsInstalled && imported.PlatformIds.Count == 0 && !imported.IncludeLibraryPluginAction,
-                            "A Luna import has the wrong library or was incorrectly made installed or Windows-only.");
+                        Check(imported.PluginId == LunaImportIdentity.PluginId && imported.IsInstalled && imported.PlatformIds.Count == 0 && imported.IncludeLibraryPluginAction,
+                            "A Luna import has the wrong library, installed default, plugin play action, or platform.");
                         Check(library.Sources.Values.Single(s => s.Id == imported.SourceId).Name == "Amazon Luna", "Imported source is incorrect.");
                         var action = imported.GameActions.Single();
                         Check(action.Type == GameActionType.URL && action.Name == "Open in Luna" && !action.IsPlayAction && action.Path == imported.Links.Single().Url,
@@ -291,6 +294,221 @@ namespace LunaPlayniteSmoke
                 "Repeated migration changed unmarked/foreign games or duplicated imports.");
         }
 
+        private static void CheckInstallWebsite()
+        {
+            const string asin = "B0GFWDM8NP";
+            const string url = "https://luna.amazon.com/game/alan-wake-2/" + asin;
+            var game = new Game("Edited Luna title")
+            {
+                PluginId = LunaImportIdentity.PluginId, GameId = LunaImportIdentity.Encode("US", asin, asin),
+                Favorite = true, Notes = "User notes", IsInstalled = false,
+                GameActions = new ObservableCollection<GameAction>
+                {
+                    new GameAction { Name = "Open in Luna", Type = GameActionType.URL, Path = url, IsPlayAction = false }
+                }
+            };
+            using var plugin = new LunaPlugin(null!);
+            Check(plugin.GetInstallActions(new GetInstallActionsArgs { Game = game }).Single().Name == "Open in Luna",
+                "An existing owned Luna import did not receive a website install action.");
+            var opened = new System.Collections.Generic.List<Uri>();
+            var cancelled = 0; var installed = 0;
+            void Exercise(Action<Uri> open, bool fail)
+            {
+                using var controller = LunaWebsiteInstallController.ForGame(game, open)!;
+                // The isolated host subscribes to SDK events exactly as Playnite's
+                // controller factory does; production uses only the public SDK.
+                typeof(InstallController).GetEvent("InstallCancelled", BindingFlags.NonPublic | BindingFlags.Instance)!
+                    .GetAddMethod(true)!.Invoke(controller, new object[]
+                    {
+                        new EventHandler<GameInstallationCancelledEventArgs>((_, __) => { cancelled++; game.IsInstalling = false; })
+                    });
+                typeof(InstallController).GetEvent("Installed", BindingFlags.NonPublic | BindingFlags.Instance)!
+                    .GetAddMethod(true)!.Invoke(controller, new object[]
+                    {
+                        new EventHandler<GameInstalledEventArgs>((_, __) => { installed++; game.IsInstalled = true; })
+                    });
+                game.IsInstalling = true;
+                try
+                {
+                    controller.Install(new InstallActionArgs());
+                    Check(!fail, "A browser launch failure was swallowed instead of reaching the host error handler.");
+                }
+                catch (System.ComponentModel.Win32Exception) when (fail) { }
+                Check(!game.IsInstalling && !game.IsInstalled && installed == 0,
+                    "The website handoff left an installing state or marked a cloud game installed.");
+            }
+            Exercise(opened.Add, false); Exercise(opened.Add, false);
+            Exercise(_ => throw new System.ComponentModel.Win32Exception("No browser available."), true);
+            Check(opened.Count == 2 && opened.All(uri => uri.AbsoluteUri == url) && cancelled == 3 &&
+                game.Name == "Edited Luna title" && game.Favorite && game.Notes == "User notes" && !game.GameActions[0].IsPlayAction,
+                "Install did not open the stored game URL repeatedly, finish each handoff, or preserve user metadata.");
+
+            var marker = game.GameId;
+            game.PluginId = Guid.NewGuid();
+            Check(!plugin.GetInstallActions(new GetInstallActionsArgs { Game = game }).Any(), "Install intercepted another library's game.");
+            game.PluginId = Guid.Empty;
+            Check(!plugin.GetInstallActions(new GetInstallActionsArgs { Game = game }).Any(), "Install intercepted an unowned manual game.");
+            game.PluginId = LunaImportIdentity.PluginId; game.GameId = "unmarked";
+            Check(!plugin.GetInstallActions(new GetInstallActionsArgs { Game = game }).Any(), "Install accepted an invalid Luna identity.");
+            game.GameId = marker;
+            foreach (var unsafeUrl in new[]
+            {
+                "http://luna.amazon.com/game/alan-wake-2/" + asin,
+                "https://luna.amazon.com.evil.example/game/alan-wake-2/" + asin,
+                "https://user@luna.amazon.com/game/alan-wake-2/" + asin,
+                "https://luna.amazon.com:444/game/alan-wake-2/" + asin,
+                "https://luna.amazon.com/game/other/B09HFKWMTQ",
+                "https://luna.amazon.com/home", "file:///C:/Windows/test.exe"
+            })
+            {
+                game.GameActions[0].Path = unsafeUrl;
+                Check(!plugin.GetInstallActions(new GetInstallActionsArgs { Game = game }).Any(),
+                    "Install accepted an unsafe URL or a mismatched game identity: " + unsafeUrl);
+            }
+            game.GameActions.Clear();
+            game.Links = new ObservableCollection<Link> { new Link("Amazon Luna", url) };
+            Check(plugin.GetInstallActions(new GetInstallActionsArgs { Game = game }).Count() == 1,
+                "Install could not use the stored Luna link when its additional action was removed.");
+            game.GameId = LunaImportIdentity.Encode("US", "B0BTRVRN6M", "B0BTRVRN6M");
+            game.Links[0].Url = "https://luna.amazon.com/game/fortnite";
+            Check(plugin.GetInstallActions(new GetInstallActionsArgs { Game = game }).Count() == 1,
+                "Install rejected the supported slug-only Luna page format.");
+            game.Links.Clear();
+            Check(!plugin.GetInstallActions(new GetInstallActionsArgs { Game = game }).Any(), "Install offered a handoff without a stored Luna URL.");
+            game.GameId = marker; game.Links.Add(new Link("Amazon Luna", url)); plugin.Dispose();
+            Check(!plugin.GetInstallActions(new GetInstallActionsArgs { Game = game }).Any(), "A disposed extension offered an install action.");
+            Console.WriteLine("Windows Luna Install website handoff checks passed (ownership, URLs, repeated clicks, failure cleanup, uninstalled state).");
+        }
+
+        private static async Task CheckInstalledSettingAsync(string directory)
+        {
+            var root = Path.Combine(directory, "installed-setting");
+            var library = new SmokeDatabase(Path.Combine(root, "library"));
+            var host = new SmokeDatabase.Host(library, root);
+            var catalog = CatalogValidator.ValidateSnapshot(Snapshot(), "US", time);
+            Game Owned(string name, Guid owner) => new Game(name)
+            {
+                PluginId = owner, GameId = LunaImportIdentity.Encode("US", catalog.Games[0].Id, catalog.Games[0].Asin!),
+                Favorite = true, Notes = "User notes", Playtime = 321,
+                Links = new ObservableCollection<Link> { new Link("Amazon Luna", catalog.Games[0].Url) },
+                GameActions = new ObservableCollection<GameAction>
+                {
+                    new GameAction { Name = "Open in Luna", Type = GameActionType.URL, Path = catalog.Games[0].Url }
+                }
+            };
+            var owned = Owned("Edited Luna title", LunaImportIdentity.PluginId);
+            var legacy = Owned("Legacy Luna", Guid.Empty);
+            var foreign = Owned("Foreign copy", Guid.NewGuid());
+            var manual = new Game("Unmarked manual game");
+            var unmarked = new Game("Unmarked library game") { PluginId = LunaImportIdentity.PluginId };
+            library.Games.Values.AddRange(new[] { owned, legacy, foreign, manual, unmarked });
+            using var plugin = new LunaPlugin(host.Api);
+            // An older settings file has no installed-state property. Preserve its browser preferences.
+            plugin.SavePluginSettings(new { SchemaVersion = 1, Category = CatalogCategory.GameNight, TitleSort = CatalogTitleSort.Descending, Width = 1100, Height = 800 });
+            var settings = (LunaSettings)plugin.GetSettings(false);
+            Check(settings.MarkGamesInstalled && plugin.Properties.HasSettings && settings.VerifySettings(out var errors) && errors.Count == 0,
+                "The installed setting is not enabled by default for an upgraded preferences file.");
+            plugin.OnApplicationStarted(new OnApplicationStartedEventArgs());
+            Game Current(Game game) => library.Games.Api.Get(game.Id);
+            Check(Current(owned).IsInstalled && Current(owned).IncludeLibraryPluginAction && Current(legacy).IsInstalled &&
+                Current(legacy).PluginId == LunaImportIdentity.PluginId && !Current(foreign).IsInstalled && !Current(manual).IsInstalled && !Current(unmarked).IsInstalled,
+                "Startup did not update existing/legacy Luna entries exclusively.");
+            Check(plugin.GetPlayActions(new GetPlayActionsArgs { Game = Current(owned) }).Single().Name == "Open in Luna",
+                "Enabled settings did not supply a native Play controller for an existing import.");
+            var view = (LunaSettingsView)plugin.GetSettingsView(false);
+            var checkbox = (CheckBox)view.FindName("InstalledBox");
+            var window = new Window { Content = view, Width = 640, Height = 400 };
+            try
+            {
+                window.Show(); await Until(() => checkbox.IsChecked == true);
+                settings.BeginEdit(); checkbox.IsChecked = false;
+                Check(!settings.MarkGamesInstalled && Current(owned).IsInstalled, "Editing settings changed the library before Save.");
+                settings.CancelEdit(); await Until(() => checkbox.IsChecked == true);
+                Check(Current(owned).IsInstalled, "Cancelling settings changed installed state.");
+                settings.BeginEdit(); checkbox.IsChecked = false; settings.EndEdit();
+                Check(!Current(owned).IsInstalled && !Current(owned).IncludeLibraryPluginAction && !Current(legacy).IsInstalled &&
+                    !plugin.GetPlayActions(new GetPlayActionsArgs { Game = Current(owned) }).Any() &&
+                    plugin.GetInstallActions(new GetInstallActionsArgs { Game = Current(owned) }).Count() == 1,
+                    "Disabling the setting did not switch existing imports to the Install website handoff.");
+                var saved = plugin.LoadPluginSettings<BrowserPreferences>()!;
+                Check(!saved.MarkGamesInstalled && saved.Category == CatalogCategory.GameNight && saved.TitleSort == CatalogTitleSort.Descending && saved.Width == 1100 && saved.Height == 800,
+                    "Saving installed state lost browser preferences.");
+                using var restarted = new LunaPlugin(host.Api);
+                Check(!((LunaSettings)restarted.GetSettings(false)).MarkGamesInstalled, "Restart forgot the disabled setting.");
+                using var adapter = new PlayniteImportDatabase(library.Api, Dispatcher.CurrentDispatcher, root,
+                    () => plugin.LoadPluginSettings<BrowserPreferences>()!.MarkGamesInstalled);
+                var importer = new CatalogImportService(adapter, new JsonImportMappingStore(root), utcNow: () => time);
+                var disabledImport = await importer.ImportAsync(catalog, new[] { catalog.Games[1].Id }, CancellationToken.None);
+                Check(disabledImport.Added == 1, "A disabled-mode import failed: " + disabledImport.Summary);
+                var created = library.Games.Values.Single(g => LunaImportIdentity.TryDecode(g.GameId, out var identity) && identity.LunaId == catalog.Games[1].Id).Id;
+                Check(!library.Games.Api.Get(created).IsInstalled && !library.Games.Api.Get(created).IncludeLibraryPluginAction,
+                    "A new import ignored the saved disabled setting.");
+                settings.BeginEdit(); checkbox.IsChecked = true; settings.EndEdit();
+                Check(library.Games.Api.Get(created).IsInstalled && Current(owned).IsInstalled && Current(owned).IncludeLibraryPluginAction,
+                    "Re-enabling the setting did not update all owned imports.");
+                var enabledImport = await importer.ImportAsync(catalog, new[] { catalog.Games[2].Id }, CancellationToken.None);
+                Check(enabledImport.Added == 1, "An enabled-mode import failed: " + enabledImport.Summary);
+                var enabledId = library.Games.Values.Single(g => LunaImportIdentity.TryDecode(g.GameId, out var identity) && identity.LunaId == catalog.Games[2].Id).Id;
+                Check(library.Games.Api.Get(enabledId).IsInstalled && library.Games.Api.Get(enabledId).IncludeLibraryPluginAction,
+                    "A new import ignored the enabled setting.");
+                Check(Current(owned).Name == owned.Name && Current(owned).Favorite && Current(owned).Notes == owned.Notes && Current(owned).Playtime == owned.Playtime &&
+                    Current(owned).GameId == owned.GameId && Current(owned).GameActions.Single().Path == owned.GameActions.Single().Path &&
+                    !Current(owned).GameActions.Single().IsPlayAction && !Current(foreign).IsInstalled && !Current(unmarked).IsInstalled && !Current(manual).IsInstalled,
+                    "Changing installed state overwrote metadata, actions, identity, or unrelated entries.");
+                var file = Path.Combine(root, LunaImportIdentity.PluginId.ToString(), "config.json");
+                var bytes = File.ReadAllBytes(file);
+                using (var locked = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    settings.BeginEdit(); settings.MarkGamesInstalled = false;
+                    try { settings.EndEdit(); throw new InvalidOperationException("Saving to a locked settings file unexpectedly succeeded."); }
+                    catch (IOException) { }
+                    settings.CancelEdit();
+                    Check(settings.MarkGamesInstalled && Current(owned).IsInstalled, "A failed settings save changed effective behavior or library state.");
+                }
+                Check(bytes.SequenceEqual(File.ReadAllBytes(file)) && host.Errors == 0, "A failed settings save replaced the original file or caused an unexpected host error.");
+            }
+            finally { window.Close(); }
+            plugin.SavePluginSettings(new { SchemaVersion = 2, MarkGamesInstalled = false });
+            using var future = new LunaPlugin(host.Api);
+            Check(!future.GetSettings(false).VerifySettings(out var futureErrors) && futureErrors.Count > 0,
+                "The settings editor would overwrite a newer settings schema.");
+            Console.WriteLine("Windows Luna installed-setting checks passed (default/upgrade, UI Save/Cancel, existing/new imports, restart, metadata, save failure).");
+        }
+
+        private static void CheckPlayWebsite()
+        {
+            var game = new Game("Edited title")
+            {
+                PluginId = LunaImportIdentity.PluginId, GameId = LunaImportIdentity.Encode("US", "B0GFWDM8NP", "B0GFWDM8NP"),
+                IsInstalled = true, IncludeLibraryPluginAction = true, Playtime = 42,
+                Links = new ObservableCollection<Link> { new Link("Amazon Luna", "https://luna.amazon.com/game/alan-wake-2/B0GFWDM8NP") }
+            };
+            var opened = 0; var stopped = 0; var started = 0;
+            void Exercise(bool fail)
+            {
+                using var controller = LunaWebsitePlayController.ForGame(game, uri =>
+                {
+                    if (fail) throw new System.ComponentModel.Win32Exception("No browser.");
+                    Check(uri.AbsoluteUri == game.Links[0].Url, "Play opened a different game URL."); opened++;
+                })!;
+                typeof(PlayController).GetEvent("Stopped", BindingFlags.NonPublic | BindingFlags.Instance)!.GetAddMethod(true)!.Invoke(controller,
+                    new object[] { new EventHandler<GameStoppedEventArgs>((_, args) => { stopped++; game.IsLaunching = false; game.IsRunning = false; Check(args.SessionLength == 0, "Play invented streaming duration."); }) });
+                typeof(PlayController).GetEvent("Started", BindingFlags.NonPublic | BindingFlags.Instance)!.GetAddMethod(true)!.Invoke(controller,
+                    new object[] { new EventHandler<GameStartedEventArgs>((_, __) => started++) });
+                game.IsLaunching = true;
+                try { controller.Play(new PlayActionArgs()); Check(!fail, "Play swallowed a browser-launch failure."); }
+                catch (System.ComponentModel.Win32Exception) when (fail) { }
+                Check(!game.IsLaunching && !game.IsRunning && game.IsInstalled && game.Playtime == 42, "Play left a launch state or changed installed state/playtime.");
+            }
+            Exercise(false); Exercise(false); Exercise(true);
+            Check(opened == 2 && stopped == 3 && started == 0, "Play did not finish each handoff or incorrectly tracked a streaming session.");
+            game.PluginId = Guid.NewGuid();
+            Check(LunaWebsitePlayController.ForGame(game, _ => { }) == null, "Play intercepted another library.");
+            game.PluginId = LunaImportIdentity.PluginId; game.Links[0].Url = "https://example.com/";
+            Check(LunaWebsitePlayController.ForGame(game, _ => { }) == null, "Play accepted an unsafe URL.");
+            Console.WriteLine("Windows Luna Play handoff checks passed (repeat, shared URL validation, failure cleanup, no session tracking).");
+        }
+
         private static async Task CheckSidebarAsync(string directory)
         {
             var root = Path.Combine(directory, "sidebar-host");
@@ -365,7 +583,12 @@ namespace LunaPlayniteSmoke
                 tab.Closed(); frame.Content = new TextBlock { Text = "Library" };
                 var preferences = plugin.LoadPluginSettings<BrowserPreferences>();
                 Check(preferences != null && preferences.SchemaVersion == 1, "Sidebar close did not persist browser preferences.");
+                var settings = (LunaSettings)plugin.GetSettings(false);
+                settings.BeginEdit(); settings.MarkGamesInstalled = false; settings.EndEdit();
                 frame.Content = tab.Opened(); await Until(() => view.IsLoaded && !model.IsBusy);
+                tab.Closed(); frame.Content = new TextBlock(); await Until(() => !view.IsLoaded);
+                Check(plugin.LoadPluginSettings<BrowserPreferences>()?.MarkGamesInstalled == false,
+                    "Saving browser preferences overwrote the changed installed setting.");
                 Check(bytes.SequenceEqual(File.ReadAllBytes(Path.Combine(root, LunaImportIdentity.PluginId.ToString(), "catalog-US.json"))),
                     "Sidebar/window switching modified the accepted catalog cache.");
                 Check(host.Errors == 0 && library.Games.Values.Count == 0, "Opening the browser caused an error or imported games.");

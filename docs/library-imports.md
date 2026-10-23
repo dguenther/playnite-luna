@@ -1,7 +1,7 @@
 # Optional Playnite library imports
 
 Milestone D adds explicit single/bulk imports to the Playnite 10 browser preview
-(`0.2.4`). Catalog viewing and runtime refresh remain independent of importing.
+(`0.2.6`). Catalog viewing and runtime refresh remain independent of importing.
 The public US streaming scope and [runtime acceptance contract](catalog-data-layer.md)
 are unchanged. No account connection or complete saved API fixture is required.
 **Gates C and D still require actual Windows Playnite host validation.**
@@ -35,18 +35,51 @@ warnings. Retrying the batch skips committed entries and retries failures.
 
 New entries use the catalog title, **Amazon Luna** source, observed `Luna:
 Standard`, `Luna: Premium`, and/or `Luna: GameNight` tags, a direct Luna link, and
-an **Open in Luna** URL action. The action is an additional action rather than a
-native Play action. Entries remain uninstalled, have no assumed Windows platform,
+an **Open in Luna** URL action. The saved URL action remains an additional action;
+the library supplies the native Play controller when enabled. Entries follow
+the installed-state setting below, have no assumed Windows platform,
 and belong to the **Amazon Luna** library. The extension registers as a
 `LibraryPlugin` so Playnite's **Library** filter uses that name. Source and
 platform are separate fields; no PC Windows platform is inferred. URL opening
 does not claim entitlement or track a play session.
 
+## Play, Install, and installed-state setting
+
+Under **Add-ons → Extension settings → Libraries → Amazon Luna**, **Mark Luna
+games as installed** is enabled by default, including upgrades from
+preferences files without that property. Saving applies to existing owned,
+marked imports; new imports use the latest saved choice. Startup, library updates,
+and opening the catalog also reconcile existing entries. Cancel leaves the
+saved choice and library unchanged. Browser preferences share the existing
+settings file, and saving them preserves this choice.
+
+Enabled entries have `IsInstalled` and `IncludeLibraryPluginAction` set, show
+**Play**, and appear in Installed filters. The SDK Play controller opens their
+Luna page and stops immediately with zero session duration, without a Started
+event or browser-process tracking. It therefore does not claim a streaming
+session, add playtime, or update Play count/last-played through a Started event.
+No local installation is performed.
+
+Disabled entries have those two flags cleared and show **Install**. The SDK
+Install controller opens the same page. Both controllers prefer the stored
+**Open in Luna** URL action and fall back to the **Amazon Luna** link. Existing
+imports need no reimport, URL/action rewrite, or catalog request. Titles, artwork,
+notes, favorites, playtime, and other edited metadata remain intact.
+
+The Install handoff uses the SDK's installation-cancelled completion event to clear
+Playnite's temporary installing state without changing installed state. It
+never signals installation success or starts playtime tracking. Playnite logs
+the completion as cancellation, and extensions/scripts listening for installation
+cancellation may receive that event. Browser-launch failures reach Playnite's
+normal installation error handler after cleanup. Other libraries, unmarked
+entries, unsafe URLs, and URLs with conflicting ASINs receive no Luna controller.
+
 Updating Playnite's libraries does not fetch or automatically import the Luna
 catalog. Its library-import hook returns no new games; additions remain explicit
 browser actions. On startup, library update, or opening the browser, earlier
 manual imports with a valid Luna marker move to this library by changing only
-`PluginId`. Their GUID, mapping, actions, artwork, and edited metadata are retained.
+`PluginId`, then applying the installed-state setting. Their GUID, mapping,
+actions, artwork, and edited metadata are retained.
 Unmarked manual games and games belonging to other libraries are not migrated.
 
 Optional covers use the same first-party downloader and concurrency/size/deadline
@@ -54,10 +87,10 @@ bounds as browser artwork. The adapter decodes bounded thumbnails on a worker an
 adds PNG files through Playnite's `AddFile` API for new entries. Invalid or failed
 covers are omitted. No catalog API requests are needed for an import.
 
-Repeated imports and catalog refreshes do not update existing game metadata.
+Repeated imports and catalog refreshes do not update existing descriptive metadata.
 Title overrides, favorites, completion, playtime, notes, custom artwork, user
 tags/categories, links, and actions remain as edited. Metadata ownership beyond
-the initial creation is intentionally not inferred. No game is deleted when it
+the installed-state/library-action setting is intentionally not inferred. No game is deleted when it
 disappears from a runtime catalog, and departed-game tagging remains deferred.
 
 ## Metadata downloads
@@ -132,8 +165,15 @@ actual host database persistence.
 
 On a clean Playnite 10.62 installation, record these results before closing D:
 
-- Import one and several games; confirm source, memberships, artwork, uninstalled
-  status, and working Open in Luna actions through the host's action menu.
+- Import one and several games; confirm source, memberships, artwork, installed
+  default, and working Open in Luna actions through the host's action menu.
+- Confirm the installed-state setting defaults on for an upgrade and new setup.
+  Click **Play** on earlier/new imports and check their Luna pages and immediate
+  launch-state cleanup, without fabricated playtime. Uncheck the setting and
+  Cancel once, then Save: only Save should change all owned entries to uninstalled.
+  Click **Install** repeatedly and check website handoff/cleanup. Re-enable,
+  import another game, restart, and verify flags, preferences, edited metadata,
+  and URL actions persist in both modes. Other libraries must remain untouched.
 - Upgrade from `0.2.0`, restart/open the catalog, and confirm earlier marked
   imports appear under **Library → Amazon Luna** with their edits and GUIDs intact.
   Confirm new imports use the same group and library updates import no extra games.

@@ -1,5 +1,42 @@
 # Catalog validation record
 
+## Configurable Play/Install state — preview 0.2.6
+
+The user's requested extension setting is enabled by default. It applies to
+existing owned, marked imports on Save/startup/open/library update, and new
+imports use the latest saved choice. Enabled games are installed and expose a
+native Play controller; disabled games are uninstalled and retain the Install
+website controller. Both open the stored Luna page. Play signals Stopped(0)
+without Started, so no streaming duration or play-count/last-played update is
+inferred. Settings changes manage only installed state and inclusion of the
+library's Play action, preserving GUIDs, URLs/actions, and descriptive metadata.
+
+The Windows SDK/WPF harness exercises the settings checkbox, enabled default
+when upgrading an older preferences file, Save/Cancel, existing/legacy/new
+entries, untouched other libraries, restart reload, browser preference retention,
+locked-file save rollback, future-schema rejection, and both website handoffs.
+Captured openers and SDK event subscriptions verify repeat/failure cleanup and
+no fabricated session tracking. The offline suites remain 267 .NET and 24 Python
+checks. Actual Playnite settings/Play/Install behavior remains a manual host check.
+
+## Install-button website handoff — preview 0.2.5
+
+The requested follow-up uses the SDK's public `GetInstallActions` callback and
+an `InstallController` to open an existing Luna import's stored game-page URL.
+The controller never signals installation success: the SDK cancellation event
+clears Playnite's installing state and keeps cloud games uninstalled. This
+completion behavior was checked against Playnite 10.62's `GamesEditor` and
+controller-factory source. Browser errors propagate to the host after cleanup.
+
+The Windows SDK/WPF harness covers registration for existing owned imports,
+foreign/manual/unmarked exclusions, unsafe URLs, ASIN conflicts, action/link
+fallback, slug-only URLs, repeated handoffs, preserved metadata, no installed
+event, failure cleanup, and disposed-plugin exclusion. It uses a captured opener
+and isolated SDK event subscriptions, with no actual browser launch or catalog
+requests. The offline suites remain 267 .NET and 24 Python checks. Actual button
+behavior in Playnite, restart persistence, and the broader C/D/E host checklists
+remain pending; the user is performing those checks.
+
 ## Monochrome sidebar symbol — preview 0.2.4
 
 The user screenshot shows the official circular purple favicon in Playnite and

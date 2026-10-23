@@ -16,10 +16,12 @@ namespace LunaPlaynite
         private readonly IGameDatabaseAPI database;
         private readonly Dispatcher dispatcher;
         private readonly string directory;
+        private readonly Func<bool> markGamesInstalled;
         public event Action? LibraryChanged;
-        public PlayniteImportDatabase(IGameDatabaseAPI database, Dispatcher dispatcher, string directory)
+        public PlayniteImportDatabase(IGameDatabaseAPI database, Dispatcher dispatcher, string directory, Func<bool>? markGamesInstalled = null)
         {
             this.database = database; this.dispatcher = dispatcher; this.directory = directory;
+            this.markGamesInstalled = markGamesInstalled ?? (() => true);
             database.Games.ItemCollectionChanged += GamesChanged;
             database.Games.ItemUpdated += GamesUpdated;
         }
@@ -41,6 +43,20 @@ namespace LunaPlaynite
             return legacy.Length;
         });
 
+        public int ApplyInstalledState(bool installed) => dispatcher.Invoke(() =>
+        {
+            var owned = database.Games.Where(game => game.PluginId == LunaImportIdentity.PluginId &&
+                LunaImportIdentity.TryDecode(game.GameId, out _) &&
+                (game.IsInstalled != installed || game.IncludeLibraryPluginAction != installed)).ToArray();
+            foreach (var game in owned)
+            {
+                var updated = game.GetCopy();
+                updated.IsInstalled = installed; updated.IncludeLibraryPluginAction = installed;
+                database.Games.Update(updated);
+            }
+            return owned.Length;
+        });
+
         public string? AddGame(ImportCandidate candidate, Guid id, byte[]? coverBytes)
         {
             // Decode on the calling worker, before touching host SDK objects on the dispatcher.
@@ -54,12 +70,13 @@ namespace LunaPlaynite
                         (identity.LunaId == candidate.LunaId || identity.Asin == candidate.Asin)) related.Add(identity);
                 if (related.Count == 1 && LunaImportIdentity.Matches(related[0], candidate.LunaId, candidate.Asin)) throw new ImportAlreadyExistsException();
                 if (related.Count > 0) throw new InvalidOperationException("Conflicting Luna identities exist in the library.");
+                var installed = markGamesInstalled();
                 var game = new Game(candidate.Title)
                 {
                     Id = id, PluginId = LunaImportIdentity.PluginId,
                     GameId = LunaImportIdentity.Encode(candidate.Region, candidate.LunaId, candidate.Asin),
                     SourceId = database.Sources.Add("Amazon Luna").Id,
-                    IsInstalled = false, IncludeLibraryPluginAction = false, PlatformIds = new List<Guid>(),
+                    IsInstalled = installed, IncludeLibraryPluginAction = installed, PlatformIds = new List<Guid>(),
                     Added = DateTime.Now,
                     Links = new ObservableCollection<Link> { new Link("Amazon Luna", candidate.Url) },
                     GameActions = new ObservableCollection<GameAction> { new GameAction
