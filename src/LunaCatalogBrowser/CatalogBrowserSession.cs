@@ -37,9 +37,23 @@ namespace LunaCatalogBrowser
             ActivityChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        private Task WhenIdleAsync()
+        public async Task RefreshAsync(object host, CancellationToken token)
         {
-            if (!Model.IsBusy) return Task.CompletedTask;
+            token.ThrowIfCancellationRequested();
+            try
+            {
+                await AttachAsync(host);
+                await WhenIdleAsync(token);
+                token.ThrowIfCancellationRequested();
+                await Model.RefreshAsync(token);
+            }
+            finally { Detach(host); }
+        }
+
+        private async Task WhenIdleAsync(CancellationToken token = default)
+        {
+            token.ThrowIfCancellationRequested();
+            if (!Model.IsBusy) return;
             var idle = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             PropertyChangedEventHandler? changed = null;
             changed = (_, args) =>
@@ -48,9 +62,13 @@ namespace LunaCatalogBrowser
                 Model.PropertyChanged -= changed;
                 idle.TrySetResult(true);
             };
-            Model.PropertyChanged += changed;
-            changed(this, new PropertyChangedEventArgs(nameof(Model.IsBusy)));
-            return idle.Task;
+            using (token.Register(() => idle.TrySetCanceled()))
+            {
+                Model.PropertyChanged += changed;
+                changed(this, new PropertyChangedEventArgs(nameof(Model.IsBusy)));
+                try { await idle.Task; }
+                finally { Model.PropertyChanged -= changed; }
+            }
         }
 
         public void Dispose()

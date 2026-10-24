@@ -9,7 +9,8 @@ Repository: `dguenther/playnite-luna`. PR
 `f85bde1`. Milestone D [PR #8](https://github.com/dguenther/playnite-luna/pull/8)
 merged as `7c21d4f`. The inline sidebar follow-up
 [PR #9](https://github.com/dguenther/playnite-luna/pull/9) merged as `77196e0`.
-The Install-button follow-up is on `feature/luna-install-website`, preview `0.2.6`. Check current
+The Play/Install settings follow-up [PR #10](https://github.com/dguenther/playnite-luna/pull/10)
+merged as `4e6180d`. Catalog automation is on `feature/luna-catalog-updates`, preview `0.2.7`. Check current
 Git/PR state and preserve existing edits before resuming. No applicable
 `AGENTS.md` was found during this work.
 
@@ -26,8 +27,8 @@ persisted mappings, durable host recovery markers, and a production SDK adapter.
 Host feedback confirmed basic opening and imported entries in `0.2.0`. The
 `0.2.1` follow-up removes the heading row, inherits host list-item/theme colors,
 registers **Amazon Luna** as a library, and migrates only marked manual imports
-by changing library ownership. Imports remain explicit; global library updates
-do not fetch or add catalog games. Automatic metadata download has no public
+by changing library ownership. Explicit imports remain available. Preview `0.2.7` also refreshes on library
+updates by default and offers independently controlled automatic library actions. Automatic metadata download has no public
 SDK trigger for these imports; use Playnite's manual Download Metadata command.
 The `0.2.2` follow-up adds a sidebar tab for inline browsing; `0.2.3` replaces its
 placeholder moon with Luna's official circular logo. Preview `0.2.4` uses the
@@ -40,7 +41,7 @@ last-host departure cancels work, and reopening restores offline data and status
 See [the import contract](library-imports.md).
 
 Preview `0.2.6` adds **Mark Luna games as installed**, enabled by
-default, through SDK extension settings (draft PR #10). Save reconciles existing
+default, through SDK extension settings (merged PR #10). Save reconciles existing
 owned marked games' `IsInstalled`/`IncludeLibraryPluginAction`; new creates read
 the saved choice. Startup/open/library update also reconcile. Cancel preserves
 the saved choice. The preferences file retains category/sort/window size and
@@ -96,7 +97,7 @@ a single observed removal.
 ## Verification
 
 - Locked restore and Release builds for both library targets pass with zero
-  warnings/errors, including WPF and the Windows smoke harness. All 267 .NET
+  warnings/errors, including WPF and the Windows smoke harness. All 286 .NET
   tests and 24 Python offline checks pass.
 - The 88 production data-layer cases cover validation, restart reload, malformed/schema
   checks, backup recovery, atomic replacement, cancellation/write failures,
@@ -146,7 +147,7 @@ a single observed removal.
 ## Next work
 
 **Finish Gates C and D's Windows host checks, then proceed to Milestone E.** Download the
-`luna-playnite-preview` CI artifact for `feature/luna-install-website`, or use `tools/PackageLuna.ps1` with
+`luna-playnite-preview` CI artifact for `feature/luna-catalog-updates`, or use `tools/PackageLuna.ps1` with
 an installed Playnite 10 Toolbox. Follow the [host checklist](playnite-browser.md#outstanding-windows-host-checks),
 record actual loading/theme/browser/offline/restart results, and keep Gate C
 pending until those pass. Also follow [the import checklist](library-imports.md#verification-and-remaining-host-checks).
@@ -155,8 +156,9 @@ Playnite 10.62 is the preview packaging target.
 Milestone D implements optional selected/bulk imports and Imported/Not imported status,
 backed by versioned `(region, LunaId) -> Playnite GUID` mappings reconciled with
 the real database. Same-title copies in another library never establish Luna
-identity. Preserve user edits, never delete games automatically, and keep catalog
-viewing independent of importing. Follow [PLAN.md](../PLAN.md).
+identity. Preserve user edits and keep catalog viewing independent of importing.
+Automatic removal is now explicitly authorized through an off-by-default setting,
+subject to absence from the first validated refresh and ownership/history/open-protection checks. Follow [PLAN.md](../PLAN.md).
 
 Windows Playnite is required to validate SDK integration, host loading, responsive
 UI, and clean-install packaging. Linux builds, WPF smoke checks, and generated
@@ -188,3 +190,14 @@ Research replay/live commands and expected exit codes are in
 [Validation](validation.md) retains earlier research history. Keep
 `docs/implementation-plan.md` as the original specification and update `PLAN.md`
 as production milestones gain evidence.
+
+Current automation defaults: refresh on library update and expired tagging on;
+new-arrival imports and unplayed expired-game removal off, per user clarification.
+First download establishes a baseline; do not auto-import the entire catalog.
+Opening via Play/Install/catalog records removal protection without adding playtime.
+The strict `catalog-automation-US.json` journal must be writable before mutations;
+corrupt/newer state blocks them. Windows checks invoke the actual background SDK
+callback with an injected first-party fixture provider and exercise API opt-out,
+cancellation, failure retention, tagging metadata, history guards, and SDK deletion.
+Actual Playnite behavior still requires the user's host checks. Regional endpoint
+discovery remains a proposal; these settings retain the US catalog scope.

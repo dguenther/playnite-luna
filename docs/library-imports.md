@@ -1,7 +1,7 @@
 # Optional Playnite library imports
 
 Milestone D adds explicit single/bulk imports to the Playnite 10 browser preview
-(`0.2.6`). Catalog viewing and runtime refresh remain independent of importing.
+(`0.2.7`). Catalog viewing and runtime refresh remain independent of importing.
 The public US streaming scope and [runtime acceptance contract](catalog-data-layer.md)
 are unchanged. No account connection or complete saved API fixture is required.
 **Gates C and D still require actual Windows Playnite host validation.**
@@ -74,13 +74,12 @@ cancellation may receive that event. Browser-launch failures reach Playnite's
 normal installation error handler after cleanup. Other libraries, unmarked
 entries, unsafe URLs, and URLs with conflicting ASINs receive no Luna controller.
 
-Updating Playnite's libraries does not fetch or automatically import the Luna
-catalog. Its library-import hook returns no new games; additions remain explicit
-browser actions. On startup, library update, or opening the browser, earlier
-manual imports with a valid Luna marker move to this library by changing only
-`PluginId`, then applying the installed-state setting. Their GUID, mapping,
-actions, artwork, and edited metadata are retained.
-Unmarked manual games and games belonging to other libraries are not migrated.
+Playnite library updates refresh the catalog by default. The independent
+[automation settings](catalog-automation.md) control expiry tagging (on), new
+arrival imports (off), and unplayed expired-game removal (off). Manual Refresh
+uses those same optional actions. Legacy marked imports migrate to this library
+and follow the installed-state setting; GUIDs, mappings, actions, artwork, and
+edited metadata are retained. Other libraries and unmarked games are excluded.
 
 Optional covers use the same first-party downloader and concurrency/size/deadline
 bounds as browser artwork. The adapter decodes bounded thumbnails on a worker and
@@ -90,8 +89,9 @@ covers are omitted. No catalog API requests are needed for an import.
 Repeated imports and catalog refreshes do not update existing descriptive metadata.
 Title overrides, favorites, completion, playtime, notes, custom artwork, user
 tags/categories, links, and actions remain as edited. Metadata ownership beyond
-the installed-state/library-action setting is intentionally not inferred. No game is deleted when it
-disappears from a runtime catalog, and departed-game tagging remains deferred.
+the installed-state/library-action setting and managed expiry tag is intentionally
+not inferred. Removal requires its separate opt-in setting, absence from the first
+successfully validated and saved refresh, and live ownership/history/activity/open-protection checks.
 
 ## Metadata downloads
 
@@ -176,7 +176,8 @@ On a clean Playnite 10.62 installation, record these results before closing D:
   and URL actions persist in both modes. Other libraries must remain untouched.
 - Upgrade from `0.2.0`, restart/open the catalog, and confirm earlier marked
   imports appear under **Library → Amazon Luna** with their edits and GUIDs intact.
-  Confirm new imports use the same group and library updates import no extra games.
+  Confirm new imports use the same group. With default settings, library updates
+  refresh without adding games; test the optional automation separately.
 - Run Playnite's manual Download Metadata command for selected Luna games and
   verify the configured providers work; browser imports do not invoke it.
 - Filter to a subset, reject Import All, then confirm it and verify the full
@@ -190,3 +191,10 @@ On a clean Playnite 10.62 installation, record these results before closing D:
 
 Complete [the browser host checklist](playnite-browser.md#outstanding-windows-host-checks)
 alongside these checks before Milestone E release validation.
+
+For preview `0.2.7`, also test library-update refresh enabled/disabled, automatic
+expiry tagging and enabled removal on the first valid refresh, tag clearing on reappearance,
+arrival-only imports/retries when enabled, and opt-in removal that retains played,
+busy, opened, foreign, and ambiguous entries. Use an isolated portable library
+for deletion/failure scenarios. Verify failures/cancellation retain the saved
+catalog and do not count as expiry observations. See [the automation contract](catalog-automation.md).

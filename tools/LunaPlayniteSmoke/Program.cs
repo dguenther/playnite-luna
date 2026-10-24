@@ -140,6 +140,8 @@ namespace LunaPlayniteSmoke
                 CheckLegacyMigration(directory);
                 CheckInstallWebsite();
                 await CheckInstalledSettingAsync(directory);
+                await CheckLibraryUpdateAsync(directory);
+                await CheckAutomationAdapterAsync(directory);
                 CheckPlayWebsite();
                 await CheckSidebarAsync(directory);
                 var cache = new JsonCatalogCache(directory, () => time);
@@ -406,7 +408,8 @@ namespace LunaPlayniteSmoke
             // An older settings file has no installed-state property. Preserve its browser preferences.
             plugin.SavePluginSettings(new { SchemaVersion = 1, Category = CatalogCategory.GameNight, TitleSort = CatalogTitleSort.Descending, Width = 1100, Height = 800 });
             var settings = (LunaSettings)plugin.GetSettings(false);
-            Check(settings.MarkGamesInstalled && plugin.Properties.HasSettings && settings.VerifySettings(out var errors) && errors.Count == 0,
+            Check(settings.MarkGamesInstalled && settings.RefreshOnLibraryUpdate && settings.TagExpiredGames && !settings.ImportNewGames && !settings.RemoveUnplayedGames &&
+                plugin.Properties.HasSettings && settings.VerifySettings(out var errors) && errors.Count == 0,
                 "The installed setting is not enabled by default for an upgraded preferences file.");
             plugin.OnApplicationStarted(new OnApplicationStartedEventArgs());
             Game Current(Game game) => library.Games.Api.Get(game.Id);
@@ -421,10 +424,31 @@ namespace LunaPlayniteSmoke
             try
             {
                 window.Show(); await Until(() => checkbox.IsChecked == true);
+                Check(((CheckBox)view.FindName("RefreshOnLibraryUpdateBox")).IsChecked == true &&
+                    ((CheckBox)view.FindName("TagExpiredGamesBox")).IsChecked == true &&
+                    ((CheckBox)view.FindName("ImportNewGamesBox")).IsChecked == false &&
+                    ((CheckBox)view.FindName("RemoveUnplayedGamesBox")).IsChecked == false,
+                    "Automation settings checkboxes do not reflect the requested defaults.");
                 settings.BeginEdit(); checkbox.IsChecked = false;
                 Check(!settings.MarkGamesInstalled && Current(owned).IsInstalled, "Editing settings changed the library before Save.");
                 settings.CancelEdit(); await Until(() => checkbox.IsChecked == true);
                 Check(Current(owned).IsInstalled, "Cancelling settings changed installed state.");
+                settings.BeginEdit(); settings.RefreshOnLibraryUpdate = false; settings.TagExpiredGames = false;
+                settings.ImportNewGames = true; settings.RemoveUnplayedGames = true; settings.CancelEdit();
+                Check(settings.RefreshOnLibraryUpdate && settings.TagExpiredGames && !settings.ImportNewGames && !settings.RemoveUnplayedGames,
+                    "Cancelling settings did not restore all automation choices.");
+                settings.BeginEdit(); settings.RefreshOnLibraryUpdate = false; settings.TagExpiredGames = false;
+                var countBeforeSave = library.Games.Values.Count;
+                settings.ImportNewGames = true; settings.RemoveUnplayedGames = true; settings.EndEdit();
+                using (var reloaded = new LunaPlugin(host.Api))
+                {
+                    var choices = (LunaSettings)reloaded.GetSettings(false);
+                    Check(choices.MarkGamesInstalled && !choices.RefreshOnLibraryUpdate && !choices.TagExpiredGames && choices.ImportNewGames && choices.RemoveUnplayedGames,
+                        "Saved automation choices were lost on restart.");
+                    Check(library.Games.Values.Count == countBeforeSave, "Saving settings mutated the library.");
+                }
+                settings.BeginEdit(); settings.RefreshOnLibraryUpdate = true; settings.TagExpiredGames = true;
+                settings.ImportNewGames = false; settings.RemoveUnplayedGames = false; settings.EndEdit();
                 settings.BeginEdit(); checkbox.IsChecked = false; settings.EndEdit();
                 Check(!Current(owned).IsInstalled && !Current(owned).IncludeLibraryPluginAction && !Current(legacy).IsInstalled &&
                     !plugin.GetPlayActions(new GetPlayActionsArgs { Game = Current(owned) }).Any() &&
@@ -473,6 +497,127 @@ namespace LunaPlayniteSmoke
             Check(!future.GetSettings(false).VerifySettings(out var futureErrors) && futureErrors.Count > 0,
                 "The settings editor would overwrite a newer settings schema.");
             Console.WriteLine("Windows Luna installed-setting checks passed (default/upgrade, UI Save/Cancel, existing/new imports, restart, metadata, save failure).");
+        }
+
+        private sealed class LibraryProvider : ILunaCatalogProvider
+        {
+            internal int Calls;
+            internal bool Fail, Block;
+            internal string? MissingAsin;
+            public async Task<CatalogSnapshot> FetchAsync(string region, CancellationToken token)
+            {
+                Calls++;
+                if (Block) await Task.Delay(Timeout.Infinite, token);
+                if (Fail) throw new HttpRequestException("Offline test");
+                var snapshot = Snapshot();
+                if (MissingAsin != null)
+                {
+                    foreach (var query in snapshot.Queries)
+                    { query.Games.RemoveAll(g => g.Asin == MissingAsin); query.TilesObserved = query.Games.Count; }
+                    snapshot = CatalogSnapshot.Merge(snapshot.Queries);
+                }
+                snapshot.RetrievedAt = time.AddMinutes(Calls); return snapshot;
+            }
+        }
+        private static async Task CheckLibraryUpdateAsync(string directory)
+        {
+            var root = Path.Combine(directory, "library-update");
+            var library = new SmokeDatabase(Path.Combine(root, "library"));
+            var host = new SmokeDatabase.Host(library, root); var provider = new LibraryProvider();
+            using var plugin = new LunaPlugin(host.Api, provider);
+            var result = await Task.Run(() => plugin.ImportGames(new LibraryImportGamesArgs()).ToArray());
+            Check(provider.Calls == 1 && result.Length == 0 && library.Games.Values.Count == 0,
+                "A default library update did not refresh or imported games without opt-in.");
+            var folder = Path.Combine(root, LunaImportIdentity.PluginId.ToString());
+            Check(File.Exists(Path.Combine(folder, "catalog-US.json")), "The library update did not persist its validated catalog.");
+            var settings = (LunaSettings)plugin.GetSettings(false);
+            settings.BeginEdit(); settings.RefreshOnLibraryUpdate = false; settings.EndEdit();
+            await Task.Run(() => plugin.ImportGames(new LibraryImportGamesArgs()).ToArray());
+            Check(provider.Calls == 1, "A disabled library refresh made an API request.");
+            settings.BeginEdit(); settings.RefreshOnLibraryUpdate = true; settings.EndEdit();
+            var bytes = File.ReadAllBytes(Path.Combine(folder, "catalog-US.json"));
+            var journal = File.ReadAllBytes(Path.Combine(folder, "catalog-automation-US.json"));
+            provider.Fail = true;
+            try { await Task.Run(() => plugin.ImportGames(new LibraryImportGamesArgs()).ToArray()); throw new Exception("An offline refresh was not reported to Playnite."); }
+            catch (InvalidOperationException) { }
+            Check(bytes.SequenceEqual(File.ReadAllBytes(Path.Combine(folder, "catalog-US.json"))) &&
+                journal.SequenceEqual(File.ReadAllBytes(Path.Combine(folder, "catalog-automation-US.json"))),
+                "A failed library refresh changed the accepted catalog or automation observations.");
+            provider.Fail = false; provider.Block = true;
+            using var cancelled = new CancellationTokenSource();
+            var args = new LibraryImportGamesArgs();
+            typeof(LibraryImportGamesArgs).GetProperty("CancelToken")!.SetValue(args, cancelled.Token);
+            var update = Task.Run(() => plugin.ImportGames(args).ToArray());
+            await Until(() => provider.Calls == 3); cancelled.Cancel();
+            Check((await update).Length == 0 && library.Games.Values.Count == 0, "Cancelled library update did not finish safely.");
+            provider.Block = false;
+            using var adapter = new PlayniteImportDatabase(library.Api, Dispatcher.CurrentDispatcher, folder);
+            var importer = new CatalogImportService(adapter, new JsonImportMappingStore(folder), utcNow: () => time);
+            var catalog = CatalogValidator.ValidateSnapshot(Snapshot(), "US", time);
+            Check((await importer.ImportAsync(catalog, new[] { catalog.Games[0].Id }, CancellationToken.None)).Added == 1,
+                "The launch-protection fixture could not be imported.");
+            var protectedGame = library.Games.Values.Single();
+            settings.BeginEdit(); settings.RemoveUnplayedGames = true; settings.EndEdit();
+            provider.MissingAsin = catalog.Games[0].Asin;
+            var attemptedOpen = false;
+            library.Games.BeforeUpdate = game =>
+            {
+                if (game.Id != protectedGame.Id || !library.Tags.Values.Any(tag => tag.Name == PlayniteImportDatabase.ExpiredTag && game.TagIds.Contains(tag.Id))) return;
+                attemptedOpen = true;
+                Check(new JsonCatalogAutomationStore(folder).Read().TaggedGameIds.Contains(game.Id),
+                    "The SDK expiry-tag write started before managed ownership was saved.");
+                // Reproduce a launch during ApplyAsync with a readable journal whose replacement fails.
+                using (var locked = new FileStream(Path.Combine(folder, "catalog-automation-US.json"), FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    var starting = new OnGameStartingEventArgs();
+                    typeof(OnGameStartingEventArgs).GetProperty("Game")!.SetValue(starting, game);
+                    plugin.OnGameStarting(starting);
+                }
+            };
+            try { await Task.Run(() => plugin.ImportGames(new LibraryImportGamesArgs()).ToArray()); }
+            finally { library.Games.BeforeUpdate = null; }
+            Check(attemptedOpen && library.Games.Values.Any(game => game.Id == protectedGame.Id) &&
+                !new JsonCatalogAutomationStore(folder).Read().OpenedGameIds.Contains(protectedGame.Id),
+                "A failed launch-protection save during an active refresh did not block removal.");
+            Console.WriteLine("Windows active-update launch-protection failure checks passed (readable journal, failed replacement, opened game retained).");
+            Console.WriteLine("Windows Luna library-update checks passed (default refresh, opt-out, background SDK callback, cache/journal failure retention, cancellation).");
+        }
+        private static async Task CheckAutomationAdapterAsync(string directory)
+        {
+            var root = Path.Combine(directory, "automation-adapter");
+            var library = new SmokeDatabase(Path.Combine(root, "library"));
+            using var adapter = new PlayniteImportDatabase(library.Api, Dispatcher.CurrentDispatcher, root);
+            var imports = new CatalogImportService(adapter, new JsonImportMappingStore(root), utcNow: () => time);
+            var catalog = CatalogValidator.ValidateSnapshot(Snapshot(), "US", time);
+            var batch = await imports.ImportAsync(catalog, catalog.Games.Select(g => g.Id), CancellationToken.None);
+            Check(batch.Added == 5, "Adapter fixture imports failed.");
+            var games = library.Games.Values.ToArray();
+            games[0].Playtime = 12; games[1].PlayCount = 1; games[2].LastActivity = DateTime.Now; games[3].IsLaunching = true;
+            foreach (var game in games.Take(4))
+                Check(!adapter.RemoveUnplayed(game.Id, game.GameId, () => true), "Removal ignored recorded play history or an active operation.");
+            var candidate = games[4]; var marker = candidate.GameId;
+            Check(!adapter.RemoveUnplayed(candidate.Id, marker, () => false), "Removal ignored launch protection.");
+            var title = games[0].Name; var action = games[0].GameActions[0].Path;
+            try
+            {
+                adapter.SetExpired(games[0].Id, games[0].GameId, true, () => throw new IOException("Ownership journal unavailable"));
+                throw new InvalidOperationException("A failed ownership save did not abort the SDK tag write.");
+            }
+            catch (IOException) { }
+            Check(!library.Tags.Values.Any(tag => tag.Name == PlayniteImportDatabase.ExpiredTag && library.Games.Api.Get(games[0].Id).TagIds.Contains(tag.Id)),
+                "The adapter applied an expiry tag after its ownership save failed.");
+            Check(adapter.SetExpired(games[0].Id, games[0].GameId, true), "The adapter did not add an expired tag.");
+            var expired = library.Games.Api.Get(games[0].Id);
+            Check(expired.Name == title && expired.GameActions[0].Path == action && expired.Playtime == 12 && expired.TagIds.Count == games[0].TagIds.Count + 1,
+                "Expiry tagging overwrote existing metadata or membership tags.");
+            Check(!adapter.SetExpired(expired.Id, expired.GameId, true, () => throw new InvalidOperationException("An existing tag was claimed.")),
+                "The adapter changed or claimed an existing expiry tag.");
+            Check(adapter.SetExpired(expired.Id, expired.GameId, false), "The adapter did not clear an expired tag.");
+            candidate.PluginId = Guid.NewGuid();
+            Check(!adapter.RemoveUnplayed(candidate.Id, marker, () => true) && !adapter.SetExpired(candidate.Id, marker, true), "Automation changed a foreign library game.");
+            candidate.PluginId = LunaImportIdentity.PluginId;
+            Check(adapter.RemoveUnplayed(candidate.Id, marker, () => true) && library.Games.Values.Count == 4, "Confirmed unplayed removal did not use the SDK collection.");
+            Console.WriteLine("Windows Luna automatic tag/removal adapter checks passed (metadata, history, ownership, live guards, host deletion).");
         }
 
         private static void CheckPlayWebsite()

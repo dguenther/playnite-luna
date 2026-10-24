@@ -6,8 +6,8 @@ Reconciled October 18, 2026 (America/New_York) after merged PRs
 [#7](https://github.com/dguenther/playnite-luna/pull/7), and
 [#8](https://github.com/dguenther/playnite-luna/pull/8), and the inline sidebar
 follow-up [PR #9](https://github.com/dguenther/playnite-luna/pull/9), merged as
-`77196e0`. The Play/Install settings follow-up is in draft
-[PR #10](https://github.com/dguenther/playnite-luna/pull/10), branch `feature/luna-install-website`, in
+`77196e0`. The Play/Install settings follow-up [PR #10](https://github.com/dguenther/playnite-luna/pull/10)
+merged as `4e6180d`. Catalog automation is on `feature/luna-catalog-updates` in
 `dguenther/playnite-luna`. Evidence timestamps use UTC.
 
 This is the working checklist reconciled with the uploaded implementation plan.
@@ -21,7 +21,7 @@ runtime refreshes, versioned cache/recovery, identity-aware comparisons, optiona
 research tools, representative fixtures, and CI. Milestone C now adds a Playnite
 WPF browser, a testable local browsing model, and Toolbox preview packaging.
 Milestone D adds reconciled import status, single/multi-selection imports, and
-confirmed full-catalog imports in preview `0.2.6`, with **Library → Amazon Luna**
+confirmed full-catalog imports in preview `0.2.7`, with **Library → Amazon Luna**
 ownership and migration from marked manual imports. Initial host opening/imports
 were reported working; the remaining host checks stay open.
 The sidebar follow-up shares browsing state between an inline Desktop view and
@@ -51,7 +51,8 @@ Amazon account connection.
 - Use C#, a `LibraryPlugin`, WPF, and .NET Framework 4.6.2 for the extension.
   The original specification used `GenericPlugin`; host feedback requested an
   Amazon Luna Library group, which requires library registration. Imports remain
-  explicit browser actions and global library updates do not import the catalog.
+  explicit browser actions plus optional arrival-only automatic imports; library
+  updates refresh by default.
   Retain the existing provider's `net462;net8.0` targets and .NET 8 research tooling.
 - Obtain data directly from Amazon Luna; do not introduce third-party catalog
   providers. The undocumented first-party API is a dependency, not a stable contract.
@@ -274,9 +275,10 @@ Depends on the validated data and browser; finish the status integration in C.
   skip automatic updates when ownership cannot be established. This implementation
   preserves existing metadata. The `0.2.1` upgrade changes only library ownership
   for earlier manual entries with a valid Luna marker.
-- [x] Never automatically delete imported games for MVP. Removal detection/tagging
-  remains deferred and must require complete successful same-region snapshots and
-  confirmation across refreshes.
+- [x] Keep automatic deletion off by default. The authorized automation follow-up
+  adds expired tags by default and opt-in unplayed removal on the first complete
+  successful same-region refresh, requiring ownership/history/activity/open protection,
+  and safe persisted state. Add new-arrival import as a separate off-by-default option.
 - [x] Add tests for identity/mapping reconciliation, deleted games, repeated/bulk
   imports, partial failures, untouched non-Luna copies, and preserved user edits.
 - [ ] Validate persistence and working URL actions inside Playnite.
@@ -391,11 +393,21 @@ Keep runtime fetching and representative tests; no bulk catalog fixture is neede
 
 ## Deferred improvements
 
-After MVP: additional marketplaces, configurable automatic refresh, addition/
-removal notifications, opt-in automatic new-game imports, departed-game status
-tags, informational matches in other libraries, optional metadata enrichment, and
+After MVP: additional marketplaces, scheduled refresh beyond library updates,
+addition/removal notifications, informational matches in other libraries,
+optional metadata enrichment, and
 additional sorting/genre filters. None is required to close the MVP gates.
 
 Reference URLs for Playnite SDK, Game Pass Catalog Browser, the n8n research
 starting point, Luna, and its terms are retained in
 [the source plan](docs/implementation-plan.md#12-reference-material).
+
+## Authorized catalog automation follow-up
+
+Preview `0.2.7` implements default-enabled library-update refresh and expiry
+tagging, plus off-by-default arrival imports and unplayed expired removals.
+Nineteen new regressions bring the .NET total to 286. The SDK/WPF harness checks
+real callbacks and adapter mutations with injected fixtures. State/journal failure,
+wrong/invalid snapshots, cancellation, repeat observations, reappearance, play
+history, opened games, ownership, identity migrations, and retries must preserve
+library safety. See [the automation contract and remaining host checks](docs/catalog-automation.md).

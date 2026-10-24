@@ -11,7 +11,7 @@ using Playnite.SDK.Models;
 
 namespace LunaPlaynite
 {
-    public sealed class PlayniteImportDatabase : ICatalogImportDatabase, IDisposable
+    public sealed class PlayniteImportDatabase : ICatalogAutomationDatabase, IDisposable
     {
         private readonly IGameDatabaseAPI database;
         private readonly Dispatcher dispatcher;
@@ -29,6 +29,35 @@ namespace LunaPlaynite
         private void GamesUpdated(object sender, ItemUpdatedEventArgs<Game> args) => LibraryChanged?.Invoke();
         public IReadOnlyList<LibraryGameIdentity> ReadIdentities() => dispatcher.Invoke(() =>
             (IReadOnlyList<LibraryGameIdentity>)database.Games.Select(game => new LibraryGameIdentity(game.Id, game.PluginId, game.GameId)).ToArray());
+
+        public const string ExpiredTag = "Luna: Expired";
+        private static bool Owned(Game game) => game != null && game.PluginId == LunaImportIdentity.PluginId && LunaImportIdentity.TryDecode(game.GameId, out _);
+        private static bool Busy(Game game) => game.IsRunning || game.IsLaunching || game.IsInstalling || game.IsUninstalling;
+        private static bool Played(Game game) => game.Playtime > 0 || game.PlayCount > 0 || game.LastActivity != null;
+        public IReadOnlyList<CatalogLibraryGame> ReadLibraryGames() => dispatcher.Invoke(() =>
+        {
+            var tag = database.Tags.FirstOrDefault(t => t.Name == ExpiredTag);
+            return (IReadOnlyList<CatalogLibraryGame>)database.Games.Where(Owned).Select(g => new CatalogLibraryGame(
+                new LibraryGameIdentity(g.Id, g.PluginId, g.GameId), Played(g), Busy(g), tag != null && g.TagIds?.Contains(tag.Id) == true)).ToArray();
+        });
+        public bool SetExpired(Guid id, string expectedIdentity, bool expired, Action? beforeChange = null) => dispatcher.Invoke(() =>
+        {
+            var game = database.Games.Get(id);
+            if (!Owned(game) || game.GameId != expectedIdentity) return false;
+            var tag = database.Tags.FirstOrDefault(t => t.Name == ExpiredTag);
+            if (expired && tag == null) tag = database.Tags.Add(ExpiredTag);
+            if (tag == null || (game.TagIds?.Contains(tag.Id) == true) == expired) return false;
+            var updated = game.GetCopy(); updated.TagIds = updated.TagIds ?? new List<Guid>();
+            if (expired) updated.TagIds.Add(tag.Id); else updated.TagIds.Remove(tag.Id);
+            beforeChange?.Invoke();
+            database.Games.Update(updated); return true;
+        });
+        public bool RemoveUnplayed(Guid id, string expectedIdentity, Func<bool> mayRemove) => dispatcher.Invoke(() =>
+        {
+            var game = database.Games.Get(id);
+            if (!Owned(game) || game.GameId != expectedIdentity || Played(game) || Busy(game) || !mayRemove()) return false;
+            return database.Games.Remove(game);
+        });
 
         public int MigrateLegacyImports() => dispatcher.Invoke(() =>
         {

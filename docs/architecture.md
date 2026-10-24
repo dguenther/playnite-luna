@@ -101,9 +101,9 @@ the session's model. Initialization is lazy, supplying
 `GetPluginUserDataPath()` to the cache. Browser preferences use Playnite's settings
 API. The virtualized list cancels recycled-row cover requests, decodes images on
 workers, and retains bounded frozen bitmaps in memory. Open in Luna launches a
-validated page through the default browser. Viewing and refresh make no database
-imports; startup/open/library update migrate marked legacy manual entries by
-changing only library ownership. Global library updates do not fetch/add games.
+validated page through the default browser. Opening loads cached data. Refresh runs optional catalog automation after a
+validated save; library updates refresh by default. Startup/open/library update
+migrate marked legacy imports and reconcile installed state.
 See [the browser contract](playnite-browser.md).
 
 Milestone D's `CatalogImportService` orchestrates explicit imports through
@@ -113,7 +113,7 @@ the dispatcher and checks identity atomically before creation. Its library entri
 carry the Luna source, memberships, direct link and additional URL action, and
 optional covers through host storage. Existing metadata is never updated by
 refresh/reimport, apart from the explicit installed-state/library-action setting,
-and games are never deleted. The local browser model provides
+and removal requires the separate opt-in automation policy. The local browser model provides
 multi-selection, import status, confirmed complete-catalog imports, cancellation,
 and partial-failure summaries. See [the import contract](library-imports.md).
 
@@ -134,7 +134,7 @@ handoffs, settings UI/persistence, old/new imports, and preserved metadata.
 
 `global.json`, committed NuGet lock files, pinned Python dependencies, and GitHub
 Actions make offline validation repeatable: locked restore, Release builds for
-both library targets plus the WPF plugin, 267 .NET tests, and 24 Python tests on
+both library targets plus the WPF plugin, 286 .NET tests, and 24 Python tests on
 Linux and Windows. Windows additionally opens the actual WPF view in a dispatcher
 smoke harness and packages a checked preview with the official Playnite 10.62
 Toolbox. Playnite supplies both its SDK and JSON 10.0.3; the `net462` catalog
@@ -154,3 +154,13 @@ has a documented Windows host checklist. Milestone D implements explicit imports
 and reconciles `(region, LunaId)` mappings with Playnite's database. Windows is
 required for host validation, actual library persistence, URL action behavior,
 and final clean-install package testing. Gates C and D remain pending those checks.
+
+`CatalogAutomation` is host-independent and runs after accepted network refreshes,
+using `ICatalogAutomationDatabase` and the existing import service. Its strict,
+atomic journal tracks ASIN baselines, retries, missing products, managed
+tags, and website-open protection. The first successful refresh detecting an
+absence can tag or remove the entry according to settings. Mutation methods recheck live ownership,
+identity, history, and active state on the dispatcher. Cached/failed refreshes do
+not invoke it. A background session host integrates the SDK library-update callback
+with the same model busy/cancel state; it returns created games to Playnite.
+See [automation and its regression/host checks](catalog-automation.md).

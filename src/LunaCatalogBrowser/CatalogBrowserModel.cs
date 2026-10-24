@@ -45,6 +45,9 @@ namespace LunaCatalogBrowser
         private readonly CatalogService service;
         private readonly Action<string>? reportError;
         private readonly CatalogImportService? imports;
+        private readonly Func<ValidatedCatalog?, ValidatedCatalog, CancellationToken, Task<CatalogAutomationResult>>? automation;
+        public CatalogAutomationResult? LastAutomationResult { get; private set; }
+        public string AutomationError { get; private set; } = "";
         private CatalogGameItem[] games = new CatalogGameItem[0];
         private IReadOnlyList<CatalogGameItem> visibleGames = Array.AsReadOnly(new CatalogGameItem[0]);
         private CancellationTokenSource? operation;
@@ -65,8 +68,9 @@ namespace LunaCatalogBrowser
         private string importSummary = "";
         private string importDetails = "";
 
-        public CatalogBrowserModel(CatalogService service, Action<string>? reportError = null, CatalogImportService? imports = null)
-        { this.service = service ?? throw new ArgumentNullException(nameof(service)); this.reportError = reportError; this.imports = imports; }
+        public CatalogBrowserModel(CatalogService service, Action<string>? reportError = null, CatalogImportService? imports = null,
+            Func<ValidatedCatalog?, ValidatedCatalog, CancellationToken, Task<CatalogAutomationResult>>? automation = null)
+        { this.service = service ?? throw new ArgumentNullException(nameof(service)); this.reportError = reportError; this.imports = imports; this.automation = automation; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public IReadOnlyList<CatalogCategory> Categories { get; } = Array.AsReadOnly((CatalogCategory[])Enum.GetValues(typeof(CatalogCategory)));
@@ -91,7 +95,7 @@ namespace LunaCatalogBrowser
         public DateTimeOffset? LastSuccessfulRefresh => state?.LastSuccessfulRefresh;
         public string LastRefreshText => LastSuccessfulRefresh.HasValue ?
             "Last refreshed " + LastSuccessfulRefresh.Value.ToLocalTime().ToString("g") : "No successful refresh yet";
-        public string ErrorText => operationError ?? (state?.Error == null ? "" : string.Join(" ", state.Error.Diagnostics));
+        public string ErrorText => operationError ?? (state?.Error == null ? AutomationError : string.Join(" ", state.Error.Diagnostics));
         public string StatusText => busy ? (games.Length == 0 ? "Loading catalog…" : "Loading · saved games remain available") :
             cancelled ? (games.Length == 0 ? "Loading cancelled · choose Refresh to try again" : "Refresh cancelled · showing saved catalog") :
             state?.Error != null || operationError != null ? (games.Length == 0 ? "Catalog unavailable · try Refresh" : "Refresh failed · showing saved catalog") :
@@ -224,7 +228,29 @@ namespace LunaCatalogBrowser
                 operation = cancellation; busy = true; cancelled = false; operationError = null; NotifyState();
                 try
                 {
+                    ValidatedCatalog? previous = null;
+                    if (refresh)
+                    {
+                        AutomationError = ""; LastAutomationResult = null;
+                        previous = (await Task.Run(() => service.LoadAsync(cancellation.Token))).Catalog;
+                    }
                     var result = await Task.Run(() => refresh ? service.RefreshAsync(cancellation.Token) : service.LoadAsync(cancellation.Token));
+                    if (refresh && result.Error == null && result.Source == CatalogDataSource.Network && result.Catalog != null && automation != null)
+                    {
+                        try
+                        {
+                            LastAutomationResult = await Task.Run(() => automation(previous, result.Catalog, cancellation.Token));
+                            importSummary = LastAutomationResult.Summary;
+                            importDetails = "";
+                            if (LastAutomationResult.HasFailures) AutomationError = "Catalog refreshed, but some automatic imports failed. Retry Refresh to retry those games.";
+                        }
+                        catch (OperationCanceledException) when (cancellation.IsCancellationRequested) { throw; }
+                        catch (Exception ex)
+                        {
+                            AutomationError = "Catalog refreshed, but automatic library changes could not finish. Retry Refresh after checking the extension data folder.";
+                            reportError?.Invoke("Luna automatic library update failed (" + ex.GetType().Name + ").");
+                        }
+                    }
                     Apply(result);
                     await ReadImportStateAsync(cancellation.Token);
                 }

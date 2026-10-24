@@ -119,13 +119,15 @@ Mixed/conflicting identities within a single fetch still fail validation.
 Reported removals are observations between accepted snapshots, not permission
 to delete Playnite entries or a confirmed removal notification. Explicit
 [library imports](library-imports.md) preserve those entries. Cross-refresh
-removal confirmation and departed-game tags remain deferred.
+removal safeguards and departed-game tags are handled by the separate
+[opt-in automation layer](catalog-automation.md); this comparer alone authorizes
+no deletion.
 
 ## Verification and next step
 
-The suite contains 267 .NET tests, including 88 production data-layer cases,
+The suite contains 286 .NET tests, including 88 production data-layer cases,
 26 browser/artwork cases, 51 import/mapping/browser cases, and five session lifecycle
-cases, plus 24 Python checks. Production tests use the existing
+cases, plus 19 automation/session regressions and 24 Python checks. Production tests use the existing
 five-game API samples
 and targeted edge cases, with an injected HTTP handler and real temporary cache
 files. CI builds both library targets and runs both suites on Linux and Windows.

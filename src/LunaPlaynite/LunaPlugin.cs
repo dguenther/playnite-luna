@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -41,11 +43,19 @@ namespace LunaPlaynite
         private DispatcherTimer? importChanges;
         private bool importsChanged;
         private bool disposed;
+        private CatalogAutomation? automation;
+        private JsonCatalogAutomationStore? automationStore;
+        private readonly HashSet<Guid> openedGames = new HashSet<Guid>();
+        private readonly SemaphoreSlim libraryUpdates = new SemaphoreSlim(1, 1);
+        private readonly CancellationTokenSource shutdown = new CancellationTokenSource();
+        private readonly ILunaCatalogProvider? catalogProvider;
         public override Guid Id => LunaImportIdentity.PluginId;
         public override string Name => "Amazon Luna";
 
-        public LunaPlugin(IPlayniteAPI api) : base(api)
+        public LunaPlugin(IPlayniteAPI api) : this(api, null) { }
+        public LunaPlugin(IPlayniteAPI api, ILunaCatalogProvider? catalogProvider) : base(api)
         {
+            this.catalogProvider = catalogProvider;
             Properties = new LibraryPluginProperties { HasSettings = true, HasCustomizedGameImport = true };
         }
 
@@ -62,27 +72,54 @@ namespace LunaPlaynite
         public override ISettings GetSettings(bool firstRunSettings)
         {
             LoadPreferences();
-            return settings ?? (settings = new LunaSettings(() => preferences.MarkGamesInstalled, SaveInstalledSetting, () => savePreferences && !disposed));
+            return settings ?? (settings = new LunaSettings(() => preferences, SaveSettings, () => savePreferences && !disposed));
         }
         public override UserControl GetSettingsView(bool firstRunView) => new LunaSettingsView { DataContext = GetSettings(firstRunView) };
 
-        private void SaveInstalledSetting(bool installed)
+        private void SaveSettings(BrowserPreferences draft)
         {
             if (disposed || !savePreferences) throw new InvalidOperationException("Luna settings cannot be saved by this extension version.");
-            var previous = preferences.MarkGamesInstalled;
-            preferences.MarkGamesInstalled = installed;
-            try { SavePluginSettings(preferences); }
-            catch { preferences.MarkGamesInstalled = previous; throw; }
+            var candidate = preferences.Copy();
+            candidate.MarkGamesInstalled = draft.MarkGamesInstalled;
+            candidate.RefreshOnLibraryUpdate = draft.RefreshOnLibraryUpdate;
+            candidate.TagExpiredGames = draft.TagExpiredGames;
+            candidate.ImportNewGames = draft.ImportNewGames;
+            candidate.RemoveUnplayedGames = draft.RemoveUnplayedGames;
+            SavePluginSettings(candidate); preferences = candidate;
             if (!ReconcileLibraryGames())
                 PlayniteApi.Dialogs.ShowErrorMessage("The Luna setting was saved, but some library entries could not be updated. Reopen the Luna catalog or restart Playnite to retry.", "Amazon Luna");
         }
 
-        // Library registration supplies the Amazon Luna group; importing remains an explicit browser action.
+        // Automatic imports/removals require their separate opt-in settings.
         public override IEnumerable<GameMetadata> GetGames(LibraryGetGamesArgs args) => Array.Empty<GameMetadata>();
         public override IEnumerable<Game> ImportGames(LibraryImportGamesArgs args)
         {
-            if (!disposed && !args.CancelToken.IsCancellationRequested) ReconcileLibraryGames();
-            return Array.Empty<Game>();
+            if (disposed || args.CancelToken.IsCancellationRequested) return Array.Empty<Game>();
+            using (var cancellation = CancellationTokenSource.CreateLinkedTokenSource(args.CancelToken, shutdown.Token))
+            {
+                var acquired = false;
+                try
+                {
+                    libraryUpdates.Wait(cancellation.Token); acquired = true;
+                    var dispatcher = PlayniteApi.MainView.UIDispatcher;
+                    var enabled = dispatcher.Invoke(() => { ReconcileLibraryGames(); return savePreferences && preferences.RefreshOnLibraryUpdate; });
+                    if (!enabled) return Array.Empty<Game>();
+                    return dispatcher.Invoke(() => RefreshLibraryAsync(cancellation.Token)).GetAwaiter().GetResult();
+                }
+                catch (OperationCanceledException) when (cancellation.IsCancellationRequested) { return Array.Empty<Game>(); }
+                finally { if (acquired) libraryUpdates.Release(); }
+            }
+        }
+        private async Task<IEnumerable<Game>> RefreshLibraryAsync(CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+            var active = EnsureBrowserSession();
+            await active.RefreshAsync(new object(), token);
+            token.ThrowIfCancellationRequested();
+            if (active.Model.ErrorText.Length > 0) throw new InvalidOperationException(active.Model.ErrorText);
+            var result = active.Model.LastAutomationResult;
+            if (result != null) logger.Info(result.Summary);
+            return result?.AddedGameIds.Select(id => PlayniteApi.Database.Games.Get(id)).Where(g => g != null).ToArray() ?? Array.Empty<Game>();
         }
         public override void OnApplicationStarted(OnApplicationStartedEventArgs args) => ReconcileLibraryGames();
 
@@ -91,15 +128,31 @@ namespace LunaPlaynite
             if (disposed) yield break;
             LoadPreferences();
             if (!preferences.MarkGamesInstalled) yield break;
-            var controller = LunaWebsitePlayController.ForGame(args.Game, OpenWebsite);
+            var controller = LunaWebsitePlayController.ForGame(args.Game, uri => { RecordOpened(args.Game.Id); OpenWebsite(uri); });
             if (controller != null) yield return controller;
         }
 
         public override IEnumerable<InstallController> GetInstallActions(GetInstallActionsArgs args)
         {
             if (disposed) yield break;
-            var controller = LunaWebsiteInstallController.ForGame(args.Game, OpenWebsite);
+            var controller = LunaWebsiteInstallController.ForGame(args.Game, uri => { RecordOpened(args.Game.Id); OpenWebsite(uri); });
             if (controller != null) yield return controller;
+        }
+
+        private JsonCatalogAutomationStore AutomationStore => automationStore ?? (automationStore = new JsonCatalogAutomationStore(GetPluginUserDataPath()));
+        private void RecordOpened(Guid id)
+        {
+            lock (openedGames) openedGames.Add(id);
+            try
+            {
+                if (automation != null) automation.RecordOpened(id);
+                else AutomationStore.Update(state => { if (!state.OpenedGameIds.Contains(id)) state.OpenedGameIds.Add(id); });
+            }
+            catch (Exception) { logger.Warn("Luna launch protection could not be saved; automatic removal is blocked to protect opened games."); }
+        }
+        public override void OnGameStarting(OnGameStartingEventArgs args)
+        {
+            if (!disposed && args.Game.PluginId == Id && LunaImportIdentity.TryDecode(args.Game.GameId, out _)) RecordOpened(args.Game.Id);
         }
 
         private bool ReconcileLibraryGames()
@@ -203,7 +256,7 @@ namespace LunaPlaynite
             }
             if (service == null)
             {
-                var provider = new LunaCatalogProvider(catalogClient,
+                var provider = catalogProvider ?? new LunaCatalogProvider(catalogClient,
                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36", "154.0.0.0");
                 var catalogService = new CatalogService(provider, new JsonCatalogCache(GetPluginUserDataPath()));
                 var artwork = new CatalogArtworkClient(artworkClient);
@@ -221,10 +274,23 @@ namespace LunaPlaynite
                 };
                 imports = new CatalogImportService(importDatabase, new JsonImportMappingStore(GetPluginUserDataPath()),
                     artwork.DownloadAsync, message => logger.Error(message));
+                automation = new CatalogAutomation(importDatabase, imports, AutomationStore);
                 service = catalogService;
             }
             LoadPreferences();
-            var model = new CatalogBrowserModel(service, message => logger.Error(message), imports);
+            var model = new CatalogBrowserModel(service, message => logger.Error(message), imports, async (previous, current, token) =>
+            {
+                CatalogAutomationOptions options = null!;
+                Guid[] opened = null!;
+                await dispatcher.InvokeAsync(() =>
+                {
+                    options = new CatalogAutomationOptions { TagExpiredGames = savePreferences && preferences.TagExpiredGames,
+                        ImportNewGames = savePreferences && preferences.ImportNewGames, RemoveUnplayedGames = savePreferences && preferences.RemoveUnplayedGames };
+                    lock (openedGames) opened = openedGames.ToArray();
+                });
+                foreach (var id in opened) automation!.RecordOpened(id);
+                return await automation!.ApplyAsync(previous, current, options, token).ConfigureAwait(false);
+            });
             if (Enum.IsDefined(typeof(CatalogCategory), preferences.Category)) model.Category = preferences.Category;
             if (Enum.IsDefined(typeof(CatalogTitleSort), preferences.TitleSort)) model.TitleSort = preferences.TitleSort;
             session = new CatalogBrowserSession(model);
@@ -300,7 +366,14 @@ namespace LunaPlaynite
         {
             if (!Uri.TryCreate(game.Url, UriKind.Absolute, out var uri) || uri.Scheme != "https" || uri.Host != "luna.amazon.com" ||
                 uri.Port != 443 || uri.UserInfo.Length != 0 || !uri.AbsolutePath.StartsWith("/game/", StringComparison.Ordinal)) return;
-            try { OpenWebsite(uri); }
+            try
+            {
+                var asin = service?.State.Catalog?.Games.FirstOrDefault(g => g.Id == game.Id)?.Asin;
+                if (asin != null && importDatabase != null)
+                    foreach (var owned in importDatabase.ReadLibraryGames())
+                        if (LunaImportIdentity.TryDecode(owned.Identity.GameId, out var identity) && identity.Asin == asin) RecordOpened(owned.Identity.PlayniteId);
+                OpenWebsite(uri);
+            }
             catch (Exception ex) when (ex is Win32Exception || ex is InvalidOperationException)
             { PlayniteApi.Dialogs.ShowErrorMessage("The Luna page could not be opened. Check your default browser.", "Amazon Luna"); }
         }
@@ -312,6 +385,7 @@ namespace LunaPlaynite
         {
             if (disposed) return;
             disposed = true;
+            shutdown.Cancel();
             session?.Dispose();
             sidebarView?.Deactivate();
             if (sidebarItem != null) sidebarItem.Visible = false;

@@ -8,7 +8,7 @@ See [PLAN.md](PLAN.md) for the implementation checklist reconciled with the orig
 
 Windows CI packages a `.pext` with the official Playnite 10.62 Toolbox and uploads
 it as `luna-playnite-preview`. Download that artifact from the successful Windows
-workflow run on [PR #10](https://github.com/dguenther/playnite-luna/pull/10), extract
+workflow run for the [catalog-update branch](https://github.com/dguenther/playnite-luna/tree/feature/luna-catalog-updates), extract
 the `.pext`, and open it with Playnite. This is a development preview awaiting
 host validation, not a verified release.
 
@@ -23,7 +23,7 @@ sorting work locally; select a game and choose **Open in Luna**. Failed or
 cancelled refreshes retain the previous catalog. Select one or multiple rows and
 choose **Import Selected**, or confirm **Import All (N)** for the complete catalog.
 Imported entries appear under **Library → Amazon Luna** and have Luna URL actions.
-Preview `0.2.6` enables **Mark Luna games as installed** by default.
+Preview `0.2.7` enables **Mark Luna games as installed** by default.
 Change it under **Add-ons → Extension settings → Libraries → Amazon Luna**.
 Saving applies to existing imports and new imports use the saved choice. Enabled
 games show **Play** and appear in Installed filters; disabled games show **Install**.
@@ -35,6 +35,12 @@ the games in Playnite and use **Download Metadata**; automatic downloading is no
 triggered by browser imports. Repeated imports
 skip existing entries and preserve user edits. See [imports and recovery](docs/library-imports.md)
 and [browser behavior, packaging, and host checks](docs/playnite-browser.md).
+
+Catalog refresh during Playnite library updates and **Luna: Expired** tagging are
+enabled by default. Automatic arrival imports and removal of unplayed expired
+entries are separate settings, both off by default. Expiry is detected on the first
+successful refresh where a game is missing; removal also checks recorded play history, activity, and
+extension website-open protection. See [automation behavior and limits](docs/catalog-automation.md).
 
 ## Current findings
 
@@ -66,7 +72,7 @@ dotnet build AmazonLuna.sln -c Release --no-restore
 dotnet test tests/LunaCatalog.Tests/LunaCatalog.Tests.csproj -c Release --no-build
 ```
 
-The suite has 267 .NET tests and 24 Python offline checks. After installing the
+The suite has 286 .NET tests and 24 Python offline checks. After installing the
 [pinned Python dependency](tools/LunaBrowserEvidence/README.md#setup), run:
 
 ```sh

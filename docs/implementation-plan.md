@@ -369,7 +369,7 @@ For MVP, do not automatically delete imported games.
 
 After a verified catalog refresh, the extension may calculate additions and removals. However, actual removal detection and status tagging can remain a post-MVP feature.
 
-Future removal detection must only operate after a complete, successful catalog fetch for the same region, and should require confirmation across refreshes before reporting a game as removed.
+Removal detection must only operate after a complete, successful catalog fetch for the same region. The authorized follow-up uses the first successful refresh where a game is absent, with optional deletion gated by live ownership/history/activity and website-open protection; see [catalog update automation](catalog-automation.md).
 
 #### Phase 3 acceptance criteria
 

@@ -31,7 +31,8 @@ namespace LunaCatalog
 
     public static class CatalogComparer
     {
-        // Observed differences only: these must never delete imported Playnite games.
+        // Catalog differences only. Opt-in library automation separately checks
+        // persisted protection and live ownership/history before changing the library.
         public static CatalogChanges Compare(ValidatedCatalog previous, ValidatedCatalog current, DateTimeOffset now)
         {
             CatalogValidator.ValidateCached(previous, current.Region, now);

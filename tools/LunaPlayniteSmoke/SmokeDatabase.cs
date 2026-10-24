@@ -60,6 +60,7 @@ namespace LunaPlayniteSmoke
         internal sealed class Items<T> where T : DatabaseObject, new()
         {
             internal readonly List<T> Values = new List<T>();
+            internal Action<T>? BeforeUpdate;
             internal IItemCollection<T> Api { get; }
             internal Items()
             {
@@ -81,9 +82,13 @@ namespace LunaPlayniteSmoke
                             Values.Add((T)args[0]); return null;
                         case "Update":
                             var updated = (T)args[0];
+                            BeforeUpdate?.Invoke(updated);
                             var index = Values.FindIndex(v => v.Id == updated.Id);
                             if (index < 0) throw new InvalidOperationException("Cannot update a missing game.");
                             Values[index] = updated; return null;
+                        case "Remove":
+                            var removeId = args[0] is Guid guid ? guid : ((T)args[0]).Id;
+                            return Values.RemoveAll(v => v.Id == removeId) > 0;
                         case "add_ItemCollectionChanged": case "remove_ItemCollectionChanged":
                         case "add_ItemUpdated": case "remove_ItemUpdated": return null;
                         default: throw new NotSupportedException(name);

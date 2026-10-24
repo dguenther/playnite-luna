@@ -1,5 +1,39 @@
 # Catalog validation record
 
+## Catalog update automation — preview 0.2.7
+
+Merged PR #10 (`4e6180d`) is the baseline. Per the user's clarified defaults,
+library-update refresh and expired tagging are enabled; new-arrival imports and
+unplayed expired-game removal are disabled. Manual refresh and the SDK customized
+library-update callback share session coordination and post-validation automation.
+The implementation and safeguards are described in [the automation contract](catalog-automation.md).
+
+Nineteen new automation/session regressions bring the .NET total to **286**, with
+the existing **24 Python checks**. They cover first-refresh expiry/removal and restart,
+reappearance, managed tag ownership, import retry/idempotency/no backfill, played/
+busy/opened protections, foreign/duplicate identities, corrupt/future state,
+cancellation/wrong scope, failed/invalid refresh retention, accepted-catalog
+availability after automation failure, and background/view lifetime coordination.
+The Windows harness also exercises SDK callback opt-out/cancellation, settings
+defaults, real adapter tag preservation, and live history/ownership deletion guards.
+No live API audit or full response fixture was added. Actual Playnite library
+updates, notifications, and opt-in automation remain pending manual host checks.
+
+Per the user's follow-up, expiry now acts on the first successfully validated
+and saved refresh where a game is absent. Failed/invalid refreshes preserve the
+library; a later successful refresh can remove an eligible missing entry immediately.
+Automatic removal remains disabled by default and retains the existing live
+history/activity/ownership and website-open protections. Schema-1 journals remain
+compatible, including earlier missing-product observation counts.
+
+The code-review follow-up covers interrupted tag writes both before and after
+the SDK commit, recovery after restart, and preservation of a user tag added
+during refresh. Tag ownership is persisted after the live tag check and before
+the SDK mutation. The Windows harness reproduces a launch during an active
+automatic update while journal replacement is blocked but reads still work;
+the running automation must retain the game. It also verifies that a failed
+ownership save prevents the SDK tag change and existing tags are not claimed.
+
 ## Configurable Play/Install state — preview 0.2.6
 
 The user's requested extension setting is enabled by default. It applies to
