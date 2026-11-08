@@ -53,7 +53,7 @@ Amazon account connection.
   Amazon Luna Library group, which requires library registration. Imports remain
   explicit browser actions plus optional arrival-only automatic imports; library
   updates refresh by default.
-  Retain the existing provider's `net462;net8.0` targets and .NET 8 research tooling.
+  Keep the provider's `net462;net10.0` targets and .NET 10 research tooling.
 - Obtain data directly from Amazon Luna; do not introduce third-party catalog
   providers. The undocumented first-party API is a dependency, not a stable contract.
 - Show Standard, Premium, and GameNight as overlapping observed memberships,
@@ -309,7 +309,7 @@ Depends on Gates A–D. Retain the existing offline suite and CI.
 | Additions/removals across snapshots | Validated same-scope comparisons, migration, metadata changes, failed-refresh safeguards, and no deletion of imported entries | Windows Playnite host integration. |
 | Import idempotency and stale mappings | Milestone D service, mapping-file, browser, and SDK adapter checks | Actual Playnite database persistence, restart, and action behavior. |
 
-- [x] .NET 8 SDK selection, committed NuGet lock files, locked restore, Release
+- [x] .NET 10 SDK selection, committed NuGet lock files, locked restore, Release
   build, and offline tests in GitHub Actions.
 - [x] Milestone B passes 182 .NET cases and Release builds for
   `net462` and `net8.0` with zero warnings/errors. CI covers Linux and Windows.
@@ -362,7 +362,7 @@ These track the original final acceptance criteria, not just source scaffolding.
 
 ## Reproduction and next increment
 
-Use an installed .NET 8 SDK selected by `global.json`:
+Use an installed .NET 10 SDK selected by `global.json`:
 
 ```sh
 dotnet restore AmazonLuna.sln --locked-mode

@@ -15,7 +15,7 @@ Git/PR state and preserve existing edits before resuming. No applicable
 `AGENTS.md` was found during this work.
 
 **Gates A and B pass** for the scoped public US streaming investigation and
-production data layer. `src/LunaCatalog` targets `net462;net8.0` with no Playnite
+production data layer. `src/LunaCatalog` targets `net462;net10.0` with no Playnite
 dependencies. It now includes `CatalogValidator`, `ValidatedCatalog`,
 `CatalogService`, `ICatalogCache` / `JsonCatalogCache`, and `CatalogComparer`.
 See [the runtime contract](catalog-data-layer.md) and [architecture](architecture.md).
@@ -125,7 +125,7 @@ a single observed removal.
   and inherited theme/selection colors; the installed archive checks the exact
   geometry resource hash.
 - The `net462` build shares Playnite 10.62's JSON 10.0.3; no JSON DLL or private
-  loader is packaged. Standalone .NET 8 keeps JSON 13.0.3. The independent
+  loader is packaged. Standalone .NET 10 keeps JSON 13.0.3. The independent
   installed-package check verifies host reuse and duplicate/depth rejection.
   The WPF harness checks that a late obsolete artwork failure cannot clear a
   recycled row's replacement image.

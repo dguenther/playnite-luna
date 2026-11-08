@@ -5,13 +5,13 @@ Milestone A / Gate A passes for the public US streaming catalog captured October
 exclusions. Milestone B / Gate B passes for the production data layer; Milestone
 C's Playnite browser is implemented, with Windows host validation still pending.
 
-`src/LunaCatalog` builds for `net462` and `net8.0`, with no Playnite or WPF
+`src/LunaCatalog` builds for `net462` and `net10.0`, with no Playnite or WPF
 dependencies. It owns request construction, normalized models, recursive
 response parsing, region-scoped identity, category-set merging, and diagnostics.
 The HTTP client is injected for testable transport behavior. Requests use the
 frontend-selected US endpoint and explicit `all_games` browse query.
 
-`tools/LunaCatalogProbe` runs on .NET 8 and provides live anonymous retrieval and
+`tools/LunaCatalogProbe` runs on .NET 10 and provides live anonymous retrieval and
 offline fixture replay. The optional `--verify-details` mode checks up to five
 main-product identities and canonical Luna URLs. It writes a research snapshot
 atomically after all four queries and any requested detail checks pass response
@@ -77,7 +77,7 @@ shapes and edge cases, not a complete raw response or saved catalog. Optional
 full research snapshots remain in ignored `artifacts/` and are not bundled with
 the browser.
 
-`src/LunaCatalogBrowser` targets `net462;net8.0` without Playnite or WPF. Its
+`src/LunaCatalogBrowser` targets `net462;net10.0` without Playnite or WPF. Its
 `CatalogBrowserModel` publishes read-only display items, combines local title
 search/category filters with deterministic title/ID sorting, and retains selection
 by ID when accepted metadata changes. It runs service work on workers and returns
@@ -139,7 +139,7 @@ Linux and Windows. Windows additionally opens the actual WPF view in a dispatche
 smoke harness and packages a checked preview with the official Playnite 10.62
 Toolbox. Playnite supplies both its SDK and JSON 10.0.3; the `net462` catalog
 reuses that host assembly, with no JSON DLL or assembly loader bundled.
-Standalone `net8.0` tools/tests retain JSON 13.0.3. Both targets bound JSON
+Standalone `net10.0` tools/tests retain JSON 13.0.3. Both targets bound JSON
 depth to 64 and reject duplicate cache properties through a compatible reader.
 A separate process loads the extracted package beside the official host assemblies
 and round-trips representative data through validation/cache, checking a single

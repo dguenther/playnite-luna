@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net462;net8.0</TargetFrameworks>
+    <TargetFrameworks>net462;net10.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <!-- Playnite 10.62 provides JSON 10; standalone .NET tools use the current dependency. -->
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" Condition="'$(TargetFramework)' == 'net462'" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" Condition="'$(TargetFramework)' == 'net8.0'" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" Condition="'$(TargetFramework)' == 'net10.0'" />
     <!-- The host's JSON 10 has an insecure default depth limit. All catalog input
          uses MaxDepth=64 (LunaJson and cache settings), the advisory's mitigation.
          Suppress only that advisory; keep auditing other vulnerabilities. -->

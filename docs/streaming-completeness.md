@@ -52,7 +52,7 @@ browse contract at runtime. It will not run this full audit on every refresh or
 load a bundled research catalog. C# tests use reduced representative API samples;
 they do not need a complete saved API response.
 
-Install a .NET 8 SDK, [build the C# probe](../README.md#build-and-test), and complete
+Install a .NET 10 SDK, [build the C# probe](../README.md#build-and-test), and complete
 the [browser tool setup](../tools/LunaBrowserEvidence/README.md#setup).
 Retain the configured proxy and TLS verification. From the repository root:
 

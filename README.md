@@ -1,6 +1,6 @@
 # Amazon Luna Catalog Browser for Playnite
 
-Playnite 10 preview: an inline sidebar catalog browser with an optional separate window, saved offline data, runtime C# refreshes, local search/category filters, artwork, Open in Luna actions, and selected/bulk library imports. The provider and browser model build for .NET Framework 4.6.2 and .NET 8; the library plugin targets `net462` with Playnite SDK 6.17.0. Host validation is in progress; sidebar, restart/persistence, theme, and clean-install checks remain pending.
+Playnite 10 preview: an inline sidebar catalog browser with an optional separate window, saved offline data, runtime C# refreshes, local search/category filters, artwork, Open in Luna actions, and selected/bulk library imports. The provider and browser model build for .NET Framework 4.6.2 and .NET 10; the library plugin targets `net462` with Playnite SDK 6.17.0. Host validation is in progress; sidebar, restart/persistence, theme, and clean-install checks remain pending.
 
 See [PLAN.md](PLAN.md) for the implementation checklist reconciled with the original plan and the current repository.
 
@@ -64,7 +64,7 @@ proxy/TLS setup.
 
 ## Build and test
 
-Install a .NET 8 SDK. `global.json` selects the latest installed .NET 8 feature band. Reference assemblies for `net462` are restored from NuGet. Linux can compile the full solution, including WPF, but running WPF or Playnite requires Windows.
+Install a .NET 10 SDK. `global.json` selects the latest installed .NET 10 feature band. The SDK builds both the `net10.0` standalone tools/tests and the `net462` Playnite extension; Playnite users do not need .NET 10. Reference assemblies for `net462` are restored from NuGet. Linux can compile the full solution, including WPF, but running WPF or Playnite requires Windows.
 
 ```sh
 dotnet restore AmazonLuna.sln --locked-mode

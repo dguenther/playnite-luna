@@ -24,7 +24,7 @@
         "contentHash": "hSXaFmh7hNCuEoC4XNY5DrRkLDzYHqPx/Ik23R4J86Z7PE/Y6YidhG602dFVdLBRSdG6xp9NabH3dXpcoxWvww=="
       }
     },
-    "net8.0": {
+    "net10.0": {
       "Newtonsoft.Json": {
         "type": "Direct",
         "requested": "[13.0.3, )",

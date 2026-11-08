@@ -98,7 +98,7 @@ complete catalog, even while filtered. See [import behavior and recovery](librar
 
 Run the [repository build and tests](../README.md#build-and-test). The full
 solution compiles on Linux and Windows. `src/LunaCatalogBrowser` is independent
-of WPF/Playnite and shares the provider's `net462;net8.0` targets.
+of WPF/Playnite and shares the provider's `net462;net10.0` targets.
 
 On Windows, exercise the WPF bindings and dispatcher independently of the host:
 
@@ -120,7 +120,7 @@ contains exactly the three Luna DLLs, `extension.yaml`, `LICENSE`, and
 `THIRD-PARTY-NOTICES.txt`. Playnite supplies both its SDK and Newtonsoft.Json
 10.0.3. The `net462` catalog builds against that JSON version and reuses the
 host assembly, with no bundled JSON DLL, private loader, binding redirects,
-or resolver handlers. Standalone `net8.0` tools/tests use JSON 13.0.3.
+or resolver handlers. Standalone `net10.0` tools/tests use JSON 13.0.3.
 There are no source files, tests, API fixtures, raw catalog responses, or saved
 user data in the package.
 

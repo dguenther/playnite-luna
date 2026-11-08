@@ -1,5 +1,38 @@
 # Catalog validation record
 
+## .NET 10 toolchain migration — November 8, 2026
+
+The build SDK, standalone test/probe targets, and CI now use .NET 10. Shared
+libraries target `net462;net10.0`; the Playnite extension and Windows smoke
+harnesses continue to target `net462`. NuGet lock files were regenerated using
+SDK **10.0.403**, and locked restore passed. Current setup instructions use
+.NET 10; earlier entries below retain their original .NET 8 validation results.
+
+Validation on Windows:
+
+| Check | Result |
+| --- | --- |
+| Locked solution restore | Passed |
+| Release solution build, including `net462` WPF and `net10.0` | Passed; zero warnings/errors |
+| .NET 10 unit tests | 286 passed; zero failed/skipped |
+| `net462` Windows WPF/SDK smoke harness | Passed |
+| Official Playnite Toolbox packaging and archive-content checks | Passed |
+| Extracted-package dependency/cache/mapping checks | Passed using host SDK 6.18 and JSON 10 |
+
+.NET 10's transitive dependency audit also reports the host-pinned JSON 10
+advisory through `LunaCatalogBrowser`. That project now carries the same narrow
+advisory suppression as `LunaCatalog`: all catalog JSON input has an explicit
+depth limit of 64. Other dependency audits remain enabled.
+
+The SDK was downloaded from Microsoft's release metadata, verified against its
+SHA-512 checksum, and extracted under the ignored `work/dotnet10/sdk` directory.
+Local CLI/cache state also stays under `work`. Sandbox restrictions prevented
+normal build-server communication and isolated-host imports; the Release build
+used `-m:1 -p:UseSharedCompilation=false`, and tests/smoke/package checks passed
+outside the sandbox. No actual Playnite library was changed. Python tooling was
+unchanged and its offline suite was not rerun. Real Playnite host acceptance
+checks remain pending.
+
 ## Catalog update automation — preview 0.2.7
 
 Merged PR #10 (`4e6180d`) is the baseline. Per the user's clarified defaults,
