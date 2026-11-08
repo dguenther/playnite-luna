@@ -17,6 +17,7 @@ namespace LunaPlaynite
         private readonly CatalogBrowserSession session;
         private readonly Action<CatalogGameItem> openGame;
         private bool active;
+        internal bool IsActive => active;
         private bool synchronizingSelection;
         private readonly Func<int, bool>? confirmImportAll;
         private readonly DispatcherTimer ageTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(1) };

@@ -8,6 +8,7 @@ namespace LunaCatalog
 {
     public sealed class CatalogAutomationOptions
     {
+        public LunaSubscriptionType SubscriptionType { get; set; } = LunaSubscriptionType.Standard;
         public bool TagExpiredGames { get; set; } = true;
         public bool ImportNewGames { get; set; }
         public bool RemoveUnplayedGames { get; set; }
@@ -60,6 +61,8 @@ namespace LunaCatalog
         public async Task<CatalogAutomationResult> ApplyAsync(ValidatedCatalog? previous, ValidatedCatalog current,
             CatalogAutomationOptions options, CancellationToken token)
         {
+            if (!Enum.IsDefined(typeof(LunaSubscriptionType), options.SubscriptionType))
+                throw new ArgumentOutOfRangeException(nameof(options.SubscriptionType));
             CatalogValidator.ValidateCached(current, "US", utcNow());
             if (previous != null) CatalogComparer.Compare(previous, current, utcNow());
             await gate.WaitAsync(token).ConfigureAwait(false);
@@ -69,6 +72,7 @@ namespace LunaCatalog
                 var games = database.ReadLibraryGames().Where(g => g.Identity.PluginId == LunaImportIdentity.PluginId &&
                     LunaImportIdentity.TryDecode(g.Identity.GameId, out _)).ToArray();
                 var present = new HashSet<string>(current.Games.Select(g => g.Asin!), StringComparer.Ordinal);
+                var eligible = new HashSet<string>(current.Games.Where(g => g.Categories.Contains(options.SubscriptionType.ToString())).Select(g => g.Asin!), StringComparer.Ordinal);
                 var identities = games.ToDictionary(g => g.Identity.PlayniteId, g =>
                 { LunaImportIdentity.TryDecode(g.Identity.GameId, out var identity); return identity; });
                 CatalogAutomationState plan = null!;
@@ -83,11 +87,11 @@ namespace LunaCatalog
                             missing[asin] = state.MissingAsins.TryGetValue(asin, out var count) ? Math.Min(2, count + 1) : 1;
                         state.MissingAsins = missing;
                         if (options.ImportNewGames && known != null)
-                            state.PendingNewAsins = state.PendingNewAsins.Concat(present.Except(known, StringComparer.Ordinal)).Distinct(StringComparer.Ordinal).ToList();
+                            state.PendingNewAsins = state.PendingNewAsins.Concat(eligible.Except(known, StringComparer.Ordinal)).Distinct(StringComparer.Ordinal).ToList();
                         state.LastObservation = current.RetrievedAt;
                     }
                     if (!options.ImportNewGames) state.PendingNewAsins.Clear();
-                    state.PendingNewAsins.RemoveAll(a => !present.Contains(a));
+                    state.PendingNewAsins.RemoveAll(a => !eligible.Contains(a));
                     state.HasBaseline = true; state.KnownAsins = present.OrderBy(a => a, StringComparer.Ordinal).ToList();
                     var ownedIds = new HashSet<Guid>(identities.Keys);
                     state.OpenedGameIds.RemoveAll(id => !ownedIds.Contains(id));

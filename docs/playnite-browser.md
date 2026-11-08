@@ -42,8 +42,10 @@ If another catalog view remains open, its current work continues. Leaving the
 last view cancels unfinished catalog/import work and saves preferences; committed
 imports remain. Reopening waits for cancellation to settle, then restores cached
 data and reconciles library status without a catalog API request. Search and
-selection survive reopening during the current Playnite session; only category,
-sort, and separate-window size persist across restarts. Shutdown cancels the
+still-visible selections survive reopening during the current Playnite
+session. Each fresh opening selects the saved subscription category (Standard by
+default, or Premium); a second active view shares the current category. Sort and
+separate-window size persist across restarts. Shutdown cancels the
 shared session and hides its sidebar registration.
 
 ## Catalog behavior
@@ -71,7 +73,7 @@ the view is open. The default stale threshold is 24 hours. Select a game and
 choose **Open in Luna**, or double-click a game row, to open its validated Luna
 page in the default browser. Double-clicking blank space does nothing.
 
-Category, sort, and window size are saved through Playnite's plugin-settings
+Subscription type, sort, and window size are saved through Playnite's plugin-settings
 API. Search and selection last for the current Playnite session. The plugin's stable GUID is
 `6f4229ca-70a9-4c65-ae9f-047a367beda9`; catalog files and settings belong to
 Playnite's corresponding extension data directory. Unsupported future preference

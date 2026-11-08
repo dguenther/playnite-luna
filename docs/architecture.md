@@ -134,7 +134,7 @@ handoffs, settings UI/persistence, old/new imports, and preserved metadata.
 
 `global.json`, committed NuGet lock files, pinned Python dependencies, and GitHub
 Actions make offline validation repeatable: locked restore, Release builds for
-both library targets plus the WPF plugin, 286 .NET tests, and 24 Python tests on
+both library targets plus the WPF plugin, 297 .NET tests, and 24 Python tests on
 Linux and Windows. Windows additionally opens the actual WPF view in a dispatcher
 smoke harness and packages a checked preview with the official Playnite 10.62
 Toolbox. Playnite supplies both its SDK and JSON 10.0.3; the `net462` catalog

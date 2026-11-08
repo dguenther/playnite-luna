@@ -3,13 +3,18 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Foreground="{DynamicResource TextBrush}">
     <StackPanel Margin="16">
-        <CheckBox x:Name="InstalledBox" Content="Mark Luna games as installed"
+        <Label Content="Subscription type" Target="{Binding ElementName=SubscriptionTypeBox}" Padding="0"/>
+        <ComboBox x:Name="SubscriptionTypeBox" Margin="0,6,0,0" Width="220" HorizontalAlignment="Left"
+            ItemsSource="{Binding SubscriptionTypes}"
+            SelectedItem="{Binding SubscriptionType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBlock Margin="0,6,0,0" Text="Sets the opening catalog category and limits automatic imports to your subscription." TextWrapping="Wrap"/>
+        <CheckBox x:Name="InstalledBox" Margin="0,16,0,0" Content="Mark Luna games as installed"
             IsChecked="{Binding MarkGamesInstalled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         <CheckBox x:Name="RefreshOnLibraryUpdateBox" Margin="0,10,0,0" Content="Update catalog when Playnite updates libraries"
             IsChecked="{Binding RefreshOnLibraryUpdate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         <CheckBox x:Name="TagExpiredGamesBox" Margin="0,10,0,0" Content="Tag games no longer available on Luna as expired"
             IsChecked="{Binding TagExpiredGames, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-        <CheckBox x:Name="ImportNewGamesBox" Margin="0,10,0,0" Content="Add newly added catalog games to the library"
+        <CheckBox x:Name="ImportNewGamesBox" Margin="0,10,0,0" Content="Add newly added games in my subscription to the library"
             IsChecked="{Binding ImportNewGames, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         <CheckBox x:Name="RemoveUnplayedGamesBox" Margin="0,10,0,0" Content="Remove expired games that have not been played"
             IsChecked="{Binding RemoveUnplayedGames, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>

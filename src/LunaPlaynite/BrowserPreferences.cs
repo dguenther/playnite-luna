@@ -1,3 +1,4 @@
+using LunaCatalog;
 using LunaCatalogBrowser;
 
 namespace LunaPlaynite
@@ -6,6 +7,7 @@ namespace LunaPlaynite
     public sealed class BrowserPreferences
     {
         public int SchemaVersion { get; set; } = 1;
+        public LunaSubscriptionType SubscriptionType { get; set; } = LunaSubscriptionType.Standard;
         public bool MarkGamesInstalled { get; set; } = true;
         public bool RefreshOnLibraryUpdate { get; set; } = true;
         public bool TagExpiredGames { get; set; } = true;

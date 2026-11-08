@@ -1,20 +1,28 @@
 # Catalog update automation
 
-Preview `0.2.7` adds four settings under **Add-ons → Extension settings → Libraries
+Catalog automation settings are under **Add-ons → Extension settings → Libraries
 → Amazon Luna**. Saving settings does not itself fetch, import, tag, or remove
 games. Manual **Refresh** and enabled Playnite library updates use the same flow.
 
 | Setting | Default |
 | --- | --- |
+| Subscription type | Standard (or choose Premium) |
 | Update catalog when Playnite updates libraries | On |
 | Tag games no longer available on Luna as expired | On |
-| Add newly added catalog games to the library | Off |
+| Add newly added games in my subscription to the library | Off |
 | Remove expired games that have not been played | Off |
 
 The existing **Mark Luna games as installed** setting remains on by default.
-All five choices support Save/Cancel, survive restart, and preserve browser
-category/sort/window preferences. Older settings files acquire these defaults;
+All choices support Save/Cancel, survive restart, and preserve browser
+sort/window preferences. Older settings files acquire these defaults;
 newer schemas remain read-only to this version.
+
+**Subscription type** selects Standard or Premium. A fresh catalog opening uses
+that category; opening another view while a catalog view is active shares its
+current filters. The setting controls automatic imports independently of local
+search/category filters. GameNight remains a browsing category. Manual imports
+can include any catalog games. Saving a subscription change takes effect on the
+next opening and subsequent refresh automation; it does not remove existing imports.
 
 ## Refresh and coordination
 
@@ -72,14 +80,20 @@ initialization must be persisted before automation can proceed.
 
 ## Arrivals, persistence, and recovery
 
-Auto-import adds arrivals after an established baseline, independent of local
-search/category filters. A first-ever download without a previous catalog
+Auto-import adds arrivals after an established baseline only when their catalog
+memberships include the saved subscription type, independent of local
+search/category filters. Games with overlapping memberships are imported once.
+A first-ever download without a previous catalog
 establishes the baseline and does not import the whole catalog. Enabling the
 setting later does not backfill missing library entries; use explicit Import All
 for that. Manually deleted entries are not reimported unless they leave and
 subsequently reappear as catalog arrivals. Failed arrivals remain pending for
-retry while the option stays enabled; disabling it clears pending arrivals on
-the next refresh. Successful/previously imported entries are skipped using existing durable
+retry while the option stays enabled and they still match the subscription;
+disabling it clears pending arrivals on the next refresh. A subscription change
+discards pending arrivals outside the selected membership on the next refresh
+and does not backfill existing catalog games. Expiry/removal still use the full
+catalog, so games outside the subscription are not treated as expired merely
+because of that choice. Successful/previously imported entries are skipped using existing durable
 identity/mapping reconciliation.
 
 `catalog-automation-US.json` stores the baseline ASIN set, pending arrivals,
@@ -91,9 +105,10 @@ and inconsistent state. Corrupt/newer journals block automatic mutations rather
 than restoring potentially stale launch protection from a backup. The existing
 validated catalog cache and import mappings retain their separate recovery rules.
 
-The .NET suite includes 19 automation/session regressions; the Windows harness
+The .NET suite includes 30 automation/session regressions; the Windows harness
 checks the actual SDK library-update callback, opt-out, failure/cancellation,
-settings defaults, expiry-tag preservation, recorded-history guards, and SDK
+settings defaults, subscription filtering and changes, catalog opening categories,
+expiry-tag preservation, recorded-history guards, and SDK
 removal through an isolated database. It reproduces a failed protection save
 during an active update with a readable journal, and checks tag-intent ordering
 and aborted SDK writes when the ownership save fails. Actual Playnite update/notification and

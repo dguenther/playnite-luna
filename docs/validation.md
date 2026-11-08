@@ -1,5 +1,22 @@
 # Catalog validation record
 
+## Subscription preferences — November 8, 2026
+
+The subscription setting offers Standard (the default, including older settings
+files) and Premium. Fresh sidebar/window openings use the selected category;
+simultaneously open views retain shared filters. Automatic imports and pending
+retries require the selected membership. Subscription changes do not backfill
+existing catalog games or treat games outside the subscription as expired.
+
+Locked restore and the Release solution build passed with SDK **10.0.100**, with
+zero build warnings/errors. All **297 .NET tests** passed, including eleven new
+subscription regressions. The Windows WPF/SDK smoke harness passed subscription
+selector binding, Save/Cancel, restart and save-failure behavior, fresh/repeated
+catalog openings, shared filters, and subscription-filtered automatic imports
+through the actual plugin callback against an isolated database. Python tooling
+was unchanged and its offline suite was not rerun. Actual Playnite host acceptance
+remains a manual check.
+
 ## .NET 10 toolchain migration — November 8, 2026
 
 The build SDK, standalone test/probe targets, and CI now use .NET 10. Shared

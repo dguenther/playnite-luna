@@ -38,7 +38,11 @@ and [browser behavior, packaging, and host checks](docs/playnite-browser.md).
 
 Catalog refresh during Playnite library updates and **Luna: Expired** tagging are
 enabled by default. Automatic arrival imports and removal of unplayed expired
-entries are separate settings, both off by default. Expiry is detected on the first
+entries are separate settings, both off by default. Choose **Standard** (the default)
+or **Premium** under **Subscription type** in the extension settings. The catalog
+opens with that category selected, and automatic imports include only new arrivals
+with that membership. You can still browse other categories and import games manually.
+Changing the subscription does not backfill existing catalog games. Expiry is detected on the first
 successful refresh where a game is missing; removal also checks recorded play history, activity, and
 extension website-open protection. See [automation behavior and limits](docs/catalog-automation.md).
 
@@ -72,7 +76,7 @@ dotnet build AmazonLuna.sln -c Release --no-restore
 dotnet test tests/LunaCatalog.Tests/LunaCatalog.Tests.csproj -c Release --no-build
 ```
 
-The suite has 286 .NET tests and 24 Python offline checks. After installing the
+The suite has 297 .NET tests and 24 Python offline checks. After installing the
 [pinned Python dependency](tools/LunaBrowserEvidence/README.md#setup), run:
 
 ```sh

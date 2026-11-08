@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -141,6 +142,7 @@ namespace LunaPlayniteSmoke
                 CheckInstallWebsite();
                 await CheckInstalledSettingAsync(directory);
                 await CheckLibraryUpdateAsync(directory);
+                await CheckSubscriptionImportsAsync(directory);
                 await CheckAutomationAdapterAsync(directory);
                 CheckPlayWebsite();
                 await CheckSidebarAsync(directory);
@@ -408,7 +410,7 @@ namespace LunaPlayniteSmoke
             // An older settings file has no installed-state property. Preserve its browser preferences.
             plugin.SavePluginSettings(new { SchemaVersion = 1, Category = CatalogCategory.GameNight, TitleSort = CatalogTitleSort.Descending, Width = 1100, Height = 800 });
             var settings = (LunaSettings)plugin.GetSettings(false);
-            Check(settings.MarkGamesInstalled && settings.RefreshOnLibraryUpdate && settings.TagExpiredGames && !settings.ImportNewGames && !settings.RemoveUnplayedGames &&
+            Check(settings.SubscriptionType == LunaSubscriptionType.Standard && settings.MarkGamesInstalled && settings.RefreshOnLibraryUpdate && settings.TagExpiredGames && !settings.ImportNewGames && !settings.RemoveUnplayedGames &&
                 plugin.Properties.HasSettings && settings.VerifySettings(out var errors) && errors.Count == 0,
                 "The installed setting is not enabled by default for an upgraded preferences file.");
             plugin.OnApplicationStarted(new OnApplicationStartedEventArgs());
@@ -420,18 +422,23 @@ namespace LunaPlayniteSmoke
                 "Enabled settings did not supply a native Play controller for an existing import.");
             var view = (LunaSettingsView)plugin.GetSettingsView(false);
             var checkbox = (CheckBox)view.FindName("InstalledBox");
-            var window = new Window { Content = view, Width = 640, Height = 400 };
+            var subscription = (ComboBox)view.FindName("SubscriptionTypeBox");
+            var window = new Window { Content = view, Width = 640, Height = 470 };
             try
             {
                 window.Show(); await Until(() => checkbox.IsChecked == true);
+                Check(subscription.SelectedItem is LunaSubscriptionType.Standard && subscription.Items.Count == 2,
+                    "The subscription selector did not default to Standard or expose both subscription types.");
                 Check(((CheckBox)view.FindName("RefreshOnLibraryUpdateBox")).IsChecked == true &&
                     ((CheckBox)view.FindName("TagExpiredGamesBox")).IsChecked == true &&
                     ((CheckBox)view.FindName("ImportNewGamesBox")).IsChecked == false &&
                     ((CheckBox)view.FindName("RemoveUnplayedGamesBox")).IsChecked == false,
                     "Automation settings checkboxes do not reflect the requested defaults.");
-                settings.BeginEdit(); checkbox.IsChecked = false;
-                Check(!settings.MarkGamesInstalled && Current(owned).IsInstalled, "Editing settings changed the library before Save.");
+                settings.BeginEdit(); checkbox.IsChecked = false; subscription.SelectedItem = LunaSubscriptionType.Premium;
+                Check(!settings.MarkGamesInstalled && settings.SubscriptionType == LunaSubscriptionType.Premium && Current(owned).IsInstalled,
+                    "The subscription binding failed or editing settings changed the library before Save.");
                 settings.CancelEdit(); await Until(() => checkbox.IsChecked == true);
+                Check(subscription.SelectedItem is LunaSubscriptionType.Standard, "Cancelling settings did not restore the subscription choice.");
                 Check(Current(owned).IsInstalled, "Cancelling settings changed installed state.");
                 settings.BeginEdit(); settings.RefreshOnLibraryUpdate = false; settings.TagExpiredGames = false;
                 settings.ImportNewGames = true; settings.RemoveUnplayedGames = true; settings.CancelEdit();
@@ -439,11 +446,12 @@ namespace LunaPlayniteSmoke
                     "Cancelling settings did not restore all automation choices.");
                 settings.BeginEdit(); settings.RefreshOnLibraryUpdate = false; settings.TagExpiredGames = false;
                 var countBeforeSave = library.Games.Values.Count;
+                subscription.SelectedItem = LunaSubscriptionType.Premium;
                 settings.ImportNewGames = true; settings.RemoveUnplayedGames = true; settings.EndEdit();
                 using (var reloaded = new LunaPlugin(host.Api))
                 {
                     var choices = (LunaSettings)reloaded.GetSettings(false);
-                    Check(choices.MarkGamesInstalled && !choices.RefreshOnLibraryUpdate && !choices.TagExpiredGames && choices.ImportNewGames && choices.RemoveUnplayedGames,
+                    Check(choices.SubscriptionType == LunaSubscriptionType.Premium && choices.MarkGamesInstalled && !choices.RefreshOnLibraryUpdate && !choices.TagExpiredGames && choices.ImportNewGames && choices.RemoveUnplayedGames,
                         "Saved automation choices were lost on restart.");
                     Check(library.Games.Values.Count == countBeforeSave, "Saving settings mutated the library.");
                 }
@@ -483,11 +491,12 @@ namespace LunaPlayniteSmoke
                 var bytes = File.ReadAllBytes(file);
                 using (var locked = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    settings.BeginEdit(); settings.MarkGamesInstalled = false;
+                    settings.BeginEdit(); settings.MarkGamesInstalled = false; settings.SubscriptionType = LunaSubscriptionType.Standard;
                     try { settings.EndEdit(); throw new InvalidOperationException("Saving to a locked settings file unexpectedly succeeded."); }
                     catch (IOException) { }
                     settings.CancelEdit();
-                    Check(settings.MarkGamesInstalled && Current(owned).IsInstalled, "A failed settings save changed effective behavior or library state.");
+                    Check(settings.SubscriptionType == LunaSubscriptionType.Premium && settings.MarkGamesInstalled && Current(owned).IsInstalled,
+                        "A failed settings save changed effective behavior or library state.");
                 }
                 Check(bytes.SequenceEqual(File.ReadAllBytes(file)) && host.Errors == 0, "A failed settings save replaced the original file or caused an unexpected host error.");
             }
@@ -504,6 +513,8 @@ namespace LunaPlayniteSmoke
             internal int Calls;
             internal bool Fail, Block;
             internal string? MissingAsin;
+            internal string? ArrivalMembership;
+            internal string ArrivalAsin = "B000NEW001";
             public async Task<CatalogSnapshot> FetchAsync(string region, CancellationToken token)
             {
                 Calls++;
@@ -516,8 +527,45 @@ namespace LunaPlayniteSmoke
                     { query.Games.RemoveAll(g => g.Asin == MissingAsin); query.TilesObserved = query.Games.Count; }
                     snapshot = CatalogSnapshot.Merge(snapshot.Queries);
                 }
+                if (ArrivalMembership != null)
+                {
+                    foreach (var query in snapshot.Queries.Where(q => q.Name == "AllGames" || q.Name == ArrivalMembership))
+                    {
+                        query.Games.Add(new LunaGame { Id = ArrivalAsin, Asin = ArrivalAsin, Title = "New subscription arrival",
+                            Url = "https://luna.amazon.com/game/new-arrival/" + ArrivalAsin, HasPlayLink = true,
+                            Categories = new SortedSet<string>(query.Name == "AllGames" ? Array.Empty<string>() : new[] { ArrivalMembership }, StringComparer.Ordinal) });
+                        query.TilesObserved = query.Games.Count;
+                    }
+                    snapshot = CatalogSnapshot.Merge(snapshot.Queries);
+                }
                 snapshot.RetrievedAt = time.AddMinutes(Calls); return snapshot;
             }
+        }
+        private static async Task CheckSubscriptionImportsAsync(string directory)
+        {
+            var root = Path.Combine(directory, "subscription-imports");
+            var library = new SmokeDatabase(Path.Combine(root, "library"));
+            var host = new SmokeDatabase.Host(library, root); var provider = new LibraryProvider();
+            using var plugin = new LunaPlugin(host.Api, provider);
+            var settings = (LunaSettings)plugin.GetSettings(false);
+            settings.BeginEdit(); settings.ImportNewGames = true; settings.EndEdit();
+            async Task<Game[]> Update() => await Task.Run(() => plugin.ImportGames(new LibraryImportGamesArgs()).ToArray());
+            Check((await Update()).Length == 0, "An initial auto-import downloaded the entire catalog.");
+            provider.ArrivalMembership = "Premium";
+            Check((await Update()).Length == 0 && library.Games.Values.Count == 0,
+                "The default Standard subscription auto-imported a Premium-only arrival.");
+            settings.BeginEdit(); settings.SubscriptionType = LunaSubscriptionType.Premium; settings.EndEdit();
+            Check((await Update()).Length == 0, "Changing subscription backfilled existing catalog entries.");
+            provider.ArrivalMembership = null; await Update();
+            provider.ArrivalMembership = "Premium";
+            Check((await Update()).Length == 1 && library.Games.Values.Count == 1,
+                "A saved Premium subscription did not auto-import a new Premium arrival.");
+            settings.BeginEdit(); settings.SubscriptionType = LunaSubscriptionType.Standard; settings.EndEdit();
+            provider.ArrivalMembership = "Standard"; provider.ArrivalAsin = "B000NEW002";
+            Check((await Update()).Length == 1 && library.Games.Values.Count == 2,
+                "Changing to Standard did not apply to subsequent automatic imports.");
+            Check(host.Errors == 0, "Subscription imports caused an unexpected host error.");
+            Console.WriteLine("Windows Luna subscription import checks passed (Standard default, Premium exclusion/inclusion, changed settings, no backfill).");
         }
         private static async Task CheckLibraryUpdateAsync(string directory)
         {
@@ -665,6 +713,7 @@ namespace LunaPlayniteSmoke
             await cache.SaveAsync(accepted, CancellationToken.None);
             var bytes = File.ReadAllBytes(Path.Combine(root, LunaImportIdentity.PluginId.ToString(), "catalog-US.json"));
             using var plugin = new LunaPlugin(host.Api);
+            plugin.SavePluginSettings(new BrowserPreferences { Category = CatalogCategory.GameNight });
             var tab = plugin.GetSidebarItems().Single();
             Check(tab.Type == SiderbarItemType.View && tab.Title == "Browse Amazon Luna Catalog" && tab.Icon != null,
                 "Luna did not register an inline sidebar view with an icon.");
@@ -692,6 +741,8 @@ namespace LunaPlayniteSmoke
             try
             {
                 window.Show(); await Until(() => !model.IsBusy && model.TotalCount == 5 && view.IsLoaded);
+                Check(model.Category == CatalogCategory.Standard && model.VisibleCount == 2,
+                    "The catalog opening did not prefer the default subscription over its saved category.");
                 await Until(() => ReferenceEquals(icon!.Fill, Brushes.Gray));
                 Application.Current.Resources["GlyphBrush"] = Brushes.DodgerBlue;
                 await Until(() => ReferenceEquals(icon!.Fill, Brushes.DodgerBlue));
@@ -709,8 +760,8 @@ namespace LunaPlayniteSmoke
                 Check(ReferenceEquals(tab.Opened(), view), "Reopening the tab discarded its catalog control.");
                 frame.Content = view;
                 await Until(() => view.IsLoaded && !model.IsBusy);
-                Check(model.SearchText == "Alan" && model.SelectedGame?.Id == selectedId && Control<ListBox>(view, "GamesList").SelectedItems.Count == 1,
-                    "Sidebar reopen lost local filters or selection.");
+                Check(model.Category == CatalogCategory.Standard && model.SearchText == "Alan" && model.SelectedGame?.Id == selectedId && Control<ListBox>(view, "GamesList").SelectedItems.Count == 1,
+                    "Sidebar reopen did not restore the subscription category while retaining search and visible selection.");
 
                 model.Category = CatalogCategory.All;
                 var menu = plugin.GetMainMenuItems(new GetMainMenuItemsArgs()).Single();
@@ -718,6 +769,7 @@ namespace LunaPlayniteSmoke
                 await Until(() => host.DialogWindow?.IsVisible == true && !model.IsBusy);
                 var popout = (CatalogBrowserView)host.DialogWindow!.Content;
                 Check(!ReferenceEquals(popout, view) && ReferenceEquals(popout.DataContext, model), "Window and sidebar do not safely share browser state.");
+                Check(model.Category == CatalogCategory.All, "Opening a second view reset the active view's category.");
                 Control<TextBox>(popout, "SearchBox").Text = "WRC";
                 Check(model.VisibleCount == 1 && Control<TextBox>(view, "SearchBox").Text == "WRC", "Window filters did not update the sidebar.");
                 model.SearchText = "Alan";
@@ -729,10 +781,12 @@ namespace LunaPlayniteSmoke
                 var preferences = plugin.LoadPluginSettings<BrowserPreferences>();
                 Check(preferences != null && preferences.SchemaVersion == 1, "Sidebar close did not persist browser preferences.");
                 var settings = (LunaSettings)plugin.GetSettings(false);
-                settings.BeginEdit(); settings.MarkGamesInstalled = false; settings.EndEdit();
+                settings.BeginEdit(); settings.MarkGamesInstalled = false; settings.SubscriptionType = LunaSubscriptionType.Premium; settings.EndEdit();
                 frame.Content = tab.Opened(); await Until(() => view.IsLoaded && !model.IsBusy);
+                Check(model.Category == CatalogCategory.Premium, "Reopening the sidebar ignored the newly saved subscription.");
                 tab.Closed(); frame.Content = new TextBlock(); await Until(() => !view.IsLoaded);
-                Check(plugin.LoadPluginSettings<BrowserPreferences>()?.MarkGamesInstalled == false,
+                Check(plugin.LoadPluginSettings<BrowserPreferences>()?.MarkGamesInstalled == false &&
+                    plugin.LoadPluginSettings<BrowserPreferences>()?.SubscriptionType == LunaSubscriptionType.Premium,
                     "Saving browser preferences overwrote the changed installed setting.");
                 Check(bytes.SequenceEqual(File.ReadAllBytes(Path.Combine(root, LunaImportIdentity.PluginId.ToString(), "catalog-US.json"))),
                     "Sidebar/window switching modified the accepted catalog cache.");

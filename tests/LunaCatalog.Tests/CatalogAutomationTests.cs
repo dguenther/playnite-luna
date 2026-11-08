@@ -49,16 +49,17 @@ public sealed class CatalogAutomationTests : IDisposable
     private JsonCatalogAutomationStore Store => new(directory);
     private CatalogAutomation Create() => new(database, new CatalogImportService(database, new JsonImportMappingStore(directory), utcNow: () => now), Store, () => now);
     private static string Alien => RuntimeSamples.Validated().Games.Single(g => g.Title == "Alien: Isolation").Asin!;
-    private ValidatedCatalog Catalog(int minute, bool remove = false, bool add = false, bool fallbackId = false) =>
-        CatalogValidator.ValidateSnapshot(Snapshot(minute, remove, add, fallbackId), "US", now);
-    private CatalogSnapshot Snapshot(int minute, bool remove = false, bool add = false, bool fallbackId = false)
+    private ValidatedCatalog Catalog(int minute, bool remove = false, bool add = false, bool fallbackId = false, string[]? arrivalMemberships = null) =>
+        CatalogValidator.ValidateSnapshot(Snapshot(minute, remove, add, fallbackId, arrivalMemberships), "US", now);
+    private CatalogSnapshot Snapshot(int minute, bool remove = false, bool add = false, bool fallbackId = false, string[]? arrivalMemberships = null)
     {
+        arrivalMemberships ??= new[] { "Premium" };
         var snapshot = RuntimeSamples.Snapshot();
         foreach (var query in snapshot.Queries)
         {
             if (remove) query.Games.RemoveAll(g => g.Asin == Alien);
             if (fallbackId) foreach (var game in query.Games.Where(g => g.Asin == Alien)) game.Id = game.Asin!;
-            if (add && (query.Name == "AllGames" || query.Name == "Premium"))
+            if (add && (query.Name == "AllGames" || arrivalMemberships.Contains(query.Name)))
             {
                 var game = JsonConvert.DeserializeObject<LunaGame>(JsonConvert.SerializeObject(query.Games[0]))!;
                 game.Id = "amzn1.adg.product.00000000-0000-4000-8000-000000000001"; game.Asin = "B000NEW001"; game.Title = "New arrival";
@@ -76,6 +77,7 @@ public sealed class CatalogAutomationTests : IDisposable
     public async Task DefaultsTagOnFirstObservationAndSurviveRestartWithoutRemoval()
     {
         var id = OwnAlien(); var options = new CatalogAutomationOptions();
+        Assert.Equal(LunaSubscriptionType.Standard, options.SubscriptionType);
         Assert.True(options.TagExpiredGames); Assert.False(options.ImportNewGames); Assert.False(options.RemoveUnplayedGames);
         await Create().ApplyAsync(Catalog(0), Catalog(1, remove: true), options, default);
         Assert.Contains(id, database.Expired); Assert.Contains(id, database.Data.Entries.Keys);
@@ -187,7 +189,7 @@ public sealed class CatalogAutomationTests : IDisposable
     [Fact]
     public async Task AutoImportsOnlyNewArrivalsAndRetriesFailuresWithoutDuplicates()
     {
-        var options = new CatalogAutomationOptions { ImportNewGames = true };
+        var options = new CatalogAutomationOptions { ImportNewGames = true, SubscriptionType = LunaSubscriptionType.Premium };
         await Create().ApplyAsync(null, Catalog(0), options, default);
         Assert.Empty(database.Data.Entries);
         database.Data.Reject = _ => true;
@@ -198,6 +200,68 @@ public sealed class CatalogAutomationTests : IDisposable
         Assert.Single(retried.AddedGameIds); Assert.Single(database.Data.Entries); Assert.Empty(Store.Read().PendingNewAsins);
         await Create().ApplyAsync(Catalog(2, add: true), Catalog(3, add: true), options, default);
         Assert.Single(database.Data.Entries);
+    }
+
+    [Theory]
+    [InlineData(LunaSubscriptionType.Standard, "Standard", true)]
+    [InlineData(LunaSubscriptionType.Standard, "Premium", false)]
+    [InlineData(LunaSubscriptionType.Premium, "Premium", true)]
+    [InlineData(LunaSubscriptionType.Premium, "Standard", false)]
+    [InlineData(LunaSubscriptionType.Standard, "GameNight", false)]
+    [InlineData(LunaSubscriptionType.Premium, "GameNight", false)]
+    public async Task AutoImportsOnlyArrivalsInTheSelectedSubscription(LunaSubscriptionType subscription, string membership, bool expectedImport)
+    {
+        var current = Catalog(1, add: true, arrivalMemberships: new[] { membership });
+        var result = await Create().ApplyAsync(Catalog(0), current, new() { ImportNewGames = true, SubscriptionType = subscription }, default);
+        Assert.Equal(expectedImport ? 1 : 0, result.AddedGameIds.Count);
+        Assert.Equal(expectedImport ? 1 : 0, database.Data.Entries.Count);
+        Assert.Empty(Store.Read().PendingNewAsins);
+        Assert.Contains("B000NEW001", Store.Read().KnownAsins);
+    }
+
+    [Theory]
+    [InlineData(LunaSubscriptionType.Standard)]
+    [InlineData(LunaSubscriptionType.Premium)]
+    public async Task OverlappingMembershipsImportOnceForEitherSubscription(LunaSubscriptionType subscription)
+    {
+        var options = new CatalogAutomationOptions { ImportNewGames = true, SubscriptionType = subscription };
+        await Create().ApplyAsync(Catalog(0), Catalog(1, add: true, arrivalMemberships: new[] { "Standard", "Premium" }), options, default);
+        await Create().ApplyAsync(null, Catalog(2, add: true, arrivalMemberships: new[] { "Standard", "Premium" }), options, default);
+        Assert.Single(database.Data.Entries);
+        Assert.Empty(Store.Read().PendingNewAsins);
+    }
+
+    [Fact]
+    public async Task SubscriptionChangesDiscardIneligiblePendingImportsWithoutBackfilling()
+    {
+        var options = new CatalogAutomationOptions { ImportNewGames = true, SubscriptionType = LunaSubscriptionType.Premium };
+        database.Data.Reject = _ => true;
+        await Create().ApplyAsync(Catalog(0), Catalog(1, add: true), options, default);
+        Assert.Single(Store.Read().PendingNewAsins);
+        database.Data.Reject = null;
+        options.SubscriptionType = LunaSubscriptionType.Standard;
+        await Create().ApplyAsync(null, Catalog(2, add: true), options, default);
+        Assert.Empty(database.Data.Entries); Assert.Empty(Store.Read().PendingNewAsins);
+        options.SubscriptionType = LunaSubscriptionType.Premium;
+        await Create().ApplyAsync(null, Catalog(3, add: true), options, default);
+        Assert.Empty(database.Data.Entries);
+    }
+
+    [Fact]
+    public async Task GamesOutsideTheSubscriptionRemainPresentForExpiryAndRemoval()
+    {
+        var id = OwnAlien();
+        await Create().ApplyAsync(Catalog(0), Catalog(1), new() { SubscriptionType = LunaSubscriptionType.Standard, RemoveUnplayedGames = true }, default);
+        Assert.Contains(id, database.Data.Entries.Keys); Assert.Empty(database.Expired); Assert.Empty(Store.Read().MissingAsins);
+    }
+
+    [Fact]
+    public async Task UnknownSubscriptionCannotMutateTheJournalOrLibrary()
+    {
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => Create().ApplyAsync(Catalog(0), Catalog(1, add: true),
+            new() { ImportNewGames = true, SubscriptionType = (LunaSubscriptionType)99 }, default));
+        Assert.Empty(database.Data.Entries);
+        Assert.False(File.Exists(Path.Combine(directory, "catalog-automation-US.json")));
     }
 
     [Fact]

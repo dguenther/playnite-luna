@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using LunaCatalog;
 using Playnite.SDK;
 
 namespace LunaPlaynite
@@ -12,6 +13,8 @@ namespace LunaPlaynite
         private readonly Func<bool> canSave;
         private BrowserPreferences draft = new BrowserPreferences();
         public event PropertyChangedEventHandler? PropertyChanged;
+        public IReadOnlyList<LunaSubscriptionType> SubscriptionTypes { get; } = Array.AsReadOnly((LunaSubscriptionType[])Enum.GetValues(typeof(LunaSubscriptionType)));
+        public LunaSubscriptionType SubscriptionType { get => draft.SubscriptionType; set { draft.SubscriptionType = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SubscriptionType))); } }
         public bool MarkGamesInstalled { get => draft.MarkGamesInstalled; set { draft.MarkGamesInstalled = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MarkGamesInstalled))); } }
         public bool RefreshOnLibraryUpdate { get => draft.RefreshOnLibraryUpdate; set { draft.RefreshOnLibraryUpdate = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RefreshOnLibraryUpdate))); } }
         public bool TagExpiredGames { get => draft.TagExpiredGames; set { draft.TagExpiredGames = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TagExpiredGames))); } }
@@ -31,6 +34,7 @@ namespace LunaPlaynite
         public bool VerifySettings(out List<string> errors)
         {
             errors = new List<string>();
+            if (!Enum.IsDefined(typeof(LunaSubscriptionType), SubscriptionType)) errors.Add("Choose a Luna subscription type.");
             if (!canSave()) errors.Add("These Luna settings were saved by a newer version. Update the extension before changing them.");
             return errors.Count == 0;
         }

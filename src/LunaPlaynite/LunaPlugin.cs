@@ -67,6 +67,7 @@ namespace LunaPlaynite
             catch (Exception) { logger.Warn("Luna preferences could not be read; defaults will be used."); preferences = new BrowserPreferences(); }
             savePreferences = preferences.SchemaVersion == 1;
             if (!savePreferences) preferences = new BrowserPreferences();
+            if (!Enum.IsDefined(typeof(LunaSubscriptionType), preferences.SubscriptionType)) preferences.SubscriptionType = LunaSubscriptionType.Standard;
         }
 
         public override ISettings GetSettings(bool firstRunSettings)
@@ -80,6 +81,8 @@ namespace LunaPlaynite
         {
             if (disposed || !savePreferences) throw new InvalidOperationException("Luna settings cannot be saved by this extension version.");
             var candidate = preferences.Copy();
+            if (!Enum.IsDefined(typeof(LunaSubscriptionType), draft.SubscriptionType)) throw new ArgumentOutOfRangeException(nameof(draft.SubscriptionType));
+            candidate.SubscriptionType = draft.SubscriptionType;
             candidate.MarkGamesInstalled = draft.MarkGamesInstalled;
             candidate.RefreshOnLibraryUpdate = draft.RefreshOnLibraryUpdate;
             candidate.TagExpiredGames = draft.TagExpiredGames;
@@ -221,7 +224,7 @@ namespace LunaPlaynite
             try
             {
                 if (disposed) throw new ObjectDisposedException(nameof(LunaPlugin));
-                if (sidebarView != null) { ReconcileLibraryGames(); return sidebarView; }
+                if (sidebarView != null) { PrepareBrowserOpening(); ReconcileLibraryGames(); return sidebarView; }
                 return sidebarView = CreateBrowserView();
             }
             catch (Exception)
@@ -285,13 +288,14 @@ namespace LunaPlaynite
                 await dispatcher.InvokeAsync(() =>
                 {
                     options = new CatalogAutomationOptions { TagExpiredGames = savePreferences && preferences.TagExpiredGames,
-                        ImportNewGames = savePreferences && preferences.ImportNewGames, RemoveUnplayedGames = savePreferences && preferences.RemoveUnplayedGames };
+                        ImportNewGames = savePreferences && preferences.ImportNewGames, RemoveUnplayedGames = savePreferences && preferences.RemoveUnplayedGames,
+                        SubscriptionType = preferences.SubscriptionType };
                     lock (openedGames) opened = openedGames.ToArray();
                 });
                 foreach (var id in opened) automation!.RecordOpened(id);
                 return await automation!.ApplyAsync(previous, current, options, token).ConfigureAwait(false);
             });
-            if (Enum.IsDefined(typeof(CatalogCategory), preferences.Category)) model.Category = preferences.Category;
+            model.Category = DefaultCategory;
             if (Enum.IsDefined(typeof(CatalogTitleSort), preferences.TitleSort)) model.TitleSort = preferences.TitleSort;
             session = new CatalogBrowserSession(model);
             session.ActivityChanged += (_, __) =>
@@ -305,11 +309,21 @@ namespace LunaPlaynite
         private CatalogBrowserView CreateBrowserView()
         {
             var activeSession = EnsureBrowserSession();
+            PrepareBrowserOpening();
             ReconcileLibraryGames();
             return new CatalogBrowserView(activeSession, covers!, OpenInLuna, count =>
                 PlayniteApi.Dialogs.ShowMessage("Import all " + count + " games from the complete US Luna catalog?\n\n" +
                     "Search and category filters are ignored. Existing Luna imports will be skipped. Games will be added to the Amazon Luna library with an Open in Luna action.",
                     "Import all Luna games", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+        }
+
+        private CatalogCategory DefaultCategory => preferences.SubscriptionType == LunaSubscriptionType.Premium ? CatalogCategory.Premium : CatalogCategory.Standard;
+
+        private void PrepareBrowserOpening()
+        {
+            // Keep filters shared while either visible view is open. A fresh opening uses the subscription.
+            if (sidebarView?.IsActive != true && (browser?.Content as CatalogBrowserView)?.IsActive != true)
+                session!.Model.Category = DefaultCategory;
         }
 
         private void SavePreferences()
