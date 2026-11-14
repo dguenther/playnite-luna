@@ -11,8 +11,7 @@ Settings to enable auto-import/syncing are available in Add-ons > Extensions set
 
 <img width="718" height="486" alt="Library Integration" src="https://github.com/user-attachments/assets/43ce2980-47ce-4d2c-9fcf-e5acf669bf20" />
 
-<img width="464" height="266" alt="Settings" src="https://github.com/user-attachments/assets/3e7338b9-60ff-4358-8506-49f31c4991bc" />
-
+<img width="464" height="266" alt="image" src="https://github.com/user-attachments/assets/72d90c60-87df-4ffe-8c90-b698290b3a47" />
 
 ## Install
 
