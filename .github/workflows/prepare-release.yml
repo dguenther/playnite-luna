@@ -1,0 +1,51 @@
+name: Prepare release
+on:
+  workflow_dispatch:
+    inputs:
+      expected_version:
+        description: Committed X.Y.Z version (run from default branch)
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: release-v${{ inputs.expected_version }}
+  cancel-in-progress: false
+jobs:
+  source:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Check committed release identity
+        env:
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+        run: python tools/Release/release.py identity --version "$EXPECTED_VERSION"
+  validate:
+    needs: source
+    uses: ./.github/workflows/validate.yml
+    with:
+      source_sha: ${{ github.sha }}
+  candidate:
+    needs: [source, validate]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: luna-playnite-preview
+          path: artifacts/packages
+      - name: Attach and seal draft candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+          SOURCE_SHA: ${{ github.sha }}
+        run: python tools/Release/release.py prepare --version "$EXPECTED_VERSION"

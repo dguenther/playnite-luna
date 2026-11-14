@@ -5,6 +5,11 @@ param(
 )
 $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path -Parent $PSScriptRoot
+$manifest = Get-Content (Join-Path $repoRoot 'src/LunaPlaynite/extension.yaml') -Raw
+$extensionId = [regex]::Match($manifest, '(?m)^Id: ([A-Za-z0-9_-]+)\r?$').Groups[1].Value
+$extensionVersion = [regex]::Match($manifest, '(?m)^Version: (\d+\.\d+\.\d+)\r?$').Groups[1].Value
+[xml]$project = Get-Content (Join-Path $repoRoot 'src/LunaPlaynite/LunaPlaynite.csproj') -Raw
+if (-not $extensionId -or -not $extensionVersion -or $project.Project.PropertyGroup.Version -ne $extensionVersion) { throw 'Manifest and project versions must match.' }
 $toolbox = (Resolve-Path -LiteralPath $ToolboxPath).Path
 $hostDirectory = Split-Path -Parent $toolbox
 $sdkVersion = [Reflection.AssemblyName]::GetAssemblyName((Join-Path $hostDirectory "Playnite.SDK.dll")).Version
@@ -26,7 +31,7 @@ try {
     $destination = (Resolve-Path -LiteralPath $OutputDirectory).Path
     & $toolbox pack $stage $destination
     if ($LASTEXITCODE -ne 0) { throw "Playnite Toolbox packaging failed." }
-    $package = Join-Path $destination "LunaPlaynite_6f4229ca-70a9-4c65-ae9f-047a367beda9_0_2_7.pext"
+    $package = Join-Path $destination ($extensionId + '_' + $extensionVersion.Replace('.', '_') + '.pext')
     if (-not (Test-Path -LiteralPath $package)) { throw "Toolbox did not produce the expected package." }
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $archive = [IO.Compression.ZipFile]::OpenRead($package)
