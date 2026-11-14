@@ -2,9 +2,9 @@
 
 These optional Python tools compare the public US streaming website and API with
 a C# probe snapshot. The full audit supports the recorded
-[Gate A verdict](../../docs/streaming-completeness.md) and can export a verified
+[completeness verdict](../../docs/streaming-completeness.md) and can export a verified
 snapshot. The smaller tools check individual sources and retain unverified
-coverage. These are research tools, separate from the browser's planned runtime
+coverage. These are research tools, separate from the browser's runtime
 C# downloads and representative fixture tests. They are not required on every
 runtime refresh. None runs Playnite.
 
@@ -145,7 +145,7 @@ messages. Invalid inputs are rejected before live checks. Source, output,
 diagnostics, and all temporary paths must resolve to distinct locations; this
 check runs before reading the snapshot or starting live requests.
 The current C# model cannot retain the
-Python export's verified state or receipt. Milestone B adds runtime C# refresh
+Python export's verified state or receipt. The data layer provides runtime C# refresh
 validation; importing this optional research export is not required.
 
 Claims/PC giveaways, account libraries, entitlement, and individual streaming

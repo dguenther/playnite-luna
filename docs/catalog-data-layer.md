@@ -1,10 +1,10 @@
 # Runtime catalog data layer
 
-Milestone B validates and caches current public US streaming data independently
+The data layer validates and caches current public US streaming data independently
 of Playnite. `CatalogService` downloads through the existing C# provider;
 the [Playnite browser](playnite-browser.md) supplies the plugin data directory
 and calls the service.
-The [Gate A investigation](streaming-completeness.md) established the browse
+The [public streaming investigation](streaming-completeness.md) established the browse
 protocol. The Python audit remains optional research tooling.
 
 ## Validation contract
@@ -123,19 +123,19 @@ removal safeguards and departed-game tags are handled by the separate
 [opt-in automation layer](catalog-automation.md); this comparer alone authorizes
 no deletion.
 
-## Verification and next step
+## Verification
 
-The suite contains 297 .NET tests, including 88 production data-layer cases,
-26 browser/artwork cases, 51 import/mapping/browser cases, and five session lifecycle
-cases, plus 30 automation/session regressions and 24 Python checks. Production tests use the existing
-five-game API samples
-and targeted edge cases, with an injected HTTP handler and real temporary cache
-files. CI builds both library targets and runs both suites on Linux and Windows.
-See [validation](validation.md) for the live runtime smoke test and offline
-failure/restart results.
+Production tests use the reduced five-game API samples and targeted edge cases,
+with an injected HTTP handler and real temporary cache files. They cover
+validation, restart reload, backup recovery, atomic replacement, failed refreshes,
+and identity migration. CI builds both library targets and runs the .NET and
+Python suites on Linux and Windows.
 
-Gate B passes for this data layer. Milestone C connects `CatalogService` to
-a Playnite 10 WPF `LibraryPlugin`, with local search/filtering and cached offline
-display. Windows CI checks WPF bindings and produces a Toolbox preview package;
-host loading, real-host UI behavior, and clean installation remain Windows
-Playnite checks before Gate C passes.
+The [October 11, 2026 runtime smoke result](evidence/2026-10-11-runtime-cache.json)
+records a validated live download, cache reload without networking, and
+byte-for-byte cache preservation after a simulated network failure. Its game
+counts describe that capture, not a threshold for future refreshes.
+
+Windows CI also checks WPF bindings and produces a Toolbox package. Host loading,
+real-host UI behavior, and clean installation require the separate
+[Playnite host checks](playnite-browser.md#outstanding-windows-host-checks).

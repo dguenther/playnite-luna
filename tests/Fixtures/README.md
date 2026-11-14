@@ -2,7 +2,7 @@
 
 These fixtures test the C# parser/provider against representative first-party
 response shapes and edge cases. A complete saved API response or catalog is not
-required for testing. The production browser will download current API data at
+required for testing. The production browser downloads current API data at
 runtime; these samples are test inputs, not its catalog source.
 
 These are reduced samples of first-party anonymous `getPage` responses from the initial October 10, 2026 investigation. Browse requests used the historical EU endpoint, including an empty query for All Games; the live provider now uses the frontend-selected US endpoint and explicit `all_games`. See [the API investigation](../../docs/luna-api.md#working-request) for the current request and its historical differences.

@@ -1,10 +1,11 @@
 # Optional Playnite library imports
 
-Milestone D adds explicit single/bulk imports to the Playnite 10 browser preview
-(`0.2.7`). Catalog viewing and runtime refresh remain independent of importing.
+The Playnite 10 catalog browser supports explicit single/bulk imports.
+Catalog viewing and runtime refresh remain independent of explicit importing.
 The public US streaming scope and [runtime acceptance contract](catalog-data-layer.md)
 are unchanged. No account connection or complete saved API fixture is required.
-**Gates C and D still require actual Windows Playnite host validation.**
+The checklists below cover real-host persistence and behavior that automated
+SDK checks cannot establish.
 
 ## Selection and scope
 
@@ -106,7 +107,7 @@ created batch. `Database.ImportGame` only creates the entry; it does not launch
 that workflow. Registering as a library plugin supplies the Library group, and
 does not trigger metadata downloads for browser imports. Automatic enrichment
 would require a separate metadata-provider integration or a redesigned import
-workflow. This preview uses the supported manual command.
+workflow. Use the supported manual command.
 
 ## Mapping, recovery, and concurrency
 
@@ -163,7 +164,7 @@ JSON 10 assembly. The harness also checks marked manual-game migration, untouche
 foreign/unmarked entries, and preserved user metadata. Neither harness establishes
 actual host database persistence.
 
-On a clean Playnite 10.62 installation, record these results before closing D:
+On a clean Playnite 10.62 installation, verify:
 
 - Import one and several games; confirm source, memberships, artwork, installed
   default, and working Open in Luna actions through the host's action menu.
@@ -190,9 +191,9 @@ On a clean Playnite 10.62 installation, record these results before closing D:
   verify useful summaries and preserved committed entries.
 
 Complete [the browser host checklist](playnite-browser.md#outstanding-windows-host-checks)
-alongside these checks before Milestone E release validation.
+alongside these checks when validating a release.
 
-For preview `0.2.7`, also test library-update refresh enabled/disabled, automatic
+Also test library-update refresh enabled/disabled, automatic
 expiry tagging and enabled removal on the first valid refresh, tag clearing on reappearance,
 arrival-only imports/retries when enabled, and opt-in removal that retains played,
 busy, opened, foreign, and ambiguous entries. Use an isolated portable library

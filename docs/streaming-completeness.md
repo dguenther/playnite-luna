@@ -1,6 +1,6 @@
 # Public US streaming catalog completeness
 
-**Gate A passes for the public US streaming catalog captured October 11, 2026.**
+**The audit supports completeness for the public US streaming catalog captured October 11, 2026.**
 The audit found 118 distinct games and no omissions or extra streaming IDs across
 the site's advertised public discovery mechanisms. Claims and PC giveaways are
 outside this scope, as are account libraries, account entitlement, and individual
@@ -47,8 +47,8 @@ does not assert access to hidden or account-specific inventories.
 ## Repeat and export
 
 This is optional research verification of the API's public catalog coverage.
-The production browser will download data through C# and validate the established
-browse contract at runtime. It will not run this full audit on every refresh or
+The production browser downloads data through C# and validates the established
+browse contract at runtime. It does not run this full audit on every refresh or
 load a bundled research catalog. C# tests use reduced representative API samples;
 they do not need a complete saved API response.
 
@@ -72,7 +72,7 @@ never a fixed acceptance threshold.
 The verified output is a Python-generated research JSON artifact. The current C#
 `CatalogSnapshot` keeps `IsComplete` false and has no `coverageEvidence` property;
 it cannot retain a verified receipt through deserialization/reserialization.
-Milestone B's `CatalogService` validates live API responses against the established
+`CatalogService` validates live API responses against the established
 browse contract and caches `Validated` / complete runtime catalogs separately.
 Importing the research artifact/receipt is not a production requirement. See
 [the runtime contract](catalog-data-layer.md).
@@ -87,7 +87,6 @@ must all resolve to distinct locations. Each successful output is replaced
 atomically; the evidence/catalog pair is not a transaction.
 
 Full datasets stay in ignored `artifacts/`; only reduced evidence is committed.
-The production cache and refresh contract are implemented in Milestone B. The
-Milestone C [browser preview](playnite-browser.md) consumes that service at
-runtime; Windows host checks remain pending. The optional audit retains its
-research role and does not implement automatic removal handling.
+The [production data layer](catalog-data-layer.md) provides runtime caching and
+refresh validation for the [Playnite browser](playnite-browser.md). The optional
+audit retains its research role and does not implement automatic removal handling.

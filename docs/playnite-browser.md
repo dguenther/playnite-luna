@@ -1,18 +1,19 @@
-# Playnite catalog browser preview
+# Playnite catalog browser
 
-Milestones C and D add a Playnite 10 `LibraryPlugin`, inline sidebar and optional
-WPF catalog window, and library imports in preview `0.2.7`. The project started from the official
+The Playnite 10 `LibraryPlugin` provides an inline sidebar, optional WPF catalog
+window, and library imports. The project started from the official
 [10.62 GenericPlugin template](https://github.com/JosefNemec/Playnite/tree/10.62/source/Tools/Playnite.Toolbox/Templates/Extensions/GenericPlugin)
 and now registers as a game library to provide **Library → Amazon Luna**,
-targeting `net462` and SDK `6.17.0`. The preview packaging target is Playnite
-10.62; older host versions have not been verified. The user reports that `0.2.0`
-opens in the host and imports appear. **Gate C remains pending the remaining
-host checks, including theme readability in the updated preview.**
+targeting `net462` and SDK `6.17.0`. The packaging target is Playnite 10.62;
+older host versions have not been verified. The host checklist below covers
+behavior that automated WPF and SDK checks cannot establish.
 
 ## Installation and use
 
-Download the `luna-playnite-preview` artifact from a successful Windows CI run,
-extract its `.pext`, and open that file with Playnite. Restart if Playnite asks.
+Follow the [installation instructions](../README.md#install). For development
+builds, download the `luna-playnite-preview` artifact from a successful Windows
+CI run, extract its `.pext`, and open that file with Playnite.
+Restart if Playnite asks.
 The extension adds the monochrome Luna symbol titled **Browse Amazon Luna Catalog** to the
 Desktop sidebar. Clicking it displays the catalog inline in Playnite's main
 content area. The Desktop main-menu item **Amazon Luna Catalog Browser** opens
@@ -88,8 +89,9 @@ unloaded rows cancel their requests and cannot display a previous row's cover.
 Missing/invalid/offline images use a placeholder. Artwork is not persisted to
 disk, so an offline restart may show placeholders while keeping all saved games.
 
-Viewing and refreshing do not create games or update game metadata. Opening the
-browser migrates earlier marked manual imports to the Amazon Luna library by
+Viewing the catalog does not create games. Refresh follows the saved
+[automation settings](catalog-automation.md). Opening the browser migrates
+earlier marked manual imports to the Amazon Luna library by
 changing only library ownership. Explicit **Import Selected** and confirmed
 **Import All (N)** create Luna library entries.
 Ctrl/Shift-click selects multiple rows; each row's import status comes from
@@ -150,9 +152,9 @@ bounded reader because JSON 10 lacks the newer duplicate-property API.
 
 ## Outstanding Windows host checks
 
-Record these results before declaring Gate C passed:
+Use these checks to validate a package inside Playnite:
 
-- Install the preview on a clean Playnite 10.62 installation; confirm the plugin
+- Install the package on a clean Playnite 10.62 installation; confirm the plugin
   loads without dependency errors and its Desktop main-menu item opens the view.
 - Select the Luna logo sidebar icon and confirm the catalog renders inside Playnite.
   Switch between Library and Luna repeatedly, retaining search and selection.
@@ -184,4 +186,4 @@ selection, save preferences, reject Fullscreen registration, and dispose cleanly
 Rows extend the host's implicit `ListBoxItem` style, keeping its normal/selected
 text colors, templates, and dynamic theme resources. Detail text uses full opacity.
 It does not load `LunaPlugin` in Playnite or replace these host checks. Import
-acceptance belongs to Milestone D.
+behavior has a separate [host checklist](library-imports.md#verification-and-remaining-host-checks).

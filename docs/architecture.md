@@ -1,9 +1,9 @@
 # Catalog architecture
 
-Milestone A / Gate A passes for the public US streaming catalog captured October
-11, 2026. The [scoped verdict](streaming-completeness.md) records the evidence and
-exclusions. Milestone B / Gate B passes for the production data layer; Milestone
-C's Playnite browser is implemented, with Windows host validation still pending.
+The extension separates catalog retrieval, validation/cache storage, local
+browsing, and Playnite integration. The [API investigation](luna-api.md) and
+[scoped audit verdict](streaming-completeness.md) record the evidence behind the
+public US streaming contract established October 11, 2026.
 
 `src/LunaCatalog` builds for `net462` and `net10.0`, with no Playnite or WPF
 dependencies. It owns request construction, normalized models, recursive
@@ -106,7 +106,7 @@ validated save; library updates refresh by default. Startup/open/library update
 migrate marked legacy imports and reconcile installed state.
 See [the browser contract](playnite-browser.md).
 
-Milestone D's `CatalogImportService` orchestrates explicit imports through
+`CatalogImportService` orchestrates explicit imports through
 `ICatalogImportDatabase`, with a bounded atomic `JsonImportMappingStore` and
 durable host `GameId` markers. The Playnite adapter reads/creates SDK entries on
 the dispatcher and checks identity atomically before creation. Its library entries
@@ -134,7 +134,7 @@ handoffs, settings UI/persistence, old/new imports, and preserved metadata.
 
 `global.json`, committed NuGet lock files, pinned Python dependencies, and GitHub
 Actions make offline validation repeatable: locked restore, Release builds for
-both library targets plus the WPF plugin, 297 .NET tests, and 24 Python tests on
+both library targets plus the WPF plugin, and .NET/Python tests on
 Linux and Windows. Windows additionally opens the actual WPF view in a dispatcher
 smoke harness and packages a checked preview with the official Playnite 10.62
 Toolbox. Playnite supplies both its SDK and JSON 10.0.3; the `net462` catalog
@@ -146,14 +146,6 @@ and round-trips representative data through validation/cache, checking a single
 host JSON assembly and rejecting duplicate/deep cache input. These dependency
 checks, compilation, WPF smoke checks, and packaging do not validate
 loading inside Playnite.
-
-Milestone B provides versioned caching, validated refreshes, recovery, and snapshot
-comparisons while preserving the last validated snapshot after failures. With
-Gate B passed, Milestone C's WPF browser consumes `CatalogService` and
-has a documented Windows host checklist. Milestone D implements explicit imports
-and reconciles `(region, LunaId)` mappings with Playnite's database. Windows is
-required for host validation, actual library persistence, URL action behavior,
-and final clean-install package testing. Gates C and D remain pending those checks.
 
 `CatalogAutomation` is host-independent and runs after accepted network refreshes,
 using `ICatalogAutomationDatabase` and the existing import service. Its strict,

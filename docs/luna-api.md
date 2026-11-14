@@ -2,9 +2,9 @@
 
 ## Status
 
-Validated October 11, 2026 (UTC) using anonymous requests from the managed Linux environment. Earlier n8n workflow and fetch-notes raw URLs returned HTTP 404. The plan's request shape nevertheless produced working first-party responses.
+Validated October 11, 2026 (UTC) using anonymous requests from the managed Linux environment. Earlier n8n workflow and fetch-notes raw URLs returned HTTP 404. Anonymous first-party requests nevertheless produced working responses.
 
-**Milestone A passes for the public US streaming catalog captured October 11.**
+**The October 11 audit supports completeness for the public US streaming catalog.**
 The full audit covers all 13 discovered streaming pages, every carousel, all 26
 advertised genre filters, 36 paginated searches, and every one of the 118 main
 product details in two fresh contexts. No omissions or extra streaming IDs were
@@ -12,9 +12,9 @@ found. Claims/PC giveaways and account-specific inventories/entitlements are
 excluded. See [the completeness verdict and export contract](streaming-completeness.md).
 The October 11 snapshot was fully audited and exported as `Verified` /
 `isComplete: true`, with a scoped, hash-bound research receipt. The current C#
-research CLI defaults to unverified exports. The production browser will download
-API data through C# at runtime and validate the established browse contract on
-each refresh; it will not require a full Python audit per download. C# tests use
+research CLI defaults to unverified exports. The production browser downloads
+API data through C# at runtime and validates the established browse contract on
+each refresh; it does not require a full Python audit per download. C# tests use
 reduced representative API samples, not a complete saved response or catalog.
 
 ## Earlier October 11 sampled search and discovery evidence
@@ -246,8 +246,8 @@ reverse-title references of size 200. Each search union reproduces all 118 IDs;
 page sets/order match across contexts. The smaller offset tool still checks only
 `a` and `e` and does not itself certify full catalog coverage.
 
-Catalog ingestion continues to use the four browse queries; Playnite search will
-filter that normalized snapshot locally as specified in the plan. Remote search
+Catalog ingestion continues to use the four browse queries; Playnite search
+filters that normalized snapshot locally. Remote search
 is a coverage cross-check. No search pagination was added to the C# catalog
 provider, and no browse continuation was warranted by actual browse requests.
 
@@ -263,8 +263,8 @@ Runtime refreshes validate newly returned data against the established
 browse contract; the research audit is separate from that runtime validation.
 
 The Python audit writes a research receipt into JSON. The current C# model still
-computes an unverified state and has no `coverageEvidence` property. Milestone B
-adds a separate `ValidatedCatalog` and `CatalogService` for production refresh
+computes an unverified state and has no `coverageEvidence` property. A separate
+`ValidatedCatalog` and `CatalogService` provide production refresh
 validation and caching of live C# downloads; importing the Python receipt is not
 a prerequisite. See [the runtime contract](catalog-data-layer.md).
 
@@ -281,9 +281,33 @@ a prerequisite. See [the runtime contract](catalog-data-layer.md).
 
 ## Reproduce
 
-From the repository root, use the commands in [README](../README.md). Fixture replay needs no Amazon access. The current live probe needs `proxy-prod.us-east-1.tempo.digital.a2z.com` and normal proxy/system TLS trust. Browser checks additionally need the frontend and asset hosts listed in [the browser tool instructions](../tools/LunaBrowserEvidence/README.md). The source tree retains only sanitized reduced fixtures and evidence; the full live dataset is not bundled.
+From the repository root, first run the [build and tests](../README.md#build-and-test).
+Replay the reduced fixtures without Amazon access:
 
-## Current limitations and next milestone
+```sh
+dotnet run --project tools/LunaCatalogProbe -c Release --no-build -- --fixtures tests/Fixtures --output artifacts/fixture-catalog.json
+```
+
+Fixture replay exports five games with `coverageStatus: "Unverified"` and
+`isComplete: false`. To fetch the current US catalog with sampled detail checks:
+
+```sh
+dotnet run --project tools/LunaCatalogProbe -c Release --no-build -- --live --verify-details --output artifacts/checked-us-catalog.json
+```
+
+Both modes return **2** for successful unverified research. Failed checks return
+1 and write separate diagnostics while preserving the existing export; invalid
+arguments return 64 and cancellation returns 130.
+
+The live probe needs `proxy-prod.us-east-1.tempo.digital.a2z.com` and normal
+proxy/system TLS trust. Browser checks additionally need the frontend and asset
+hosts listed in [the browser tool instructions](../tools/LunaBrowserEvidence/README.md).
+For the full scoped audit and optional verified export, follow
+[the streaming verification commands](streaming-completeness.md#repeat-and-export).
+The source tree retains only sanitized reduced fixtures and evidence; the full
+live dataset is not bundled.
+
+## Scope and limitations
 
 The earlier global Envoy tunnel outage did not recur on October 11. Supported
 network permission made Git, NuGet, Luna, and US API requests work through the
@@ -291,7 +315,7 @@ inherited proxy. Environment readiness and actual egress should both be checked
 in a new session. Native Chromium's CA error remains; verified Node forwarding
 works without repairing that trust store.
 
-**Gate A passes for the recorded public US streaming scope.** The full
+**The completeness verdict applies to the recorded public US streaming scope.** The full
 [audit capture](evidence/2026-10-11-public-streaming-audit.json) covers the closed
 advertised route graph, every loaded carousel slide, all advertised genres,
 36 paginated search queries, and all 118 product identities/canonical URLs in
@@ -299,15 +323,15 @@ two fresh contexts. Search discovery and all 111 detail recommendation IDs remai
 inside All; end-of-run All rechecks in both title orders agree with the source.
 Claims is excluded and account-specific playability is not part of this verdict.
 
-Milestone B now implements production validation and caching for runtime C# downloads
+The data layer implements production validation and caching for runtime C# downloads
 using the browse protocol established by this investigation. Every refresh must
 pass its response checks; its game set need not equal the historical capture.
 The current research CLI's unverified flag does not make a full Python audit a
 runtime requirement. Native Chromium trust remains an environment limitation
 for the optional research tools.
 
-See [the handoff](next-session.md) for reproduction commands and current
-limitations. Milestone C's [Playnite 10 browser preview](playnite-browser.md)
-integrates the production service with local search/filtering and manual runtime
-refreshes; host validation remains pending. The optional research CLI retains
-its existing behavior.
+The [Playnite browser](playnite-browser.md) integrates the production service
+with local search/filtering and runtime refreshes. Its
+[Windows host checklist](playnite-browser.md#outstanding-windows-host-checks)
+covers integration checks that the research tools cannot establish. The optional
+research CLI retains its existing behavior.
