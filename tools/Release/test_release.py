@@ -34,7 +34,7 @@ class FakeGitHub:
         return self.tag
 
     def release(self, tag):
-        return copy.deepcopy(self.current)
+        return copy.deepcopy(self.current) if self.current and self.current['tag_name'] == tag else None
 
     def request(self, method, path, data=None):
         self.calls.append((method, path, copy.deepcopy(data)))
@@ -45,6 +45,9 @@ class FakeGitHub:
         if method == 'POST' and path == 'releases':
             self.current = dict(data, id=1, html_url='https://github.invalid/draft/1', assets=[], upload_url='https://uploads.invalid', prerelease=False)
         elif method == 'PATCH':
+            # GitHub resets an untagged draft's intended tag when PATCH omits it.
+            if self.current['draft'] and 'tag_name' not in data:
+                self.current['tag_name'] = 'untagged-test'
             self.current.update(data)
             if data.get('draft') is False:
                 self.tag = dict(object=dict(type='commit', sha=self.current['target_commitish']))
@@ -93,6 +96,17 @@ class ReleaseTests(unittest.TestCase):
         self.assertTrue(all(method == 'GET' for method, _, _ in self.api.calls[mutations:]))
         with self.assertRaisesRegex(ValueError, 'Tag already exists'):
             self.prepare(11)
+
+    def test_draft_updates_and_publication_preserve_intended_tag(self):
+        self.prepare()
+        self.assertEqual('v1.2.3', self.api.current['tag_name'])
+        candidate = self.prepare(11)
+        self.api.run['run_number'] = 11
+        publish(self.api, '1.2.3', candidate)
+        patches = [data for method, _, data in self.api.calls if method == 'PATCH']
+        self.assertTrue(patches)
+        self.assertTrue(all(data.get('tag_name') == 'v1.2.3' for data in patches))
+        self.assertEqual('v1.2.3', self.api.current['tag_name'])
 
     def test_failed_replacement_invalidates_previous_candidate(self):
         candidate = self.prepare()

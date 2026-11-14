@@ -144,7 +144,7 @@ def prepare(api, version, sha, run_id, attempt, directory, run_number=None):
         old = marker(release)
         require(old is None or candidate_order(state) >= candidate_order(old), 'Stale prepare cannot replace a newer attempt')
         # A new state is persisted BEFORE any asset mutation. Failure leaves an unpublishable draft.
-        release = api.request('PATCH', f"releases/{release['id']}", dict(target_commitish=sha, body=body_with_state(release, state)))
+        release = api.request('PATCH', f"releases/{release['id']}", dict(tag_name=tag, target_commitish=sha, body=body_with_state(release, state)))
     else:
         notes = api.request('POST', 'releases/generate-notes', dict(tag_name=tag, target_commitish=sha))
         release = api.request('POST', 'releases', dict(tag_name=tag, target_commitish=sha, name=tag, draft=True, body=body_with_state(dict(body=notes['body']), state)))
@@ -161,7 +161,9 @@ def prepare(api, version, sha, run_id, attempt, directory, run_number=None):
     # Read fresh notes so edits made during uploads are preserved.
     fresh = api.request('GET', f"releases/{release['id']}")
     require(fresh['draft'] and marker(fresh)['candidate_id'] == state['candidate_id'], 'Draft changed during preparation')
-    api.request('PATCH', f"releases/{release['id']}", dict(body=body_with_state(fresh, state)))
+    # GitHub can reset a draft to an untagged-* name when PATCH omits tag_name.
+    sealed = api.request('PATCH', f"releases/{release['id']}", dict(tag_name=tag, target_commitish=sha, body=body_with_state(fresh, state)))
+    require(sealed['draft'] and sealed['tag_name'] == tag and sealed['target_commitish'] == sha and marker(sealed) == state, 'Draft identity changed while sealing candidate')
     summary = os.environ.get('GITHUB_STEP_SUMMARY')
     if summary:
         with open(summary, 'a', encoding='utf-8') as output:
@@ -206,7 +208,8 @@ def publish(api, version, candidate_id):
         require(tag, 'Published release has no matching tag')
         return 'Already published this exact candidate; no changes made'
     # Publishing creates a missing tag at the recorded full SHA. No build or re-upload occurs.
-    api.request('PATCH', f"releases/{release['id']}", dict(draft=False, target_commitish=sha))
+    published = api.request('PATCH', f"releases/{release['id']}", dict(tag_name='v' + version, draft=False, target_commitish=sha))
+    require(not published['draft'] and published['tag_name'] == 'v' + version and published['target_commitish'] == sha, 'Publication returned an unexpected release identity')
     return 'Published ' + candidate_id
 
 
